@@ -7,9 +7,13 @@
 
     <fragment
         android:id="@+id/loginFragment"
-        android:name="com.example.myapplication.ui.LoginFragment"
+        android:name="com.example.myapplication.ui.auth.LoginFragment"
         android:label="Login"
         tools:layout="@layout/fragment_login">
+
+        <action
+            android:id="@+id/action_loginFragment_to_requestOtpFragment"
+            app:destination="@id/requestOtpFragment" />
 
         <action
             android:id="@+id/action_loginFragment_to_homeFragment"
@@ -19,16 +23,34 @@
     </fragment>
 
     <fragment
-        android:id="@+id/homeFragment"
-        android:name="com.example.myapplication.ui.HomeFragment"
-        android:label="Home"
-        tools:layout="@layout/fragment_home">
+        android:id="@+id/requestOtpFragment"
+        android:name="com.example.myapplication.ui.auth.RequestOtpFragment"
+        android:label="Pedir código"
+        tools:layout="@layout/fragment_request_otp">
 
         <action
-            android:id="@+id/action_homeFragment_to_loginFragment"
-            app:destination="@id/loginFragment"
-            app:popUpTo="@id/homeFragment"
+            android:id="@+id/action_requestOtpFragment_to_verifyOtpFragment"
+            app:destination="@id/verifyOtpFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/verifyOtpFragment"
+        android:name="com.example.myapplication.ui.auth.VerifyOtpFragment"
+        android:label="Verificar código"
+        tools:layout="@layout/fragment_verify_otp">
+
+        <action
+            android:id="@+id/action_verifyOtpFragment_to_homeFragment"
+            app:destination="@id/homeFragment"
+            app:popUpTo="@id/loginFragment"
             app:popUpToInclusive="true" />
     </fragment>
+
+    <!-- Placeholder temporal: cuando se mergee el Home real de Nico, borrá este bloque
+         y apuntá los destinos de arriba al id real de su HomeFragment. -->
+    <fragment
+        android:id="@+id/homeFragment"
+        android:name="com.example.myapplication.ui.PlaceholderHomeFragment"
+        android:label="Home (placeholder)" />
 
 </navigation>

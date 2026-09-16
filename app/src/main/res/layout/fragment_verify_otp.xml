@@ -7,26 +7,18 @@
     android:padding="32dp">
 
     <TextView
+        android:id="@+id/tvEmail"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Ronda"
-        android:textSize="28sp"
-        android:textStyle="bold"
+        android:textSize="16sp"
         android:layout_marginBottom="24dp" />
 
     <EditText
-        android:id="@+id/etUsuario"
+        android:id="@+id/etCodigo"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="Usuario o email"
-        android:layout_marginBottom="12dp" />
-
-    <EditText
-        android:id="@+id/etPassword"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:hint="Contraseña"
-        android:inputType="textPassword"
+        android:hint="Código de 6 dígitos"
+        android:inputType="number"
         android:layout_marginBottom="16dp" />
 
     <TextView
@@ -38,16 +30,16 @@
         android:layout_marginBottom="12dp" />
 
     <Button
-        android:id="@+id/btnLogin"
+        android:id="@+id/btnVerificar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Ingresar" />
+        android:text="Verificar" />
 
     <TextView
-        android:id="@+id/tvIngresarConCodigo"
+        android:id="@+id/tvReenviar"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="¿No tenés contraseña? Ingresar con código"
+        android:text="Reenviar código"
         android:textColor="#1976D2"
         android:layout_marginTop="16dp" />
 

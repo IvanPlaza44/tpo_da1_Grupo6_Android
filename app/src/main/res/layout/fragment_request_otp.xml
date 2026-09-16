@@ -9,24 +9,17 @@
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Ronda"
-        android:textSize="28sp"
+        android:text="Ingresar con código"
+        android:textSize="22sp"
         android:textStyle="bold"
         android:layout_marginBottom="24dp" />
 
     <EditText
-        android:id="@+id/etUsuario"
+        android:id="@+id/etEmail"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="Usuario o email"
-        android:layout_marginBottom="12dp" />
-
-    <EditText
-        android:id="@+id/etPassword"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:hint="Contraseña"
-        android:inputType="textPassword"
+        android:hint="Email"
+        android:inputType="textEmailAddress"
         android:layout_marginBottom="16dp" />
 
     <TextView
@@ -38,18 +31,10 @@
         android:layout_marginBottom="12dp" />
 
     <Button
-        android:id="@+id/btnLogin"
+        android:id="@+id/btnEnviar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Ingresar" />
-
-    <TextView
-        android:id="@+id/tvIngresarConCodigo"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="¿No tenés contraseña? Ingresar con código"
-        android:textColor="#1976D2"
-        android:layout_marginTop="16dp" />
+        android:text="Enviar código" />
 
     <ProgressBar
         android:id="@+id/progressBar"
@@ -57,5 +42,14 @@
         android:layout_height="wrap_content"
         android:visibility="gone"
         android:layout_marginTop="16dp" />
+
+    <Button
+        android:id="@+id/btnVolver"
+        style="?android:attr/borderlessButtonStyle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Volver al Login"
+        android:textColor="#5E35B1"
+        android:layout_marginTop="8dp" />
 
 </LinearLayout>

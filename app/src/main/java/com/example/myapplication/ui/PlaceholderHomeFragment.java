@@ -1,7 +1,5 @@
 package com.example.myapplication.ui;
 
-import android.content.Context;
-import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -15,13 +13,15 @@ import androidx.fragment.app.Fragment;
 import androidx.navigation.Navigation;
 
 import com.example.myapplication.R;
+import com.example.myapplication.session.SessionManager;
 
-public class HomeFragment extends Fragment {
+public class PlaceholderHomeFragment extends Fragment {
 
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
+        // Ahora sí inflamos tu diseño XML
         return inflater.inflate(R.layout.fragment_home, container, false);
     }
 
@@ -29,19 +29,21 @@ public class HomeFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        SharedPreferences prefs = requireActivity()
-                .getSharedPreferences("auth", Context.MODE_PRIVATE);
-
         TextView tvWelcome = view.findViewById(R.id.tvWelcome);
-        tvWelcome.setText("¡Login exitoso! Token guardado: "
-                + prefs.getString("token", "(sin token)"));
-
         Button btnLogout = view.findViewById(R.id.btnLogout);
-        btnLogout.setOnClickListener(v -> {
-            prefs.edit().clear().apply();
 
-            Navigation.findNavController(view)
-                    .navigate(R.id.action_homeFragment_to_loginFragment);
+        SessionManager sessionManager = new SessionManager(requireContext());
+
+        // Mostramos un mensaje copado con el mail del usuario
+        tvWelcome.setText("✅ Login exitoso\n" + sessionManager.getEmail());
+
+        btnLogout.setOnClickListener(v -> {
+            // 1. Limpiamos las preferencias (borra el token)
+            sessionManager.cerrarSesion();
+
+            // 2. Volvemos al Login limpiando el historial para que no pueda volver con la flecha de atrás
+            Navigation.findNavController(view).navigate(R.id.loginFragment);
+            // IMPORTANTE: Asegúrate de que tu fragmento de login se llame "loginFragment" en el nav_graph.xml
         });
     }
 }
