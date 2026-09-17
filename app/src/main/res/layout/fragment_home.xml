@@ -20,4 +20,10 @@
         android:layout_height="wrap_content"
         android:text="Cerrar sesión" />
 
+    <Button
+        android:id="@+id/btnPublicar"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Publicar Producto" />/>
+
 </LinearLayout>

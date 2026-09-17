@@ -37,10 +37,12 @@ public class HomeFragment extends Fragment {
         tvWelcome.setText("¡Login exitoso! Token guardado: "
                 + prefs.getString("token", "(sin token)"));
 
+        view.findViewById(R.id.btnPublicar).setOnClickListener(v ->
+                Navigation.findNavController(v).navigate(R.id.action_homeFragment_to_publicarFragment));
+
         Button btnLogout = view.findViewById(R.id.btnLogout);
         btnLogout.setOnClickListener(v -> {
             prefs.edit().clear().apply();
-
             Navigation.findNavController(view)
                     .navigate(R.id.action_homeFragment_to_loginFragment);
         });
