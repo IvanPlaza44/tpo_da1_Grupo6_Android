@@ -15,8 +15,7 @@ import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
 public class RetrofitClient {
-
-    private static final String BASE_URL = "https://ronda-api-aut4.onrender.com/";
+    private static final String BASE_URL = "http://10.0.2.2:5000/";
     private static Retrofit retrofit;
 
     public static ApiService getApiService(Context context) {
@@ -26,11 +25,9 @@ public class RetrofitClient {
             HttpLoggingInterceptor logging = new HttpLoggingInterceptor();
             logging.setLevel(HttpLoggingInterceptor.Level.BODY);
 
-            // Agrega el header Authorization automáticamente, EXCEPTO en login/otp.
             Interceptor authInterceptor = chain -> {
                 Request original = chain.request();
 
-                // Si la ruta contiene "/auth/", pasamos de largo sin agregar Token
                 if (original.url().encodedPath().contains("/auth/")) {
                     return chain.proceed(original);
                 }
@@ -47,7 +44,7 @@ public class RetrofitClient {
             };
 
             OkHttpClient client = new OkHttpClient.Builder()
-                    .connectTimeout(90, TimeUnit.SECONDS) // Subir a 90s
+                    .connectTimeout(90, TimeUnit.SECONDS)
                     .readTimeout(90, TimeUnit.SECONDS)
                     .writeTimeout(90, TimeUnit.SECONDS)
                     .addInterceptor(authInterceptor)

@@ -1,6 +1,5 @@
 package com.example.myapplication.ui.auth;
 
-import android.content.Context;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
@@ -104,8 +103,6 @@ public class LoginFragment extends Fragment {
         Navigation.findNavController(requireView())
                 .navigate(R.id.action_loginFragment_to_homeFragment);
     }
-
-    // --- Helpers compartidos por los 3 fragments de auth ---
 
     private String extraerMensajeError(Response<?> response, String fallback) {
         try {

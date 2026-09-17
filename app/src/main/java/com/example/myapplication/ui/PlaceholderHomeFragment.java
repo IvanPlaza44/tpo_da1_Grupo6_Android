@@ -34,16 +34,14 @@ public class PlaceholderHomeFragment extends Fragment {
 
         SessionManager sessionManager = new SessionManager(requireContext());
 
-        // Mostramos un mensaje copado con el mail del usuario
         tvWelcome.setText("✅ Login exitoso\n" + sessionManager.getEmail());
 
         btnLogout.setOnClickListener(v -> {
-            // 1. Limpiamos las preferencias (borra el token)
+            // 1. borra el token
             sessionManager.cerrarSesion();
 
             // 2. Volvemos al Login limpiando el historial para que no pueda volver con la flecha de atrás
             Navigation.findNavController(view).navigate(R.id.loginFragment);
-            // IMPORTANTE: Asegúrate de que tu fragmento de login se llame "loginFragment" en el nav_graph.xml
         });
     }
 }

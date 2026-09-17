@@ -46,8 +46,8 @@
             app:popUpToInclusive="true" />
     </fragment>
 
-    <!-- Placeholder temporal: cuando se mergee el Home real de Nico, borrá este bloque
-         y apuntá los destinos de arriba al id real de su HomeFragment. -->
+    <!-- Placeholder temporal: cuando se mergee el Home real de Nico, borrar este bloque
+         y apuntar los destinos de arriba al id real de su HomeFragment. -->
     <fragment
         android:id="@+id/homeFragment"
         android:name="com.example.myapplication.ui.PlaceholderHomeFragment"
