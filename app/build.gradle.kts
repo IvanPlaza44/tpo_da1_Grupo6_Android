@@ -31,6 +31,7 @@ android {
     }
 }
 
+
 dependencies {
     implementation(libs.activity.ktx)
     implementation(libs.appcompat)
@@ -41,6 +42,7 @@ dependencies {
     androidTestImplementation(libs.ext.junit)
     implementation("com.squareup.retrofit2:retrofit:2.9.0")
     implementation("com.squareup.retrofit2:converter-gson:2.9.0")
+    // Dependenciaas necesarias para la Libreria NavComponent
     implementation("androidx.navigation:navigation-fragment:2.8.0")
     implementation("androidx.navigation:navigation-ui:2.8.0")
 }
