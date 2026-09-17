@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/product_nav_graph.xml">
+
+
+    <!--    Fragment Pendientes por sumar en Distintos nav_Graph -->
+
+
+
+
+    <!--    Fragment Navegacion Desde Detail Product a profile vendedor  -->
+    <!--    Fragment Navegacion Desde Detail Product a gestion de publicacion si es el vendedor   -->
+
+
+</navigation>
