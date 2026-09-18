@@ -14,10 +14,24 @@
         android:gravity="center"
         android:layout_marginBottom="24dp" />
 
+    <com.google.android.material.switchmaterial.SwitchMaterial
+        android:id="@+id/switchBiometria"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Activar ingreso con huella"
+        android:textSize="16sp"
+        android:layout_marginBottom="32dp" />
+
     <Button
         android:id="@+id/btnLogout"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Cerrar sesión" />
+
+    <Button
+        android:id="@+id/btnPublicar"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Publicar Producto" />
 
 </LinearLayout>

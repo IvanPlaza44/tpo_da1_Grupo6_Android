@@ -1,7 +1,5 @@
 package com.example.myapplication.ui;
 
-import android.content.Context;
-import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -15,8 +13,12 @@ import androidx.fragment.app.Fragment;
 import androidx.navigation.Navigation;
 
 import com.example.myapplication.R;
+import com.example.myapplication.session.SessionManager;
+import com.google.android.material.switchmaterial.SwitchMaterial;
 
 public class HomeFragment extends Fragment {
+
+    private SessionManager sessionManager;
 
     @Nullable
     @Override
@@ -30,17 +32,22 @@ public class HomeFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        SharedPreferences prefs = requireActivity()
-                .getSharedPreferences("auth", Context.MODE_PRIVATE);
+        sessionManager = new SessionManager(requireContext());
 
         TextView tvWelcome = view.findViewById(R.id.tvWelcome);
-        tvWelcome.setText("¡Login exitoso! Token guardado: "
-                + prefs.getString("token", "(sin token)"));
+        tvWelcome.setText("¡Login exitoso! Token guardado: " + sessionManager.getToken());
+
+        SwitchMaterial switchBiometria = view.findViewById(R.id.switchBiometria);
+        switchBiometria.setChecked(sessionManager.isBiometriaActivada());
+        switchBiometria.setOnCheckedChangeListener((buttonView, isChecked) ->
+                sessionManager.setBiometriaActivada(isChecked));
+
+        view.findViewById(R.id.btnPublicar).setOnClickListener(v ->
+                Navigation.findNavController(v).navigate(R.id.action_homeFragment_to_publicarFragment));
 
         Button btnLogout = view.findViewById(R.id.btnLogout);
         btnLogout.setOnClickListener(v -> {
-            prefs.edit().clear().apply();
-
+            sessionManager.cerrarSesion();
             Navigation.findNavController(view)
                     .navigate(R.id.action_homeFragment_to_loginFragment);
         });
