@@ -35,7 +35,8 @@ public class LoginFragment extends Fragment {
     private EditText etUsuario, etPassword;
     private Button btnLogin;
     private View btnBiometric;
-    private TextView tvIngresarConCodigo, tvError;
+    // Agregamos la variable del nuevo botón de registro acá:
+    private TextView tvIngresarConCodigo, tvError, tvIrARegistro;
     private ProgressBar progressBar;
     private BiometricAuthManager biometricManager;
 
@@ -58,17 +59,16 @@ public class LoginFragment extends Fragment {
         progressBar = view.findViewById(R.id.progressBar);
         btnBiometric = view.findViewById(R.id.btnBiometric);
 
+        // Enlazamos el botón del XML con esta clase:
+        tvIrARegistro = view.findViewById(R.id.tvIrARegistro);
+
         biometricManager = new BiometricAuthManager(requireActivity(), this::irAHome);
         SessionManager sessionManager = new SessionManager(requireContext());
 
         if (btnBiometric != null) {
-            // Solo mostramos la huella si el hardware está OK y si el usuario la activó
             if (biometricManager.canAuthenticate() && sessionManager.isBiometriaActivada()) {
                 btnBiometric.setVisibility(View.VISIBLE);
-
-                // Pre-cargamos el email para que no tenga que escribir nada
                 etUsuario.setText(sessionManager.getEmail());
-
                 btnBiometric.setOnClickListener(v -> biometricManager.showBiometricPrompt());
             } else {
                 btnBiometric.setVisibility(View.GONE);
@@ -76,8 +76,13 @@ public class LoginFragment extends Fragment {
         }
 
         btnLogin.setOnClickListener(v -> intentarLogin());
+
         tvIngresarConCodigo.setOnClickListener(v ->
                 Navigation.findNavController(view).navigate(R.id.action_loginFragment_to_requestOtpFragment));
+
+        // Le decimos que viaje a la pantalla de registro al tocar el botón nuevo:
+        tvIrARegistro.setOnClickListener(v ->
+                Navigation.findNavController(view).navigate(R.id.action_loginFragment_to_registerFragment));
     }
 
     private void intentarLogin() {

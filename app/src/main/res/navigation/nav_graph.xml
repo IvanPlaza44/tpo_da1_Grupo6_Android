@@ -20,6 +20,12 @@
             app:destination="@id/homeFragment"
             app:popUpTo="@id/loginFragment"
             app:popUpToInclusive="true" />
+
+        <!-- Acción agregada para ir a la pantalla de Registro -->
+        <action
+            android:id="@+id/action_loginFragment_to_registerFragment"
+            app:destination="@id/registerFragment" />
+
     </fragment>
 
     <fragment
@@ -45,6 +51,13 @@
             app:popUpTo="@id/loginFragment"
             app:popUpToInclusive="true" />
     </fragment>
+
+    <!-- Fragmento de Registro agregado -->
+    <fragment
+        android:id="@+id/registerFragment"
+        android:name="com.example.myapplication.ui.auth.RegisterFragment"
+        android:label="Registro"
+        tools:layout="@layout/fragment_register" />
 
     <!-- Placeholder temporal: cuando se mergee el Home real de Nico, borrar este bloque
          y apuntar los destinos de arriba al id real de su HomeFragment. -->

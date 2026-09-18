@@ -22,4 +22,7 @@ public interface ApiService {
 
     @POST("api/auth/login")
     Call<AuthResponse> login(@Body LoginRequest body);
+
+    @POST("api/auth/registro")
+    Call<Void> registrar(@Body LoginRequest request);
 }

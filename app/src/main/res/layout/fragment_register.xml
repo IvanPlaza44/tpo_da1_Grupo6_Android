@@ -10,9 +10,16 @@
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Ronda"
+        android:text="Crear cuenta"
         android:textSize="28sp"
         android:textStyle="bold"
+        android:layout_marginBottom="8dp" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Ingresá tus datos para sumarte a Ronda"
+        android:textSize="14sp"
         android:layout_marginBottom="24dp" />
 
     <com.google.android.material.textfield.TextInputLayout
@@ -21,10 +28,10 @@
         android:layout_marginBottom="12dp">
 
         <com.google.android.material.textfield.TextInputEditText
-            android:id="@+id/etUsuario"
+            android:id="@+id/etRegUsuario"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="Usuario o email"
+            android:hint="Email o Usuario"
             android:inputType="textEmailAddress" />
 
     </com.google.android.material.textfield.TextInputLayout>
@@ -36,7 +43,7 @@
         app:passwordToggleEnabled="true">
 
         <com.google.android.material.textfield.TextInputEditText
-            android:id="@+id/etPassword"
+            android:id="@+id/etRegPassword"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:hint="Contraseña"
@@ -45,7 +52,7 @@
     </com.google.android.material.textfield.TextInputLayout>
 
     <TextView
-        android:id="@+id/tvError"
+        android:id="@+id/tvRegError"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textColor="#D32F2F"
@@ -53,42 +60,25 @@
         android:layout_marginBottom="12dp" />
 
     <Button
-        android:id="@+id/btnLogin"
+        android:id="@+id/btnRegistrar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Ingresar" />
+        android:text="Registrarme" />
 
     <TextView
-        android:id="@+id/tvIngresarConCodigo"
+        android:id="@+id/tvIrALogin"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="¿No tenés contraseña? Ingresar con código"
+        android:text="¿Ya tenés cuenta? Iniciar sesión"
         android:textColor="#1976D2"
-        android:layout_marginTop="16dp" />
+        android:layout_marginTop="16dp"
+        android:padding="8dp" />
 
     <ProgressBar
-        android:id="@+id/progressBar"
+        android:id="@+id/pbRegLoading"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:visibility="gone"
         android:layout_marginTop="16dp" />
-
-    <ImageButton
-        android:id="@+id/btnBiometric"
-        android:layout_width="56dp"
-        android:layout_height="56dp"
-        android:layout_margin="16dp"
-        android:background="?attr/selectableItemBackgroundBorderless"
-        android:contentDescription="Ingreso biométrico"
-        android:src="@android:drawable/ic_lock_lock" />
-
-    <TextView
-        android:id="@+id/tvIrARegistro"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="¿No tenés cuenta? Registrate"
-        android:textColor="#1976D2"
-        android:layout_marginTop="16dp"
-        android:padding="8dp" />
 
 </LinearLayout>
