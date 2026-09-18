@@ -35,7 +35,6 @@ public class LoginFragment extends Fragment {
     private EditText etUsuario, etPassword;
     private Button btnLogin;
     private View btnBiometric;
-    // Agregamos la variable del nuevo botón de registro acá:
     private TextView tvIngresarConCodigo, tvError, tvIrARegistro;
     private ProgressBar progressBar;
     private BiometricAuthManager biometricManager;
@@ -58,11 +57,10 @@ public class LoginFragment extends Fragment {
         tvError = view.findViewById(R.id.tvError);
         progressBar = view.findViewById(R.id.progressBar);
         btnBiometric = view.findViewById(R.id.btnBiometric);
-
-        // Enlazamos el botón del XML con esta clase:
         tvIrARegistro = view.findViewById(R.id.tvIrARegistro);
 
-        biometricManager = new BiometricAuthManager(requireActivity(), this::irAHome);
+        // ACÁ ESTÁ EL CAMBIO: Ahora llama al login silencioso en vez de ir directo al Home
+        biometricManager = new BiometricAuthManager(requireActivity(), this::loginBiometricoSilencioso);
         SessionManager sessionManager = new SessionManager(requireContext());
 
         if (btnBiometric != null) {
@@ -80,7 +78,6 @@ public class LoginFragment extends Fragment {
         tvIngresarConCodigo.setOnClickListener(v ->
                 Navigation.findNavController(view).navigate(R.id.action_loginFragment_to_requestOtpFragment));
 
-        // Le decimos que viaje a la pantalla de registro al tocar el botón nuevo:
         tvIrARegistro.setOnClickListener(v ->
                 Navigation.findNavController(view).navigate(R.id.action_loginFragment_to_registerFragment));
     }
@@ -106,8 +103,12 @@ public class LoginFragment extends Fragment {
 
                 if (response.isSuccessful() && response.body() != null) {
                     AuthResponse body = response.body();
-                    new SessionManager(requireContext())
-                            .guardarSesion(body.getToken(), body.getUsuarioId(), body.getEmail(), body.getUsername());
+                    SessionManager sessionManager = new SessionManager(requireContext());
+
+                    sessionManager.guardarSesion(body.getToken(), body.getUsuarioId(), body.getEmail(), body.getUsername());
+                    // ACÁ ESTÁ EL CAMBIO: Guardamos la contraseña para usarla luego con la huella
+                    sessionManager.guardarPassword(password);
+
                     irAHome();
                 } else if (response.code() == 401 || response.code() == 404) {
                     mostrarError("Usuario o contraseña incorrectos");
@@ -120,6 +121,40 @@ public class LoginFragment extends Fragment {
             public void onFailure(@NonNull Call<AuthResponse> call, @NonNull Throwable t) {
                 setLoading(false);
                 mostrarError("Sin conexión: " + t.getMessage());
+            }
+        });
+    }
+
+    // ACÁ ESTÁ EL NUEVO MÉTODO COMPLETO
+    private void loginBiometricoSilencioso() {
+        SessionManager session = new SessionManager(requireContext());
+        String email = session.getEmail();
+        String password = session.getPassword();
+
+        if (email == null || password == null) {
+            mostrarError("Por seguridad, iniciá sesión con contraseña esta vez.");
+            return;
+        }
+
+        setLoading(true);
+        ApiService api = RetrofitClient.getApiService(requireContext());
+        api.login(new LoginRequest(email, password)).enqueue(new Callback<AuthResponse>() {
+            @Override
+            public void onResponse(@NonNull Call<AuthResponse> call, @NonNull Response<AuthResponse> response) {
+                setLoading(false);
+                if (response.isSuccessful() && response.body() != null) {
+                    AuthResponse body = response.body();
+                    session.guardarSesion(body.getToken(), body.getUsuarioId(), body.getEmail(), body.getUsername());
+                    irAHome();
+                } else {
+                    mostrarError("La sesión expiró. Iniciá sesión manualmente.");
+                }
+            }
+
+            @Override
+            public void onFailure(@NonNull Call<AuthResponse> call, @NonNull Throwable t) {
+                setLoading(false);
+                mostrarError("Sin conexión al servidor.");
             }
         });
     }
