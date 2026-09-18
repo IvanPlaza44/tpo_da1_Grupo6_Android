@@ -19,7 +19,8 @@ public class PlaceholderHomeFragment extends Fragment {
 
     @Nullable
     @Override
-    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
+    public View onCreateView(@NonNull LayoutInflater inflater,
+                             @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
         // Ahora sí inflamos tu diseño XML
         return inflater.inflate(R.layout.fragment_home, container, false);
