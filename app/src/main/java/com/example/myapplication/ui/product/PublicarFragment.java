@@ -79,7 +79,7 @@ public class PublicarFragment extends Fragment {
     }
 
     private void cargarCategorias() {
-        RetrofitClient.getApiService().obtenerCategorias().enqueue(new Callback<List<CategoriaDto>>() {
+        RetrofitClient.getApiService(requireContext()).obtenerCategorias().enqueue(new Callback<List<CategoriaDto>>() {
             @Override
             public void onResponse(Call<List<CategoriaDto>> call, Response<List<CategoriaDto>> response) {
                 if (!response.isSuccessful() || response.body() == null) return;
@@ -101,7 +101,7 @@ public class PublicarFragment extends Fragment {
 
     // Trae el borrador existente (o lo crea) y precarga los campos si ya habia algo cargado
     private void cargarBorrador() {
-        RetrofitClient.getApiService().obtenerBorrador().enqueue(new Callback<PublicacionDetalle>() {
+        RetrofitClient.getApiService(requireContext()).obtenerBorrador().enqueue(new Callback<PublicacionDetalle>() {
             @Override
             public void onResponse(Call<PublicacionDetalle> call, Response<PublicacionDetalle> response) {
                 if (!response.isSuccessful() || response.body() == null) {
@@ -144,7 +144,7 @@ public class PublicarFragment extends Fragment {
             req.zonaEntrega = etZona.getText().toString().trim();
         }
 
-        RetrofitClient.getApiService().guardarPaso(publicacionId, req).enqueue(new Callback<PublicacionDetalle>() {
+        RetrofitClient.getApiService(requireContext()).guardarPaso(publicacionId, req).enqueue(new Callback<PublicacionDetalle>() {
             @Override
             public void onResponse(Call<PublicacionDetalle> call, Response<PublicacionDetalle> response) {
                 if (!response.isSuccessful()) {
@@ -166,7 +166,7 @@ public class PublicarFragment extends Fragment {
     }
 
     private void publicar() {
-        RetrofitClient.getApiService().publicar(publicacionId).enqueue(new Callback<Void>() {
+        RetrofitClient.getApiService(requireContext()).publicar(publicacionId).enqueue(new Callback<Void>() {
             @Override
             public void onResponse(Call<Void> call, Response<Void> response) {
                 if (response.isSuccessful()) {
