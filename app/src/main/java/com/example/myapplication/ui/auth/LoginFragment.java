@@ -16,6 +16,7 @@ import androidx.fragment.app.Fragment;
 import androidx.navigation.Navigation;
 
 import com.example.myapplication.R;
+import com.example.myapplication.biometric.BiometricAuthManager;
 import com.example.myapplication.model.ApiError;
 import com.example.myapplication.model.AuthResponse;
 import com.example.myapplication.model.LoginRequest;
@@ -33,8 +34,10 @@ public class LoginFragment extends Fragment {
 
     private EditText etUsuario, etPassword;
     private Button btnLogin;
+    private View btnBiometric;
     private TextView tvIngresarConCodigo, tvError;
     private ProgressBar progressBar;
+    private BiometricAuthManager biometricManager;
 
     @Nullable
     @Override
@@ -53,6 +56,24 @@ public class LoginFragment extends Fragment {
         tvIngresarConCodigo = view.findViewById(R.id.tvIngresarConCodigo);
         tvError = view.findViewById(R.id.tvError);
         progressBar = view.findViewById(R.id.progressBar);
+        btnBiometric = view.findViewById(R.id.btnBiometric);
+
+        biometricManager = new BiometricAuthManager(requireActivity(), this::irAHome);
+        SessionManager sessionManager = new SessionManager(requireContext());
+
+        if (btnBiometric != null) {
+            // Solo mostramos la huella si el hardware está OK y si el usuario la activó
+            if (biometricManager.canAuthenticate() && sessionManager.isBiometriaActivada()) {
+                btnBiometric.setVisibility(View.VISIBLE);
+
+                // Pre-cargamos el email para que no tenga que escribir nada
+                etUsuario.setText(sessionManager.getEmail());
+
+                btnBiometric.setOnClickListener(v -> biometricManager.showBiometricPrompt());
+            } else {
+                btnBiometric.setVisibility(View.GONE);
+            }
+        }
 
         btnLogin.setOnClickListener(v -> intentarLogin());
         tvIngresarConCodigo.setOnClickListener(v ->
@@ -99,7 +120,6 @@ public class LoginFragment extends Fragment {
     }
 
     private void irAHome() {
-        // TODO: reemplazar homeFragment por el destino real una vez que se mergee el de Nico.
         Navigation.findNavController(requireView())
                 .navigate(R.id.action_loginFragment_to_homeFragment);
     }
