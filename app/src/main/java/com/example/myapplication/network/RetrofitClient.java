@@ -9,13 +9,16 @@ import com.example.myapplication.session.SessionManager;
 import okhttp3.Interceptor;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
-import okhttp3.Response;
 import okhttp3.logging.HttpLoggingInterceptor;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
 public class RetrofitClient {
-    private static final String BASE_URL = "http://192.168.100.48:8080/";
+
+    // Físico por USB con "adb reverse tcp:8080 tcp:8080": localhost
+    // Emulador (AVD): 10.0.2.2
+    private static final String BASE_URL = "http://localhost:8080/";
+
     private static Retrofit retrofit;
 
     public static ApiService getApiService(Context context) {
