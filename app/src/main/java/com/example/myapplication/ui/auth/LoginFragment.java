@@ -1,4 +1,4 @@
-package com.example.myapplication.ui;
+package com.example.myapplication.ui.auth;
 
 import android.content.Context;
 import android.content.SharedPreferences;
@@ -18,10 +18,10 @@ import androidx.fragment.app.Fragment;
 import androidx.navigation.Navigation;
 
 import com.example.myapplication.R;
-import com.example.myapplication.model.LoginRequest;
-import com.example.myapplication.model.LoginResponse;
-import com.example.myapplication.network.ApiService;
-import com.example.myapplication.network.RetrofitClient;
+import com.example.myapplication.data.model.LoginRequest;
+import com.example.myapplication.data.model.LoginResponse;
+import com.example.myapplication.data.network.ApiService;
+import com.example.myapplication.data.network.RetrofitClient;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -68,6 +68,15 @@ public class LoginFragment extends Fragment {
         setLoading(true);
 
         ApiService apiService = RetrofitClient.getApiService();
+
+//        @Inject
+//        ApiService apiService;
+        // DE ESTA MANERA SE INYECTARA LA DEPENDENCIA
+
+
+
+
+
         LoginRequest request = new LoginRequest(email, password);
 
         // enqueue() = asincrónico. Nunca usar execute() acá (bloquearía el Main Thread).

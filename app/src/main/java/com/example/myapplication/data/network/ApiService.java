@@ -1,7 +1,7 @@
-package com.example.myapplication.network;
+package com.example.myapplication.data.network;
 
-import com.example.myapplication.model.LoginRequest;
-import com.example.myapplication.model.LoginResponse;
+import com.example.myapplication.data.model.LoginRequest;
+import com.example.myapplication.data.model.LoginResponse;
 
 import retrofit2.Call;
 import retrofit2.http.Body;

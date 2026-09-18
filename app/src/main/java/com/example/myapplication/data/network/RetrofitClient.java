@@ -1,4 +1,4 @@
-package com.example.myapplication.network;
+package com.example.myapplication.data.network;
 
 import java.util.concurrent.TimeUnit;
 

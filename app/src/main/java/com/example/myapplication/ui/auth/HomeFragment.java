@@ -1,4 +1,4 @@
-package com.example.myapplication.ui;
+package com.example.myapplication.ui.auth;
 
 import android.content.Context;
 import android.content.SharedPreferences;
