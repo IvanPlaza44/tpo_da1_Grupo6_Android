@@ -13,4 +13,10 @@ public class PublicacionDetalle {
     public String zonaEntrega;
     public List<String> fotos;
     public boolean esPropia;
+
+    public String fechaPublicacion;
+    public long vendedorId;
+    public String vendedorNombre;
+    public Double vendedorPromedioEstrellas;
+
 }
