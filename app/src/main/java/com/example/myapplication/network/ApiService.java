@@ -53,6 +53,9 @@ public interface ApiService {
     @POST("api/auth/login")
     Call<AuthResponse> login(@Body LoginRequest body);
 
+    @POST("api/auth/registro")
+    Call<Void> registrar(@Body LoginRequest request);
+
     // ---------- PERFIL Y REPUTACIÓN ----------
 
     // GET /api/usuarios/5  → trae los datos de un usuario por id.

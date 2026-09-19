@@ -2,11 +2,72 @@
 <navigation xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/nav_graph"
+    app:startDestination="@id/loginFragment">
+
+    <fragment
+        android:id="@+id/loginFragment"
+        android:name="com.example.myapplication.ui.auth.LoginFragment"
+        android:label="Login"
+        tools:layout="@layout/fragment_login">
+
+        <action
+            android:id="@+id/action_loginFragment_to_requestOtpFragment"
+            app:destination="@id/requestOtpFragment" />
+
+        <action
+            android:id="@+id/action_loginFragment_to_homeFragment"
+            app:destination="@id/homeFragment"
+            app:popUpTo="@id/loginFragment"
+            app:popUpToInclusive="true" />
+
+        <!-- Acción agregada para ir a la pantalla de Registro -->
+        <action
+            android:id="@+id/action_loginFragment_to_registerFragment"
+            app:destination="@id/registerFragment" />
+
+    </fragment>
     app:startDestination="@id/auth_nav_graph">
 
     <include app:graph="@navigation/auth_nav_graph"/>
     <include app:graph="@navigation/home_nav_graph"/>
     <include app:graph="@navigation/product_nav_graph"/>
     <include app:graph="@navigation/profile_nav_graph"/>
+    <fragment
+        android:id="@+id/requestOtpFragment"
+        android:name="com.example.myapplication.ui.auth.RequestOtpFragment"
+        android:label="Pedir código"
+        tools:layout="@layout/fragment_request_otp">
+
+        <action
+            android:id="@+id/action_requestOtpFragment_to_verifyOtpFragment"
+            app:destination="@id/verifyOtpFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/verifyOtpFragment"
+        android:name="com.example.myapplication.ui.auth.VerifyOtpFragment"
+        android:label="Verificar código"
+        tools:layout="@layout/fragment_verify_otp">
+
+        <action
+            android:id="@+id/action_verifyOtpFragment_to_homeFragment"
+            app:destination="@id/homeFragment"
+            app:popUpTo="@id/loginFragment"
+            app:popUpToInclusive="true" />
+    </fragment>
+
+    <!-- Fragmento de Registro agregado -->
+    <fragment
+        android:id="@+id/registerFragment"
+        android:name="com.example.myapplication.ui.auth.RegisterFragment"
+        android:label="Registro"
+        tools:layout="@layout/fragment_register" />
+
+    <!-- Placeholder temporal: cuando se mergee el Home real de Nico, borrar este bloque
+         y apuntar los destinos de arriba al id real de su HomeFragment. -->
+    <fragment
+        android:id="@+id/homeFragment"
+        android:name="com.example.myapplication.ui.PlaceholderHomeFragment"
+        android:label="Home (placeholder)" />
 
 </navigation>
