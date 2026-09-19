@@ -8,8 +8,8 @@ import retrofit2.converter.gson.GsonConverterFactory;
 
 public class RetrofitClient {
 
-    // TODO: reemplazá esta URL por la de tu propia API cuando la tengas.
-    private static final String BASE_URL = "https://api.ritmofit.com/";
+    // IP especial del emulador de Android para conectarse al Spring Boot local
+    private static final String BASE_URL = "http://10.0.2.2:8080/";
 
     private static Retrofit retrofit;
 
