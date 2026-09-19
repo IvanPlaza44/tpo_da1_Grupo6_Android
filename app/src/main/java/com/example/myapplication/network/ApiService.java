@@ -9,9 +9,14 @@ import com.example.myapplication.model.Publicacion.PublicacionRequest;
 import com.example.myapplication.model.Usuario;
 import com.example.myapplication.model.UsuarioUpdateRequest;
 import com.example.myapplication.model.Reputacion;
-
+import com.example.myapplication.model.Publicacion.PreguntaRequestDto;
+import com.example.myapplication.model.Publicacion.PreguntaResponseDto;
+import com.example.myapplication.model.Publicacion.RespuestaPreguntaDto;
+import com.example.myapplication.model.Publicacion.OfertaRequestDto;
+import com.example.myapplication.model.Publicacion.OfertaResponseDto;
 import java.util.List;
 import com.example.myapplication.model.OtpVerifyRequest;
+
 
 import retrofit2.Call;
 import retrofit2.http.Body;
@@ -68,4 +73,34 @@ public interface ApiService {
     // GET /api/usuarios/5/reputacion → trae el promedio de estrellas y operaciones.
     @GET("api/usuarios/{id}/reputacion")
     Call<Reputacion> obtenerReputacion(@Path("id") long id);
+
+// detalle publicaicon - punto 4
+    @GET("api/publicaciones/{id}")
+    Call<PublicacionDetalle> getDetalle(@Path("id") long id);
+
+    @POST("api/publicaciones/{publicacionId}/preguntas")
+    Call<PreguntaResponseDto> preguntar(
+            @Path("publicacionId") long publicacionId,
+            @Body PreguntaRequestDto body
+    );
+
+    @GET("api/publicaciones/{publicacionId}/preguntas")
+    Call<List<PreguntaResponseDto>> listarPreguntas(@Path("publicacionId") long publicacionId);
+
+    @PUT("api/publicaciones/{publicacionId}/preguntas/{preguntaId}/respuesta")
+    Call<PreguntaResponseDto> responderPregunta(
+            @Path("publicacionId") long publicacionId,
+            @Path("preguntaId") long preguntaId,
+            @Body RespuestaPreguntaDto body
+    );
+
+    @POST("api/publicaciones/{publicacionId}/ofertas")
+    Call<OfertaResponseDto> ofertar(
+            @Path("publicacionId") long publicacionId,
+            @Body OfertaRequestDto body
+    );
+
+    @GET("api/publicaciones/{publicacionId}/ofertas")
+    Call<List<OfertaResponseDto>> listarOfertas(@Path("publicacionId") long publicacionId);
+
 }
