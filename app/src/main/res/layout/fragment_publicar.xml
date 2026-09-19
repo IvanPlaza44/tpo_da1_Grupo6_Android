@@ -86,11 +86,37 @@
             android:visibility="gone"
             android:layout_marginTop="16dp">
 
+            <Button
+                android:id="@+id/btnAgregarFotos"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Agregar fotos" />
+
+            <HorizontalScrollView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp">
+
+                <LinearLayout
+                    android:id="@+id/llFotos"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal" />
+            </HorizontalScrollView>
+
+            <TextView
+                android:id="@+id/tvFotosEstado"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="12sp"
+                android:layout_marginTop="4dp" />
+
             <TextView
                 android:id="@+id/tvResumen"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:textSize="14sp" />
+                android:textSize="14sp"
+                android:layout_marginTop="12dp" />
         </LinearLayout>
 
         <LinearLayout

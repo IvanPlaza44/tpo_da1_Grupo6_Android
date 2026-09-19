@@ -17,7 +17,15 @@ import retrofit2.http.POST;
 import retrofit2.http.PUT;
 import retrofit2.http.Path;
 
+import okhttp3.MultipartBody;
+import retrofit2.http.Multipart;
+import retrofit2.http.Part;
+
 public interface ApiService {
+
+    @Multipart
+    @POST("api/publicaciones/{id}/fotos")
+    Call<PublicacionDetalle> subirFoto(@Path("id") long publicacionId, @Part MultipartBody.Part archivo);
 
 
     @GET("api/categorias")
