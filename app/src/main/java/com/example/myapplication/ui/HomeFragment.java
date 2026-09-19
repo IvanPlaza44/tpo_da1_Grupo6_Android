@@ -45,6 +45,9 @@ public class HomeFragment extends Fragment {
         view.findViewById(R.id.btnPublicar).setOnClickListener(v ->
                 Navigation.findNavController(v).navigate(R.id.action_homeFragment_to_publicarFragment));
 
+        view.findViewById(R.id.btnMisPublicaciones).setOnClickListener(v ->
+                Navigation.findNavController(v).navigate(R.id.action_homeFragment_to_misPublicacionesFragment));
+
         Button btnLogout = view.findViewById(R.id.btnLogout);
         btnLogout.setOnClickListener(v -> {
             sessionManager.cerrarSesion();

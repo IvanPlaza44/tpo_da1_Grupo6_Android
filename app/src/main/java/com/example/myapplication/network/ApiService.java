@@ -6,6 +6,7 @@ import com.example.myapplication.model.EmailRequest;
 import com.example.myapplication.model.LoginRequest;
 import com.example.myapplication.model.Publicacion.PublicacionDetalle;
 import com.example.myapplication.model.Publicacion.PublicacionRequest;
+import com.example.myapplication.model.Publicacion.PublicacionResumen;
 import com.example.myapplication.model.Usuario;
 import com.example.myapplication.model.UsuarioUpdateRequest;
 import com.example.myapplication.model.Reputacion;
@@ -22,6 +23,7 @@ import retrofit2.http.Path;
 import okhttp3.MultipartBody;
 import retrofit2.http.Multipart;
 import retrofit2.http.Part;
+import retrofit2.http.PATCH;
 
 /**
  * Interfaz de Retrofit: aca NO se implementa ninguna logica de red.
@@ -75,4 +77,26 @@ public interface ApiService {
     // GET /api/usuarios/5/reputacion -> trae el promedio de estrellas y operaciones.
     @GET("api/usuarios/{id}/reputacion")
     Call<Reputacion> obtenerReputacion(@Path("id") long id);
+
+
+    // ---------- MIS PUBLICACIONES ----------
+
+    @GET("api/publicaciones/mias")
+    Call<List<PublicacionResumen>> misPublicaciones();
+
+    @PATCH("api/publicaciones/{id}/pausar")
+    Call<Void> pausar(@Path("id") long id);
+
+    @PATCH("api/publicaciones/{id}/reactivar")
+    Call<Void> reactivar(@Path("id") long id);
+
+    @PATCH("api/publicaciones/{id}/vendida")
+    Call<Void> marcarVendida(@Path("id") long id);
+
+
+
+
+
+
+
 }
