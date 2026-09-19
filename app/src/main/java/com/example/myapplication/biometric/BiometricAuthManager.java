@@ -14,7 +14,6 @@ public class BiometricAuthManager {
     private final FragmentActivity activity;
     private final Runnable onSuccessAction;
 
-    // Actualizamos el constructor para recibir la acción
     public BiometricAuthManager(FragmentActivity activity, Runnable onSuccessAction) {
         this.activity = activity;
         this.onSuccessAction = onSuccessAction;
@@ -22,7 +21,6 @@ public class BiometricAuthManager {
 
     public boolean canAuthenticate() {
         BiometricManager biometricManager = BiometricManager.from(activity);
-
         int result = biometricManager.canAuthenticate(BiometricManager.Authenticators.BIOMETRIC_STRONG | BiometricManager.Authenticators.DEVICE_CREDENTIAL);
 
         switch (result) {
@@ -51,7 +49,6 @@ public class BiometricAuthManager {
             public void onAuthenticationSucceeded(@NonNull BiometricPrompt.AuthenticationResult result) {
                 super.onAuthenticationSucceeded(result);
                 Toast.makeText(activity, "¡Huella reconocida!", Toast.LENGTH_SHORT).show();
-                // Ejecutamos la navegación al Home
                 if (onSuccessAction != null) {
                     onSuccessAction.run();
                 }
