@@ -1,11 +1,4 @@
 package com.example.myapplication.model;
-
-/**
- * Modelo de datos para la reputación de un usuario.
- * Se arma a partir de las calificaciones recibidas: un promedio de estrellas
- * y la cantidad de operaciones concretadas, separadas por rol (comprador/vendedor),
- * tal como lo pide el TPO en el punto "Perfil y Reputación".
- */
 public class Reputacion {
 
     private double promedioEstrellas;
@@ -13,7 +6,7 @@ public class Reputacion {
     private int cantidadComoVendedor;
 
     public Reputacion() {
-        // Constructor vacío requerido por Gson
+        // Constructor vacio requerido por Gson
     }
 
     public double getPromedioEstrellas() { return promedioEstrellas; }
@@ -25,7 +18,7 @@ public class Reputacion {
     public int getCantidadComoVendedor() { return cantidadComoVendedor; }
     public void setCantidadComoVendedor(int cantidadComoVendedor) { this.cantidadComoVendedor = cantidadComoVendedor; }
 
-    // Método de conveniencia: no viene del JSON, lo calculamos en el cliente
+    // Metodo de conveniencia: no viene del JSON, lo calculamos en el cliente
     public int getTotalOperaciones() {
         return cantidadComoComprador + cantidadComoVendedor;
     }

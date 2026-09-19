@@ -21,6 +21,17 @@
             android:id="@+id/action_homeFragment_to_publicarFragment"
             app:destination="@id/product_nav_graph" />
 
+        <action
+            android:id="@+id/action_homeFragment_to_misPublicacionesFragment"
+            app:destination="@id/misPublicacionesFragment" />
+
     </fragment>
+
+
+    <fragment
+        android:id="@+id/misPublicacionesFragment"
+        android:name="com.example.myapplication.ui.product.MisPublicacionesFragment"
+        android:label="Mis Publicaciones"
+        tools:layout="@layout/fragment_mis_publicaciones" />
 
 </navigation>
