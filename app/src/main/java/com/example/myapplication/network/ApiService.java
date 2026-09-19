@@ -10,7 +10,11 @@ import com.example.myapplication.model.Publicacion.PublicacionResumen;
 import com.example.myapplication.model.Usuario;
 import com.example.myapplication.model.UsuarioUpdateRequest;
 import com.example.myapplication.model.Reputacion;
-
+import com.example.myapplication.model.Publicacion.PreguntaRequestDto;
+import com.example.myapplication.model.Publicacion.PreguntaResponseDto;
+import com.example.myapplication.model.Publicacion.RespuestaPreguntaDto;
+import com.example.myapplication.model.Publicacion.OfertaRequestDto;
+import com.example.myapplication.model.Publicacion.OfertaResponseDto;
 import java.util.List;
 import com.example.myapplication.model.OtpVerifyRequest;
 
@@ -62,6 +66,9 @@ public interface ApiService {
     @POST("api/auth/login")
     Call<AuthResponse> login(@Body LoginRequest body);
 
+    @POST("api/auth/registro")
+    Call<Void> registrar(@Body LoginRequest request);
+
     // ---------- PERFIL Y REPUTACION ----------
 
     // GET /api/usuarios/5 -> trae los datos de un usuario por id.
@@ -78,7 +85,6 @@ public interface ApiService {
     @GET("api/usuarios/{id}/reputacion")
     Call<Reputacion> obtenerReputacion(@Path("id") long id);
 
-
     // ---------- MIS PUBLICACIONES ----------
 
     @GET("api/publicaciones/mias")
@@ -93,10 +99,33 @@ public interface ApiService {
     @PATCH("api/publicaciones/{id}/vendida")
     Call<Void> marcarVendida(@Path("id") long id);
 
+    // ---------- DETALLE / PREGUNTAS / OFERTAS ----------
 
+    @GET("api/publicaciones/{id}")
+    Call<PublicacionDetalle> getDetalle(@Path("id") long id);
 
+    @POST("api/publicaciones/{publicacionId}/preguntas")
+    Call<PreguntaResponseDto> preguntar(
+            @Path("publicacionId") long publicacionId,
+            @Body PreguntaRequestDto body
+    );
 
+    @GET("api/publicaciones/{publicacionId}/preguntas")
+    Call<List<PreguntaResponseDto>> listarPreguntas(@Path("publicacionId") long publicacionId);
 
+    @PUT("api/publicaciones/{publicacionId}/preguntas/{preguntaId}/respuesta")
+    Call<PreguntaResponseDto> responderPregunta(
+            @Path("publicacionId") long publicacionId,
+            @Path("preguntaId") long preguntaId,
+            @Body RespuestaPreguntaDto body
+    );
 
+    @POST("api/publicaciones/{publicacionId}/ofertas")
+    Call<OfertaResponseDto> ofertar(
+            @Path("publicacionId") long publicacionId,
+            @Body OfertaRequestDto body
+    );
 
+    @GET("api/publicaciones/{publicacionId}/ofertas")
+    Call<List<OfertaResponseDto>> listarOfertas(@Path("publicacionId") long publicacionId);
 }
