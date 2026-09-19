@@ -5,7 +5,6 @@ import android.content.Context;
 import java.util.concurrent.TimeUnit;
 
 import com.example.myapplication.session.SessionManager;
-
 import okhttp3.Interceptor;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
@@ -17,8 +16,7 @@ public class RetrofitClient {
 
     // Físico por USB con "adb reverse tcp:8080 tcp:8080": localhost
     // Emulador (AVD): 10.0.2.2
-    private static final String BASE_URL = "http://localhost:8080/";
-
+    private static final String BASE_URL = "http://192.168.0.16:8080/api/";
     private static Retrofit retrofit;
 
     public static ApiService getApiService(Context context) {

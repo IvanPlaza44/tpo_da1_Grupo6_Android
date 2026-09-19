@@ -14,7 +14,6 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
 import com.example.myapplication.R;
-import com.example.myapplication.model.Reputacion;
 import com.example.myapplication.model.Usuario;
 import com.example.myapplication.network.ApiService;
 import com.example.myapplication.network.RetrofitClient;
@@ -56,7 +55,7 @@ public class PublicProfileFragment extends Fragment {
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
-                              @Nullable Bundle savedInstanceState) {
+                             @Nullable Bundle savedInstanceState) {
         return inflater.inflate(R.layout.fragment_public_profile, container, false);
     }
 
@@ -82,7 +81,10 @@ public class PublicProfileFragment extends Fragment {
 
         if (userId != -1) {
             cargarPerfilPublico();
-            cargarReputacion();
+            // TODO: no hay endpoint en el backend para reputación separada por rol
+            // (comprador/vendedor) de OTRO usuario — solo existe para el propio
+            // perfil (/api/usuarios/me). Avisar al equipo.
+            // cargarReputacion();
         } else {
             Toast.makeText(getContext(), "No se pudo identificar al usuario", Toast.LENGTH_SHORT).show();
         }
@@ -114,6 +116,7 @@ public class PublicProfileFragment extends Fragment {
         });
     }
 
+    /*
     private void cargarReputacion() {
         apiService.obtenerReputacion(userId).enqueue(new Callback<Reputacion>() {
             @Override
@@ -137,6 +140,7 @@ public class PublicProfileFragment extends Fragment {
             }
         });
     }
+    */
 
     @Override
     public void onDestroyView() {

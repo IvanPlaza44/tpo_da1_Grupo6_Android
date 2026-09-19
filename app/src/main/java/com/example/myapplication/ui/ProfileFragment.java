@@ -143,8 +143,7 @@ public class ProfileFragment extends Fragment {
     }
 
     private void cargarReputacion() {
-        apiService.obtenerReputacion(usuarioId).enqueue(new Callback<Reputacion>() {
-            @Override
+        apiService.obtenerReputacion().enqueue(new Callback<Reputacion>() {            @Override
             public void onResponse(Call<Reputacion> call, Response<Reputacion> response) {
                 if (response.isSuccessful() && response.body() != null) {
                     Reputacion rep = response.body();

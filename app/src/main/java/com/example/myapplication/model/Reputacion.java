@@ -1,5 +1,7 @@
 package com.example.myapplication.model;
 
+import com.google.gson.annotations.SerializedName;
+
 /**
  * Modelo de datos para la reputación de un usuario.
  * Se arma a partir de las calificaciones recibidas: un promedio de estrellas
@@ -9,7 +11,11 @@ package com.example.myapplication.model;
 public class Reputacion {
 
     private double promedioEstrellas;
+
+    @SerializedName("operacionesComoComprador")
     private int cantidadComoComprador;
+
+    @SerializedName("operacionesComoVendedor")
     private int cantidadComoVendedor;
 
     public Reputacion() {
