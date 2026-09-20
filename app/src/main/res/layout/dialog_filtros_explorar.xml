@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:padding="16dp">
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Categoria"
+        android:textStyle="bold" />
+
+    <Spinner
+        android:id="@+id/spCategoriaFiltro"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="8dp" />
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Precio minimo"
+        android:textStyle="bold" />
+
+    <EditText
+        android:id="@+id/etPrecioMin"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Opcional"
+        android:importantForAutofill="no"
+        android:inputType="numberDecimal"
+        android:layout_marginBottom="8dp" />
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Precio maximo"
+        android:textStyle="bold" />
+
+    <EditText
+        android:id="@+id/etPrecioMax"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Opcional"
+        android:importantForAutofill="no"
+        android:inputType="numberDecimal"
+        android:layout_marginBottom="8dp" />
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Estado del articulo"
+        android:textStyle="bold" />
+
+    <Spinner
+        android:id="@+id/spEstadoArticuloFiltro"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="8dp" />
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Zona"
+        android:textStyle="bold" />
+
+    <EditText
+        android:id="@+id/etZonaFiltro"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Opcional"
+        android:importantForAutofill="no"
+        android:inputType="text"
+        android:layout_marginBottom="16dp" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="end"
+        android:orientation="horizontal">
+
+        <Button
+            android:id="@+id/btnLimpiarFiltros"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="8dp"
+            android:text="Limpiar" />
+
+        <Button
+            android:id="@+id/btnAplicarFiltros"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Aplicar" />
+
+    </LinearLayout>
+
+</LinearLayout>

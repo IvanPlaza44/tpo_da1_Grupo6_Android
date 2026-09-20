@@ -19,16 +19,32 @@
             android:textColor="#FFFFFF"
             android:visibility="gone" />
 
-        <EditText
-            android:id="@+id/etBuscar"
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="Buscar publicaciones"
-            android:imeOptions="actionSearch"
-            android:importantForAutofill="no"
-            android:inputType="text"
-            android:maxLines="1"
-            android:padding="12dp" />
+            android:gravity="center_vertical"
+            android:orientation="horizontal"
+            android:paddingHorizontal="8dp">
+
+            <EditText
+                android:id="@+id/etBuscar"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:hint="Buscar publicaciones"
+                android:imeOptions="actionSearch"
+                android:importantForAutofill="no"
+                android:inputType="text"
+                android:maxLines="1"
+                android:padding="12dp" />
+
+            <Button
+                android:id="@+id/btnFiltros"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Filtros" />
+
+        </LinearLayout>
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/rvExplorar"

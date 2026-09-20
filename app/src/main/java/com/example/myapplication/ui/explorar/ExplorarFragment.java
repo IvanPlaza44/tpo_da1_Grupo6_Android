@@ -5,12 +5,16 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.EditorInfo;
+import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.ProgressBar;
+import android.widget.Spinner;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.Fragment;
 import androidx.navigation.Navigation;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -19,6 +23,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.myapplication.R;
 import com.example.myapplication.data.local.AppDatabase;
 import com.example.myapplication.data.local.PublicacionEntity;
+import com.example.myapplication.model.Publicacion.CategoriaDto;
 import com.example.myapplication.model.Publicacion.PaginaDto;
 import com.example.myapplication.model.Publicacion.PublicacionResumen;
 import com.example.myapplication.network.ApiService;
@@ -37,6 +42,7 @@ public class ExplorarFragment extends Fragment {
 
     private static final int TAMANIO_PAGINA = 20;
     private static final int UMBRAL_PAGINACION = 3;
+    private static final String[] ESTADOS_ARTICULO_FILTRO = {"Todos", "NUEVO", "COMO_NUEVO", "USADO"};
 
     private RecyclerView rvExplorar;
     private TextView tvSinConexion;
@@ -54,6 +60,12 @@ public class ExplorarFragment extends Fragment {
     private boolean cargandoSiguiente = false;
     // null = listado general; texto = busqueda activa (se reusa en cada pagina).
     private String queryActual = null;
+    private Long categoriaId = null;
+    private Double precioMin = null;
+    private Double precioMax = null;
+    private String estadoArticulo = null;
+    private String zona = null;
+    private final List<CategoriaDto> categorias = new ArrayList<>();
     private Call<PaginaDto<PublicacionResumen>> callEnVuelo;
 
     // Room no permite operaciones en el hilo principal. Como el proyecto es
@@ -85,6 +97,7 @@ public class ExplorarFragment extends Fragment {
             }
             return false;
         });
+        view.findViewById(R.id.btnFiltros).setOnClickListener(v -> mostrarDialogFiltros());
 
         rvExplorar.setLayoutManager(new LinearLayoutManager(requireContext()));
         adapter = new ExplorarAdapter(new ArrayList<>(), publicacion -> {
@@ -106,6 +119,7 @@ public class ExplorarFragment extends Fragment {
             }
         });
 
+        cargarCategorias();
         cargarPaginaInicial();
     }
 
@@ -113,6 +127,138 @@ public class ExplorarFragment extends Fragment {
         String trimmed = texto == null ? "" : texto.trim();
         queryActual = trimmed.isEmpty() ? null : trimmed;
         cargarPaginaInicial();
+    }
+
+    private void cargarCategorias() {
+        RetrofitClient.getApiService(requireContext()).obtenerCategorias()
+                .enqueue(new Callback<List<CategoriaDto>>() {
+                    @Override
+                    public void onResponse(@NonNull Call<List<CategoriaDto>> call,
+                                           @NonNull Response<List<CategoriaDto>> response) {
+                        if (!isAdded() || !response.isSuccessful() || response.body() == null) return;
+                        categorias.clear();
+                        categorias.addAll(response.body());
+                    }
+
+                    @Override
+                    public void onFailure(@NonNull Call<List<CategoriaDto>> call, @NonNull Throwable t) {
+                        // El dialog puede seguir usandose con "Todas" y el resto de filtros.
+                    }
+                });
+    }
+
+    private void mostrarDialogFiltros() {
+        View contenido = getLayoutInflater().inflate(R.layout.dialog_filtros_explorar, null);
+        Spinner spCategoria = contenido.findViewById(R.id.spCategoriaFiltro);
+        EditText etPrecioMin = contenido.findViewById(R.id.etPrecioMin);
+        EditText etPrecioMax = contenido.findViewById(R.id.etPrecioMax);
+        Spinner spEstado = contenido.findViewById(R.id.spEstadoArticuloFiltro);
+        EditText etZona = contenido.findViewById(R.id.etZonaFiltro);
+
+        List<String> nombresCategoria = new ArrayList<>();
+        nombresCategoria.add("Todas");
+        for (CategoriaDto c : categorias) {
+            nombresCategoria.add(c.nombre);
+        }
+        spCategoria.setAdapter(new ArrayAdapter<>(requireContext(),
+                android.R.layout.simple_spinner_dropdown_item, nombresCategoria));
+        spCategoria.setSelection(indiceCategoriaAplicada());
+
+        if (precioMin != null) etPrecioMin.setText(String.valueOf(precioMin));
+        if (precioMax != null) etPrecioMax.setText(String.valueOf(precioMax));
+
+        spEstado.setAdapter(new ArrayAdapter<>(requireContext(),
+                android.R.layout.simple_spinner_dropdown_item, ESTADOS_ARTICULO_FILTRO));
+        spEstado.setSelection(indiceEstadoAplicado());
+
+        if (zona != null) etZona.setText(zona);
+
+        AlertDialog dialog = new AlertDialog.Builder(requireContext())
+                .setTitle("Filtros")
+                .setView(contenido)
+                .create();
+
+        contenido.findViewById(R.id.btnAplicarFiltros).setOnClickListener(v -> {
+            if (aplicarFiltrosDesdeDialog(spCategoria, etPrecioMin, etPrecioMax, spEstado, etZona)) {
+                dialog.dismiss();
+                cargarPaginaInicial();
+            }
+        });
+        contenido.findViewById(R.id.btnLimpiarFiltros).setOnClickListener(v -> {
+            categoriaId = null;
+            precioMin = null;
+            precioMax = null;
+            estadoArticulo = null;
+            zona = null;
+            dialog.dismiss();
+            cargarPaginaInicial();
+        });
+
+        dialog.show();
+    }
+
+    private boolean aplicarFiltrosDesdeDialog(Spinner spCategoria, EditText etPrecioMin,
+                                              EditText etPrecioMax, Spinner spEstado, EditText etZona) {
+        Double min;
+        Double max;
+        try {
+            min = parsePrecio(etPrecioMin.getText().toString());
+            max = parsePrecio(etPrecioMax.getText().toString());
+        } catch (NumberFormatException e) {
+            Toast.makeText(requireContext(), "Precio invalido", Toast.LENGTH_SHORT).show();
+            return false;
+        }
+
+        if (min != null && max != null && min > max) {
+            Toast.makeText(requireContext(),
+                    "El precio minimo no puede ser mayor al maximo",
+                    Toast.LENGTH_SHORT).show();
+            return false;
+        }
+
+        int catPos = spCategoria.getSelectedItemPosition();
+        categoriaId = catPos <= 0 ? null : categorias.get(catPos - 1).id;
+
+        int estadoPos = spEstado.getSelectedItemPosition();
+        estadoArticulo = estadoPos <= 0 ? null : ESTADOS_ARTICULO_FILTRO[estadoPos];
+
+        String zonaTexto = etZona.getText().toString().trim();
+        zona = zonaTexto.isEmpty() ? null : zonaTexto;
+        precioMin = min;
+        precioMax = max;
+        return true;
+    }
+
+    private int indiceCategoriaAplicada() {
+        if (categoriaId == null) return 0;
+        for (int i = 0; i < categorias.size(); i++) {
+            if (categorias.get(i).id == categoriaId) return i + 1;
+        }
+        return 0;
+    }
+
+    private int indiceEstadoAplicado() {
+        if (estadoArticulo == null) return 0;
+        for (int i = 1; i < ESTADOS_ARTICULO_FILTRO.length; i++) {
+            if (ESTADOS_ARTICULO_FILTRO[i].equals(estadoArticulo)) return i;
+        }
+        return 0;
+    }
+
+    private Double parsePrecio(String texto) {
+        if (texto == null) return null;
+        String trimmed = texto.trim();
+        if (trimmed.isEmpty()) return null;
+        return Double.parseDouble(trimmed.replace(',', '.'));
+    }
+
+    private boolean esCatalogoGeneral() {
+        return queryActual == null
+                && categoriaId == null
+                && precioMin == null
+                && precioMax == null
+                && estadoArticulo == null
+                && zona == null;
     }
 
     private void cargarPaginaInicial() {
@@ -149,7 +295,16 @@ public class ExplorarFragment extends Fragment {
         }
 
         ApiService apiService = RetrofitClient.getApiService(requireContext());
-        callEnVuelo = apiService.explorar(pagina, TAMANIO_PAGINA, queryActual);
+        callEnVuelo = apiService.explorar(
+                pagina,
+                TAMANIO_PAGINA,
+                queryActual,
+                categoriaId,
+                precioMin,
+                precioMax,
+                estadoArticulo,
+                zona
+        );
         callEnVuelo.enqueue(new Callback<PaginaDto<PublicacionResumen>>() {
             @Override
             public void onResponse(@NonNull Call<PaginaDto<PublicacionResumen>> call,
@@ -168,8 +323,7 @@ public class ExplorarFragment extends Fragment {
 
                     if (esInicial) {
                         mostrarLista(lista);
-                        // El cache es del catalogo general, no de una busqueda.
-                        if (queryActual == null) {
+                        if (esCatalogoGeneral()) {
                             guardarEnCache(lista);
                         }
                     } else {
@@ -197,7 +351,7 @@ public class ExplorarFragment extends Fragment {
     }
 
     private void manejarFalloCargaInicial() {
-        if (queryActual != null) {
+        if (!esCatalogoGeneral()) {
             tvSinConexion.setVisibility(View.GONE);
             mostrarLista(new ArrayList<>());
             finalizarCarga(true);
@@ -268,9 +422,9 @@ public class ExplorarFragment extends Fragment {
     private void mostrarLista(List<PublicacionResumen> lista) {
         progressBar.setVisibility(View.GONE);
         adapter.actualizarLista(lista);
-        tvVacio.setText(queryActual != null
-                ? "No hay resultados para esta busqueda"
-                : "No hay publicaciones para mostrar");
+        tvVacio.setText(esCatalogoGeneral()
+                ? "No hay publicaciones para mostrar"
+                : "No hay resultados para esta busqueda");
         tvVacio.setVisibility(lista.isEmpty() ? View.VISIBLE : View.GONE);
         rvExplorar.setVisibility(lista.isEmpty() ? View.GONE : View.VISIBLE);
     }

@@ -44,7 +44,12 @@ public interface ApiService {
     Call<PaginaDto<PublicacionResumen>> explorar(
             @Query("pagina") int pagina,
             @Query("tamanio") int tamanio,
-            @Query("query") String query
+            @Query("query") String query,
+            @Query("categoriaId") Long categoriaId,
+            @Query("precioMin") Double precioMin,
+            @Query("precioMax") Double precioMax,
+            @Query("estadoArticulo") String estadoArticulo,
+            @Query("zona") String zona
     );
 
     @GET("api/categorias")
