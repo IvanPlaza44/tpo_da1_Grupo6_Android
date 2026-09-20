@@ -52,10 +52,10 @@ public interface ApiService {
     @GET("api/publicaciones/borrador")
     Call<PublicacionDetalle> obtenerBorrador();
 
-    @PUT("api/publicaciones/{id}")
+    @PUT("api/publicaciones/me")
     Call<PublicacionDetalle> guardarPaso(@Path("id") long publicacionId, @Body PublicacionRequest body);
 
-    @POST("api/publicaciones/{id}/publicar")
+    @POST("api/publicaciones/me/publicar")
     Call<Void> publicar(@Path("id") long publicacionId);
 
     @Multipart
@@ -84,10 +84,11 @@ public interface ApiService {
     @GET("api/usuarios/{id}")
     Call<Usuario> obtenerUsuario(@Path("id") long id);
 
-    // PUT /api/usuarios/5 -> actualiza nombre/telefono/zona.
+    // PUT /api/usuarios/me -> actualiza nombre/telefono/zona del usuario logueado.
+    // El backend lo identifica por el token (Authorization), por eso no lleva id.
     // @Body serializa el objeto UsuarioUpdateRequest a JSON automaticamente.
-    @PUT("api/usuarios/{id}")
-    Call<Usuario> actualizarUsuario(@Path("id") long id, @Body UsuarioUpdateRequest body);
+    @PUT("api/usuarios/me")
+    Call<Usuario> actualizarUsuario(@Body UsuarioUpdateRequest body);
 
     // GET /api/usuarios/5/reputacion -> trae el promedio de estrellas y operaciones.
     @GET("api/usuarios/{id}/reputacion")
