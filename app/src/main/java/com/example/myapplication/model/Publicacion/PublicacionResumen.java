@@ -6,4 +6,7 @@ public class PublicacionResumen {
     public Double precio;
     public String estado;
     public String estadoArticulo;
+    public String zonaEntrega;
+    public String fotoPrincipal;
+    public String vendedorNombre;
 }
