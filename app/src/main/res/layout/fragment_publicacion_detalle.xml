@@ -149,5 +149,35 @@
 
         </LinearLayout>
 
+        <LinearLayout
+            android:id="@+id/seccionOfertasRecibidas"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:layout_marginTop="16dp"
+            android:visibility="gone">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Ofertas recibidas"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/tvSinOfertas"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Todavía no recibiste ofertas"
+                android:textColor="#757575"
+                android:visibility="gone" />
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/rvOfertas"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:nestedScrollingEnabled="false" />
+
+        </LinearLayout>
+
     </LinearLayout>
 </ScrollView>

@@ -55,6 +55,14 @@ public class MisPublicacionesFragment extends Fragment {
             public void onReactivar(PublicacionResumen p) {
                 cambiarEstado(p.id, "reactivar");
             }
+
+            @Override
+            public void onVerDetalle(PublicacionResumen p) {
+                Bundle args = new Bundle();
+                args.putLong("publicacionId", p.id);
+                androidx.navigation.Navigation.findNavController(requireView())
+                        .navigate(R.id.publicacionDetalleFragment, args);
+            }
         });
         rvMisPublicaciones.setAdapter(adapter);
 

@@ -51,6 +51,9 @@ public class PublicacionDetalleFragment extends Fragment {
     private RecyclerView rvFotos, rvPreguntas;
     private EditText etPregunta, etMontoOferta;
     private Button btnPreguntar, btnOfertar;
+    private LinearLayout seccionOfertasRecibidas;
+    private TextView tvSinOfertas;
+    private RecyclerView rvOfertas;
 
     public static PublicacionDetalleFragment newInstance(long publicacionId) {
         PublicacionDetalleFragment fragment = new PublicacionDetalleFragment();
@@ -106,6 +109,11 @@ public class PublicacionDetalleFragment extends Fragment {
         btnPreguntar.setOnClickListener(v -> enviarPregunta());
         btnOfertar.setOnClickListener(v -> enviarOferta());
 
+        seccionOfertasRecibidas = view.findViewById(R.id.seccionOfertasRecibidas);
+        tvSinOfertas = view.findViewById(R.id.tvSinOfertas);
+        rvOfertas = view.findViewById(R.id.rvOfertas);
+        rvOfertas.setLayoutManager(new LinearLayoutManager(requireContext()));
+
         cargarDetalle();
     }
 
@@ -153,12 +161,39 @@ public class PublicacionDetalleFragment extends Fragment {
 
         seccionInteresado.setVisibility(esPropia ? View.GONE : View.VISIBLE);
         tvSoyVendedor.setVisibility(esPropia ? View.VISIBLE : View.GONE);
+        seccionOfertasRecibidas.setVisibility(esPropia ? View.VISIBLE : View.GONE);
+        if (esPropia) {
+            cargarOfertas();
+        }
 
         contenido.setVisibility(View.VISIBLE);
         progressBar.setVisibility(View.GONE);
         tvError.setVisibility(View.GONE);
     }
 
+    private void cargarOfertas() {
+        apiService.listarOfertas(publicacionId).enqueue(new Callback<List<OfertaResponseDto>>() {
+            @Override
+            public void onResponse(@NonNull Call<List<OfertaResponseDto>> call,
+                                   @NonNull Response<List<OfertaResponseDto>> response) {
+                if (response.isSuccessful() && response.body() != null) {
+                    if (response.body().isEmpty()) {
+                        tvSinOfertas.setVisibility(View.VISIBLE);
+                        rvOfertas.setVisibility(View.GONE);
+                    } else {
+                        tvSinOfertas.setVisibility(View.GONE);
+                        rvOfertas.setVisibility(View.VISIBLE);
+                        rvOfertas.setAdapter(new OfertasAdapter(response.body()));
+                    }
+                }
+            }
+
+            @Override
+            public void onFailure(@NonNull Call<List<OfertaResponseDto>> call, @NonNull Throwable t) {
+                // no es crítico
+            }
+        });
+    }
     private void cargarPreguntas() {
         apiService.listarPreguntas(publicacionId).enqueue(new Callback<List<PreguntaResponseDto>>() {
             @Override
