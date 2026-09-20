@@ -29,6 +29,10 @@
             android:id="@+id/action_homeFragment_to_explorarFragment"
             app:destination="@id/explorarFragment" />
 
+        <action
+            android:id="@+id/action_homeFragment_to_profile_nav_graph"
+            app:destination="@id/profile_nav_graph" />
+
     </fragment>
 
 
