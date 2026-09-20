@@ -64,14 +64,12 @@ public class ExplorarFragment extends Fragment {
         adapter = new ExplorarAdapter(new ArrayList<>(), publicacion -> {
             Bundle args = new Bundle();
             args.putLong("publicacionId", publicacion.id);
-            // Navegamos directo por id de destino (sin <action> en el XML):
-            // publicacionDetalleFragment vive en product_nav_graph, un grafo
-            // distinto al de este fragment (home_nav_graph). Definir una
-            // <action> apuntando a un id interno de OTRO grafo incluido nos
-            // rompio la app antes; navegar por id directo desde codigo es la
-            // forma segura de cruzar grafos que ya validamos en este proyecto.
+            // publicacionDetalleFragment también está declarado en este grafo
+            // (home_nav_graph). No se puede navegar al id interno de
+            // product_nav_graph: con <include> ese destino no es visible
+            // desde explorarFragment.
             Navigation.findNavController(view)
-                    .navigate(R.id.publicacionDetalleFragment, args);
+                    .navigate(R.id.action_explorarFragment_to_publicacionDetalleFragment, args);
         });
         rvExplorar.setAdapter(adapter);
 
