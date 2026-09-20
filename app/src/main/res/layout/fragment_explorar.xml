@@ -46,6 +46,12 @@
 
         </LinearLayout>
 
+        <Spinner
+            android:id="@+id/spOrden"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingHorizontal="8dp" />
+
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/rvExplorar"
             android:layout_width="match_parent"

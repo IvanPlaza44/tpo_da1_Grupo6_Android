@@ -5,6 +5,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.EditorInfo;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.ProgressBar;
@@ -43,6 +44,8 @@ public class ExplorarFragment extends Fragment {
     private static final int TAMANIO_PAGINA = 20;
     private static final int UMBRAL_PAGINACION = 3;
     private static final String[] ESTADOS_ARTICULO_FILTRO = {"Todos", "NUEVO", "COMO_NUEVO", "USADO"};
+    private static final String[] ORDENES_VISIBLE = {"Más recientes", "Menor precio", "Mayor precio"};
+    private static final String[] ORDENES_BACKEND = {"RECIENTES", "MENOR_PRECIO", "MAYOR_PRECIO"};
 
     private RecyclerView rvExplorar;
     private TextView tvSinConexion;
@@ -65,6 +68,8 @@ public class ExplorarFragment extends Fragment {
     private Double precioMax = null;
     private String estadoArticulo = null;
     private String zona = null;
+    private String ordenActual = "RECIENTES";
+    private boolean ignorarPrimerOrden = true;
     private final List<CategoriaDto> categorias = new ArrayList<>();
     private Call<PaginaDto<PublicacionResumen>> callEnVuelo;
 
@@ -98,6 +103,26 @@ public class ExplorarFragment extends Fragment {
             return false;
         });
         view.findViewById(R.id.btnFiltros).setOnClickListener(v -> mostrarDialogFiltros());
+
+        Spinner spOrden = view.findViewById(R.id.spOrden);
+        spOrden.setAdapter(new ArrayAdapter<>(requireContext(),
+                android.R.layout.simple_spinner_dropdown_item, ORDENES_VISIBLE));
+        spOrden.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View selectedView, int position, long id) {
+                if (ignorarPrimerOrden) {
+                    ignorarPrimerOrden = false;
+                    return;
+                }
+                ordenActual = ORDENES_BACKEND[position];
+                cargarPaginaInicial();
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+                ordenActual = "RECIENTES";
+            }
+        });
 
         rvExplorar.setLayoutManager(new LinearLayoutManager(requireContext()));
         adapter = new ExplorarAdapter(new ArrayList<>(), publicacion -> {
@@ -303,7 +328,8 @@ public class ExplorarFragment extends Fragment {
                 precioMin,
                 precioMax,
                 estadoArticulo,
-                zona
+                zona,
+                ordenActual
         );
         callEnVuelo.enqueue(new Callback<PaginaDto<PublicacionResumen>>() {
             @Override
@@ -323,7 +349,7 @@ public class ExplorarFragment extends Fragment {
 
                     if (esInicial) {
                         mostrarLista(lista);
-                        if (esCatalogoGeneral()) {
+                        if (esCatalogoGeneral() && "RECIENTES".equals(ordenActual)) {
                             guardarEnCache(lista);
                         }
                     } else {

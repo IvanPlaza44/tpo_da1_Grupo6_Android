@@ -49,7 +49,8 @@ public interface ApiService {
             @Query("precioMin") Double precioMin,
             @Query("precioMax") Double precioMax,
             @Query("estadoArticulo") String estadoArticulo,
-            @Query("zona") String zona
+            @Query("zona") String zona,
+            @Query("orden") String orden
     );
 
     @GET("api/categorias")
