@@ -19,6 +19,17 @@
             android:textColor="#FFFFFF"
             android:visibility="gone" />
 
+        <EditText
+            android:id="@+id/etBuscar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Buscar publicaciones"
+            android:imeOptions="actionSearch"
+            android:importantForAutofill="no"
+            android:inputType="text"
+            android:maxLines="1"
+            android:padding="12dp" />
+
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/rvExplorar"
             android:layout_width="match_parent"

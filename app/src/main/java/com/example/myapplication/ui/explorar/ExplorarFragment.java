@@ -4,6 +4,8 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.EditorInfo;
+import android.widget.EditText;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
@@ -41,6 +43,7 @@ public class ExplorarFragment extends Fragment {
     private TextView tvVacio;
     private ProgressBar progressBar;
     private ProgressBar progressBarSiguiente;
+    private EditText etBuscar;
     private ExplorarAdapter adapter;
 
     // totalPaginas solo se setea con una respuesta valida del backend.
@@ -49,6 +52,9 @@ public class ExplorarFragment extends Fragment {
     private int totalPaginas = 0;
     private boolean cargandoInicial = false;
     private boolean cargandoSiguiente = false;
+    // null = listado general; texto = busqueda activa (se reusa en cada pagina).
+    private String queryActual = null;
+    private Call<PaginaDto<PublicacionResumen>> callEnVuelo;
 
     // Room no permite operaciones en el hilo principal. Como el proyecto es
     // Java puro (sin coroutines), usamos el mismo patron que el demo de
@@ -71,6 +77,14 @@ public class ExplorarFragment extends Fragment {
         tvVacio = view.findViewById(R.id.tvVacio);
         progressBar = view.findViewById(R.id.progressBar);
         progressBarSiguiente = view.findViewById(R.id.progressBarSiguiente);
+        etBuscar = view.findViewById(R.id.etBuscar);
+        etBuscar.setOnEditorActionListener((v, actionId, event) -> {
+            if (actionId == EditorInfo.IME_ACTION_SEARCH) {
+                aplicarBusqueda(etBuscar.getText().toString());
+                return true;
+            }
+            return false;
+        });
 
         rvExplorar.setLayoutManager(new LinearLayoutManager(requireContext()));
         adapter = new ExplorarAdapter(new ArrayList<>(), publicacion -> {
@@ -95,8 +109,15 @@ public class ExplorarFragment extends Fragment {
         cargarPaginaInicial();
     }
 
+    private void aplicarBusqueda(String texto) {
+        String trimmed = texto == null ? "" : texto.trim();
+        queryActual = trimmed.isEmpty() ? null : trimmed;
+        cargarPaginaInicial();
+    }
+
     private void cargarPaginaInicial() {
         cargandoInicial = true;
+        cargandoSiguiente = false;
         paginaActual = -1;
         totalPaginas = 0;
         mostrarCarga();
@@ -123,12 +144,17 @@ public class ExplorarFragment extends Fragment {
     }
 
     private void pedirPagina(int pagina, boolean esInicial) {
+        if (callEnVuelo != null) {
+            callEnVuelo.cancel();
+        }
+
         ApiService apiService = RetrofitClient.getApiService(requireContext());
-        apiService.explorar(pagina, TAMANIO_PAGINA).enqueue(new Callback<PaginaDto<PublicacionResumen>>() {
+        callEnVuelo = apiService.explorar(pagina, TAMANIO_PAGINA, queryActual);
+        callEnVuelo.enqueue(new Callback<PaginaDto<PublicacionResumen>>() {
             @Override
             public void onResponse(@NonNull Call<PaginaDto<PublicacionResumen>> call,
                                    @NonNull Response<PaginaDto<PublicacionResumen>> response) {
-                if (!isAdded()) return;
+                if (!isAdded() || call.isCanceled()) return;
 
                 if (response.isSuccessful() && response.body() != null) {
                     PaginaDto<PublicacionResumen> body = response.body();
@@ -142,14 +168,17 @@ public class ExplorarFragment extends Fragment {
 
                     if (esInicial) {
                         mostrarLista(lista);
-                        guardarEnCache(lista);
+                        // El cache es del catalogo general, no de una busqueda.
+                        if (queryActual == null) {
+                            guardarEnCache(lista);
+                        }
                     } else {
                         adapter.agregarItems(lista);
                     }
                     finalizarCarga(esInicial);
                     rvExplorar.post(ExplorarFragment.this::intentarCargarSiCercaDelFinal);
                 } else if (esInicial) {
-                    cargarDesdeCache();
+                    manejarFalloCargaInicial();
                 } else {
                     finalizarCarga(false);
                 }
@@ -157,14 +186,24 @@ public class ExplorarFragment extends Fragment {
 
             @Override
             public void onFailure(@NonNull Call<PaginaDto<PublicacionResumen>> call, @NonNull Throwable t) {
-                if (!isAdded()) return;
+                if (!isAdded() || call.isCanceled()) return;
                 if (esInicial) {
-                    cargarDesdeCache();
+                    manejarFalloCargaInicial();
                 } else {
                     finalizarCarga(false);
                 }
             }
         });
+    }
+
+    private void manejarFalloCargaInicial() {
+        if (queryActual != null) {
+            tvSinConexion.setVisibility(View.GONE);
+            mostrarLista(new ArrayList<>());
+            finalizarCarga(true);
+            return;
+        }
+        cargarDesdeCache();
     }
 
     private void cargarDesdeCache() {
@@ -229,6 +268,9 @@ public class ExplorarFragment extends Fragment {
     private void mostrarLista(List<PublicacionResumen> lista) {
         progressBar.setVisibility(View.GONE);
         adapter.actualizarLista(lista);
+        tvVacio.setText(queryActual != null
+                ? "No hay resultados para esta busqueda"
+                : "No hay publicaciones para mostrar");
         tvVacio.setVisibility(lista.isEmpty() ? View.VISIBLE : View.GONE);
         rvExplorar.setVisibility(lista.isEmpty() ? View.GONE : View.VISIBLE);
     }
@@ -246,6 +288,9 @@ public class ExplorarFragment extends Fragment {
     @Override
     public void onDestroy() {
         super.onDestroy();
+        if (callEnVuelo != null) {
+            callEnVuelo.cancel();
+        }
         executor.shutdown();
     }
 }
