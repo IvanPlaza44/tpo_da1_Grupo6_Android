@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <navigation xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/nav_graph"
     app:startDestination="@id/mapaFragment">
 
@@ -10,26 +9,12 @@
         android:name="com.example.myapplication.ui.LoginFragment"
         android:label="Login"
         tools:layout="@layout/fragment_login">
+    app:startDestination="@id/auth_nav_graph">
 
-        <action
-            android:id="@+id/action_loginFragment_to_homeFragment"
-            app:destination="@id/homeFragment"
-            app:popUpTo="@id/loginFragment"
-            app:popUpToInclusive="true" />
-    </fragment>
-
-    <fragment
-        android:id="@+id/homeFragment"
-        android:name="com.example.myapplication.ui.HomeFragment"
-        android:label="Home"
-        tools:layout="@layout/fragment_home">
-
-        <action
-            android:id="@+id/action_homeFragment_to_loginFragment"
-            app:destination="@id/loginFragment"
-            app:popUpTo="@id/homeFragment"
-            app:popUpToInclusive="true" />
-    </fragment>
+    <include app:graph="@navigation/auth_nav_graph"/>
+    <include app:graph="@navigation/home_nav_graph"/>
+    <include app:graph="@navigation/product_nav_graph"/>
+    <include app:graph="@navigation/profile_nav_graph"/>
 
     <fragment
         android:id="@+id/mapaFragment"

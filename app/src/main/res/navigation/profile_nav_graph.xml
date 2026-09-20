@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/profile_nav_graph"
+    app:startDestination="@id/profileFragment">
+
+    <!-- ProfileFragment: pantalla de "Mi perfil" (solo lectura) -->
+    <fragment
+        android:id="@+id/profileFragment"
+        android:name="com.example.myapplication.ui.ProfileFragment"
+        android:label="Mi perfil">
+
+        <!-- Acción para ir desde Profile hacia EditProfile -->
+        <action
+            android:id="@+id/action_profile_to_editProfile"
+            app:destination="@id/editProfileFragment" />
+    </fragment>
+
+    <!-- EditProfileFragment: formulario de edición -->
+    <fragment
+        android:id="@+id/editProfileFragment"
+        android:name="com.example.myapplication.ui.EditProfileFragment"
+        android:label="Editar perfil" />
+
+    <!-- PublicProfileFragment: perfil de OTRO usuario -->
+    <fragment
+        android:id="@+id/publicProfileFragment"
+        android:name="com.example.myapplication.ui.PublicProfileFragment"
+        android:label="Perfil público">
+
+        <argument
+            android:name="userId"
+            app:argType="long" />
+    </fragment>
+
+</navigation>

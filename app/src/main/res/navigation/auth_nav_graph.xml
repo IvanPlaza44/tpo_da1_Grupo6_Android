@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/auth_nav_graph"
+    app:startDestination="@id/loginFragment">
+
+    <fragment
+        android:id="@+id/loginFragment"
+        android:name="com.example.myapplication.ui.auth.LoginFragment"
+        android:label="Login"
+        tools:layout="@layout/fragment_login">
+
+        <action
+            android:id="@+id/action_loginFragment_to_requestOtpFragment"
+            app:destination="@id/requestOtpFragment" />
+
+        <action
+            android:id="@+id/action_loginFragment_to_homeFragment"
+            app:destination="@id/home_nav_graph"
+            app:popUpTo="@id/loginFragment"
+            app:popUpToInclusive="true" />
+
+        <!-- Acción agregada para ir a la pantalla de Registro -->
+        <action
+            android:id="@+id/action_loginFragment_to_registerFragment"
+            app:destination="@id/registerFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/requestOtpFragment"
+        android:name="com.example.myapplication.ui.auth.RequestOtpFragment"
+        android:label="Pedir código"
+        tools:layout="@layout/fragment_request_otp">
+
+        <action
+            android:id="@+id/action_requestOtpFragment_to_verifyOtpFragment"
+            app:destination="@id/verifyOtpFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/verifyOtpFragment"
+        android:name="com.example.myapplication.ui.auth.VerifyOtpFragment"
+        android:label="Verificar código"
+        tools:layout="@layout/fragment_verify_otp">
+
+        <action
+            android:id="@+id/action_verifyOtpFragment_to_homeFragment"
+            app:destination="@id/home_nav_graph"
+            app:popUpTo="@id/loginFragment"
+            app:popUpToInclusive="true" />
+    </fragment>
+
+    <!-- Fragmento de Registro agregado -->
+    <fragment
+        android:id="@+id/registerFragment"
+        android:name="com.example.myapplication.ui.auth.RegisterFragment"
+        android:label="Registro"
+        tools:layout="@layout/fragment_register" />
+
+</navigation>
