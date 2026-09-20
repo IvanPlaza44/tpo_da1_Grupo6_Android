@@ -4,6 +4,7 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -35,6 +36,7 @@ public class ExplorarFragment extends Fragment {
     private RecyclerView rvExplorar;
     private TextView tvSinConexion;
     private TextView tvVacio;
+    private ProgressBar progressBar;
     private ExplorarAdapter adapter;
 
     // Room no permite operaciones en el hilo principal. Como el proyecto es
@@ -56,6 +58,7 @@ public class ExplorarFragment extends Fragment {
         rvExplorar = view.findViewById(R.id.rvExplorar);
         tvSinConexion = view.findViewById(R.id.tvSinConexion);
         tvVacio = view.findViewById(R.id.tvVacio);
+        progressBar = view.findViewById(R.id.progressBar);
 
         rvExplorar.setLayoutManager(new LinearLayoutManager(requireContext()));
         adapter = new ExplorarAdapter(new ArrayList<>(), publicacion -> {
@@ -72,6 +75,7 @@ public class ExplorarFragment extends Fragment {
         });
         rvExplorar.setAdapter(adapter);
 
+        mostrarCarga();
         cargarDesdeServidor();
     }
 
@@ -152,7 +156,14 @@ public class ExplorarFragment extends Fragment {
         });
     }
 
+    private void mostrarCarga() {
+        progressBar.setVisibility(View.VISIBLE);
+        rvExplorar.setVisibility(View.GONE);
+        tvVacio.setVisibility(View.GONE);
+    }
+
     private void mostrarLista(List<PublicacionResumen> lista) {
+        progressBar.setVisibility(View.GONE);
         adapter.actualizarLista(lista);
         tvVacio.setVisibility(lista.isEmpty() ? View.VISIBLE : View.GONE);
         rvExplorar.setVisibility(lista.isEmpty() ? View.GONE : View.VISIBLE);
