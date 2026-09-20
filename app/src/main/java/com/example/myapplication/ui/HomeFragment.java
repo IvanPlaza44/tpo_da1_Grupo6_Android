@@ -57,5 +57,8 @@ public class HomeFragment extends Fragment {
 
         view.findViewById(R.id.btnExplorar).setOnClickListener(v ->
                 Navigation.findNavController(v).navigate(R.id.action_homeFragment_to_explorarFragment));
+
+        view.findViewById(R.id.btnPerfil).setOnClickListener(v ->
+                Navigation.findNavController(v).navigate(R.id.action_homeFragment_to_profile_nav_graph));
     }
 }

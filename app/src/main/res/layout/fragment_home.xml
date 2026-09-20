@@ -48,4 +48,11 @@
         android:layout_marginTop="16dp"
         android:text="Explorar" />
 
+    <Button
+        android:id="@+id/btnPerfil"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:text="Mi perfil" />
+
 </LinearLayout>
