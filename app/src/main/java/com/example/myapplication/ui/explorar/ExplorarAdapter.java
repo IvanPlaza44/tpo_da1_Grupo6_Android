@@ -13,6 +13,7 @@ import com.example.myapplication.R;
 import com.example.myapplication.model.Publicacion.PublicacionResumen;
 import com.example.myapplication.util.ImageLoader;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
@@ -31,8 +32,15 @@ public class ExplorarAdapter extends RecyclerView.Adapter<ExplorarAdapter.ViewHo
     }
 
     public void actualizarLista(List<PublicacionResumen> nueva) {
-        this.lista = nueva;
+        this.lista = nueva != null ? new ArrayList<>(nueva) : new ArrayList<>();
         notifyDataSetChanged();
+    }
+
+    public void agregarItems(List<PublicacionResumen> nuevos) {
+        if (nuevos == null || nuevos.isEmpty()) return;
+        int desde = lista.size();
+        lista.addAll(nuevos);
+        notifyItemRangeInserted(desde, nuevos.size());
     }
 
     @NonNull

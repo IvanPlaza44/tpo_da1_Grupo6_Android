@@ -33,11 +33,22 @@ import retrofit2.Response;
 
 public class ExplorarFragment extends Fragment {
 
+    private static final int TAMANIO_PAGINA = 20;
+    private static final int UMBRAL_PAGINACION = 3;
+
     private RecyclerView rvExplorar;
     private TextView tvSinConexion;
     private TextView tvVacio;
     private ProgressBar progressBar;
+    private ProgressBar progressBarSiguiente;
     private ExplorarAdapter adapter;
+
+    // totalPaginas solo se setea con una respuesta valida del backend.
+    // 0 = todavia no hay dato (o el backend dijo 0): no se piden mas paginas.
+    private int paginaActual = -1;
+    private int totalPaginas = 0;
+    private boolean cargandoInicial = false;
+    private boolean cargandoSiguiente = false;
 
     // Room no permite operaciones en el hilo principal. Como el proyecto es
     // Java puro (sin coroutines), usamos el mismo patron que el demo de
@@ -59,6 +70,7 @@ public class ExplorarFragment extends Fragment {
         tvSinConexion = view.findViewById(R.id.tvSinConexion);
         tvVacio = view.findViewById(R.id.tvVacio);
         progressBar = view.findViewById(R.id.progressBar);
+        progressBarSiguiente = view.findViewById(R.id.progressBarSiguiente);
 
         rvExplorar.setLayoutManager(new LinearLayoutManager(requireContext()));
         adapter = new ExplorarAdapter(new ArrayList<>(), publicacion -> {
@@ -72,33 +84,85 @@ public class ExplorarFragment extends Fragment {
                     .navigate(R.id.action_explorarFragment_to_publicacionDetalleFragment, args);
         });
         rvExplorar.setAdapter(adapter);
+        rvExplorar.addOnScrollListener(new RecyclerView.OnScrollListener() {
+            @Override
+            public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
+                if (dy <= 0) return;
+                intentarCargarSiCercaDelFinal();
+            }
+        });
 
-        mostrarCarga();
-        cargarDesdeServidor();
+        cargarPaginaInicial();
     }
 
-    private void cargarDesdeServidor() {
+    private void cargarPaginaInicial() {
+        cargandoInicial = true;
+        paginaActual = -1;
+        totalPaginas = 0;
+        mostrarCarga();
+        pedirPagina(0, true);
+    }
+
+    private void intentarCargarSiCercaDelFinal() {
+        LinearLayoutManager lm = (LinearLayoutManager) rvExplorar.getLayoutManager();
+        if (lm == null) return;
+        int ultimoVisible = lm.findLastVisibleItemPosition();
+        int total = lm.getItemCount();
+        if (total > 0 && ultimoVisible >= total - UMBRAL_PAGINACION) {
+            cargarSiguientePagina();
+        }
+    }
+
+    private void cargarSiguientePagina() {
+        if (cargandoInicial || cargandoSiguiente) return;
+        if (paginaActual + 1 >= totalPaginas) return;
+
+        cargandoSiguiente = true;
+        progressBarSiguiente.setVisibility(View.VISIBLE);
+        pedirPagina(paginaActual + 1, false);
+    }
+
+    private void pedirPagina(int pagina, boolean esInicial) {
         ApiService apiService = RetrofitClient.getApiService(requireContext());
-        apiService.explorar(0, 20).enqueue(new Callback<PaginaDto<PublicacionResumen>>() {
+        apiService.explorar(pagina, TAMANIO_PAGINA).enqueue(new Callback<PaginaDto<PublicacionResumen>>() {
             @Override
             public void onResponse(@NonNull Call<PaginaDto<PublicacionResumen>> call,
                                    @NonNull Response<PaginaDto<PublicacionResumen>> response) {
                 if (!isAdded()) return;
 
                 if (response.isSuccessful() && response.body() != null) {
-                    List<PublicacionResumen> lista = response.body().contenido;
+                    PaginaDto<PublicacionResumen> body = response.body();
+                    List<PublicacionResumen> lista = body.contenido != null
+                            ? body.contenido
+                            : new ArrayList<>();
+
+                    totalPaginas = body.totalPaginas;
+                    paginaActual = pagina;
                     tvSinConexion.setVisibility(View.GONE);
-                    mostrarLista(lista);
-                    guardarEnCache(lista);
-                } else {
+
+                    if (esInicial) {
+                        mostrarLista(lista);
+                        guardarEnCache(lista);
+                    } else {
+                        adapter.agregarItems(lista);
+                    }
+                    finalizarCarga(esInicial);
+                    rvExplorar.post(ExplorarFragment.this::intentarCargarSiCercaDelFinal);
+                } else if (esInicial) {
                     cargarDesdeCache();
+                } else {
+                    finalizarCarga(false);
                 }
             }
 
             @Override
             public void onFailure(@NonNull Call<PaginaDto<PublicacionResumen>> call, @NonNull Throwable t) {
                 if (!isAdded()) return;
-                cargarDesdeCache();
+                if (esInicial) {
+                    cargarDesdeCache();
+                } else {
+                    finalizarCarga(false);
+                }
             }
         });
     }
@@ -126,6 +190,7 @@ public class ExplorarFragment extends Fragment {
             requireActivity().runOnUiThread(() -> {
                 tvSinConexion.setVisibility(lista.isEmpty() ? View.GONE : View.VISIBLE);
                 mostrarLista(lista);
+                finalizarCarga(true);
             });
         });
     }
@@ -156,6 +221,7 @@ public class ExplorarFragment extends Fragment {
 
     private void mostrarCarga() {
         progressBar.setVisibility(View.VISIBLE);
+        progressBarSiguiente.setVisibility(View.GONE);
         rvExplorar.setVisibility(View.GONE);
         tvVacio.setVisibility(View.GONE);
     }
@@ -165,6 +231,16 @@ public class ExplorarFragment extends Fragment {
         adapter.actualizarLista(lista);
         tvVacio.setVisibility(lista.isEmpty() ? View.VISIBLE : View.GONE);
         rvExplorar.setVisibility(lista.isEmpty() ? View.GONE : View.VISIBLE);
+    }
+
+    private void finalizarCarga(boolean esInicial) {
+        if (esInicial) {
+            cargandoInicial = false;
+            progressBar.setVisibility(View.GONE);
+        } else {
+            cargandoSiguiente = false;
+            progressBarSiguiente.setVisibility(View.GONE);
+        }
     }
 
     @Override
