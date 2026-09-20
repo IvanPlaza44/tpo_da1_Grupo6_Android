@@ -54,5 +54,8 @@ public class HomeFragment extends Fragment {
             Navigation.findNavController(view)
                     .navigate(R.id.action_homeFragment_to_loginFragment);
         });
+
+        view.findViewById(R.id.btnExplorar).setOnClickListener(v ->
+                Navigation.findNavController(v).navigate(R.id.action_homeFragment_to_explorarFragment));
     }
 }

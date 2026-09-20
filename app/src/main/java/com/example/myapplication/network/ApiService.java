@@ -17,6 +17,8 @@ import com.example.myapplication.model.Publicacion.OfertaRequestDto;
 import com.example.myapplication.model.Publicacion.OfertaResponseDto;
 import java.util.List;
 import com.example.myapplication.model.OtpVerifyRequest;
+import com.example.myapplication.model.Publicacion.PaginaDto;
+import retrofit2.http.Query;
 
 import retrofit2.Call;
 import retrofit2.http.Body;
@@ -37,6 +39,12 @@ import retrofit2.http.PATCH;
  * arma el request y parsea la respuesta.
  */
 public interface ApiService {
+
+    @GET("api/publicaciones")
+    Call<PaginaDto<PublicacionResumen>> explorar(
+            @Query("pagina") int pagina,
+            @Query("tamanio") int tamanio
+    );
 
     @GET("api/categorias")
     Call<List<CategoriaDto>> obtenerCategorias();
