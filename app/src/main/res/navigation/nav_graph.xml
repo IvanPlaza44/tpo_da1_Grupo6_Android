@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <navigation xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/nav_graph"
     app:startDestination="@id/auth_nav_graph">
 
@@ -8,6 +9,12 @@
     <include app:graph="@navigation/home_nav_graph"/>
     <include app:graph="@navigation/product_nav_graph"/>
     <include app:graph="@navigation/profile_nav_graph"/>
+
+    <fragment
+        android:id="@+id/mapaFragment"
+        android:name="com.example.myapplication.ui.MapaFragment"
+        android:label="Mapa"
+        tools:layout="@layout/fragment_mapa" />
 
     <fragment
         android:id="@+id/publicacionDetalleFragment"

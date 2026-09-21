@@ -24,6 +24,14 @@
             app:destination="@id/explorarFragment" />
 
         <action
+            android:id="@+id/action_homeFragment_to_favoritosFragment"
+            app:destination="@id/favoritosFragment" />
+
+        <action
+            android:id="@+id/action_homeFragment_to_busquedasGuardadasFragment"
+            app:destination="@id/busquedasGuardadasFragment" />
+
+        <action
             android:id="@+id/action_homeFragment_to_profileFragment"
             app:destination="@id/profile_nav_graph" />
 
@@ -45,6 +53,30 @@
         <action
             android:id="@+id/action_explorarFragment_to_publicacionDetalleFragment"
             app:destination="@id/publicacionDetalleFragment" />
+
+    </fragment>
+
+    <fragment
+        android:id="@+id/favoritosFragment"
+        android:name="com.example.myapplication.ui.favoritos.FavoritosFragment"
+        android:label="Favoritos"
+        tools:layout="@layout/fragment_favoritos">
+
+        <action
+            android:id="@+id/action_favoritosFragment_to_publicacionDetalleFragment"
+            app:destination="@id/publicacionDetalleFragment" />
+
+    </fragment>
+
+    <fragment
+        android:id="@+id/busquedasGuardadasFragment"
+        android:name="com.example.myapplication.ui.busquedas.BusquedasGuardadasFragment"
+        android:label="Búsquedas guardadas"
+        tools:layout="@layout/fragment_busquedas_guardadas">
+
+        <action
+            android:id="@+id/action_busquedasGuardadasFragment_to_explorarFragment"
+            app:destination="@id/explorarFragment" />
 
     </fragment>
 

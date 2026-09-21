@@ -22,6 +22,7 @@ import com.example.myapplication.model.Publicacion.PublicacionResumen;
 import com.example.myapplication.network.ApiService;
 import com.example.myapplication.network.RetrofitClient;
 import com.example.myapplication.ui.explorar.ExplorarAdapter;
+import com.example.myapplication.util.ImageLoader;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -38,7 +39,7 @@ import retrofit2.Response;
  * en el detalle de una publicación.
  *
  * Una sola llamada (GET /api/usuarios/{id}) trae todo lo que pide el TP:
- * reputación, antigüedad y publicaciones activas.
+ * foto, reputación, antigüedad y publicaciones activas.
  */
 public class PublicProfileFragment extends Fragment {
 
@@ -146,6 +147,10 @@ public class PublicProfileFragment extends Fragment {
         }
         tvFechaAlta.setText("En Ronda desde " + fecha);
 
+        // Foto de perfil: se descarga de la URL en segundo plano.
+        // Si no tiene foto, queda el fondo gris del layout.
+        ImageLoader.cargar(perfil.fotoUrl, ivFotoPerfil);
+
         // Reputación (viene en la misma respuesta).
         if (perfil.promedioEstrellas > 0) {
             tvEstrellas.setText(String.format("⭐ %.1f / 5", perfil.promedioEstrellas));
@@ -167,7 +172,6 @@ public class PublicProfileFragment extends Fragment {
             rvPublicaciones.setVisibility(View.VISIBLE);
             adapter.actualizarLista(activas);
         }
-        // TODO: cargar la foto de perfil cuando el backend la incluya en el DTO.
     }
 
     @Override

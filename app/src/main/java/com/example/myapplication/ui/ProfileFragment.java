@@ -20,6 +20,7 @@ import com.example.myapplication.model.Usuario;
 import com.example.myapplication.network.ApiService;
 import com.example.myapplication.network.RetrofitClient;
 import com.example.myapplication.session.SessionManager;
+import com.example.myapplication.util.ImageLoader;
 import com.google.android.material.switchmaterial.SwitchMaterial;
 
 import retrofit2.Call;
@@ -126,8 +127,8 @@ public class ProfileFragment extends Fragment {
         // NUNCA usamos execute(): eso bloquearía el Main Thread y Android
         // tiraría NetworkOnMainThreadException (Consideración 1 de la clase de Retrofit).
         //
-        // GET /api/usuarios/me devuelve el perfil propio COMPLETO: email, teléfono
-        // y también la reputación (promedio de estrellas y operaciones).
+        // GET /api/usuarios/me devuelve el perfil propio COMPLETO: email, teléfono,
+        // foto y también la reputación (promedio de estrellas y calificaciones por rol).
         // GET /api/usuarios/{id} devuelve solo el perfil público de otra persona.
         apiService.obtenerMiPerfil().enqueue(new Callback<Usuario>() {
             @Override
@@ -144,6 +145,10 @@ public class ProfileFragment extends Fragment {
                     tvTelefono.setText(usuario.getTelefono());
                     tvZona.setText(usuario.getZona());
 
+                    // Foto de perfil (URL de Cloudinary, se descarga en segundo plano).
+                    // Si el usuario no tiene foto, queda el fondo gris del layout.
+                    ImageLoader.cargar(usuario.getFotoUrl(), ivFotoPerfil);
+
                     // Reputación: viene en la misma respuesta.
                     Double promedio = usuario.getPromedioEstrellas();
                     if (promedio != null && promedio > 0) {
@@ -153,15 +158,15 @@ public class ProfileFragment extends Fragment {
                         // en vez de un error (no es realmente una falla).
                         tvEstrellas.setText("Sin calificaciones todavía");
                     }
+                    // Estos números son calificaciones recibidas según el rol
+                    // (el backend las cuenta desde la tabla de calificaciones).
                     long total = usuario.getOperacionesComoComprador()
                             + usuario.getOperacionesComoVendedor();
                     tvOperaciones.setText(String.format(
-                            "%d operaciones (%d como comprador, %d como vendedor)",
+                            "Calificaciones recibidas: %d (%d como comprador, %d como vendedor)",
                             total,
                             usuario.getOperacionesComoComprador(),
                             usuario.getOperacionesComoVendedor()));
-                    // TODO: cargar usuario.getFotoUrl() en ivFotoPerfil cuando el backend
-                    // incluya la foto en el DTO
                 } else if (response.code() == 401) {
                     // 401 Unauthorized: el token venció o es inválido.
                     Toast.makeText(getContext(), "Tu sesión expiró, volvé a iniciar sesión", Toast.LENGTH_SHORT).show();
