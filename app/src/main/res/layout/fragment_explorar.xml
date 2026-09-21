@@ -15,7 +15,7 @@
             android:background="#FFA000"
             android:gravity="center"
             android:padding="8dp"
-            android:text="Sin conexion - mostrando datos guardados"
+            android:text="Sin conexion - mostrando datos guardados. Pueden estar desactualizados."
             android:textColor="#FFFFFF"
             android:visibility="gone" />
 
@@ -82,8 +82,35 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
-        android:text="No hay publicaciones para mostrar"
+        android:text="Todavía no hay publicaciones."
         android:textSize="16sp"
         android:visibility="gone" />
+
+    <LinearLayout
+        android:id="@+id/contenedorError"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:gravity="center"
+        android:orientation="vertical"
+        android:padding="16dp"
+        android:visibility="gone">
+
+        <TextView
+            android:id="@+id/tvError"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:text="No se pudo cargar. Revisá tu conexión e intentá de nuevo."
+            android:textSize="16sp" />
+
+        <Button
+            android:id="@+id/btnReintentar"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:text="Reintentar" />
+
+    </LinearLayout>
 
 </FrameLayout>

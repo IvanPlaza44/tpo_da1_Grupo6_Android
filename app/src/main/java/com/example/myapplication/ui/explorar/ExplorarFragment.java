@@ -41,7 +41,7 @@ import retrofit2.Response;
 
 public class ExplorarFragment extends Fragment {
 
-    private static final int TAMANIO_PAGINA = 20;
+    private static final int TAMANIO_PAGINA = 5;
     private static final int UMBRAL_PAGINACION = 3;
     private static final String[] ESTADOS_ARTICULO_FILTRO = {"Todos", "NUEVO", "COMO_NUEVO", "USADO"};
     private static final String[] ORDENES_VISIBLE = {"Más recientes", "Menor precio", "Mayor precio"};
@@ -50,6 +50,7 @@ public class ExplorarFragment extends Fragment {
     private RecyclerView rvExplorar;
     private TextView tvSinConexion;
     private TextView tvVacio;
+    private View contenedorError;
     private ProgressBar progressBar;
     private ProgressBar progressBarSiguiente;
     private EditText etBuscar;
@@ -92,6 +93,8 @@ public class ExplorarFragment extends Fragment {
         rvExplorar = view.findViewById(R.id.rvExplorar);
         tvSinConexion = view.findViewById(R.id.tvSinConexion);
         tvVacio = view.findViewById(R.id.tvVacio);
+        contenedorError = view.findViewById(R.id.contenedorError);
+        view.findViewById(R.id.btnReintentar).setOnClickListener(v -> cargarPaginaInicial());
         progressBar = view.findViewById(R.id.progressBar);
         progressBarSiguiente = view.findViewById(R.id.progressBarSiguiente);
         etBuscar = view.findViewById(R.id.etBuscar);
@@ -283,7 +286,8 @@ public class ExplorarFragment extends Fragment {
                 && precioMin == null
                 && precioMax == null
                 && estadoArticulo == null
-                && zona == null;
+                && zona == null
+                && "RECIENTES".equals(ordenActual);
     }
 
     private void cargarPaginaInicial() {
@@ -349,7 +353,7 @@ public class ExplorarFragment extends Fragment {
 
                     if (esInicial) {
                         mostrarLista(lista);
-                        if (esCatalogoGeneral() && "RECIENTES".equals(ordenActual)) {
+                        if (esCatalogoGeneral()) {
                             guardarEnCache(lista);
                         }
                     } else {
@@ -360,7 +364,7 @@ public class ExplorarFragment extends Fragment {
                 } else if (esInicial) {
                     manejarFalloCargaInicial();
                 } else {
-                    finalizarCarga(false);
+                    manejarFalloPaginaSiguiente();
                 }
             }
 
@@ -370,7 +374,7 @@ public class ExplorarFragment extends Fragment {
                 if (esInicial) {
                     manejarFalloCargaInicial();
                 } else {
-                    finalizarCarga(false);
+                    manejarFalloPaginaSiguiente();
                 }
             }
         });
@@ -378,12 +382,17 @@ public class ExplorarFragment extends Fragment {
 
     private void manejarFalloCargaInicial() {
         if (!esCatalogoGeneral()) {
-            tvSinConexion.setVisibility(View.GONE);
-            mostrarLista(new ArrayList<>());
-            finalizarCarga(true);
+            mostrarErrorConsulta();
             return;
         }
         cargarDesdeCache();
+    }
+
+    private void manejarFalloPaginaSiguiente() {
+        finalizarCarga(false);
+        Toast.makeText(requireContext(),
+                "No se pudo cargar mas publicaciones",
+                Toast.LENGTH_SHORT).show();
     }
 
     private void cargarDesdeCache() {
@@ -407,7 +416,11 @@ public class ExplorarFragment extends Fragment {
 
             if (!isAdded()) return;
             requireActivity().runOnUiThread(() -> {
-                tvSinConexion.setVisibility(lista.isEmpty() ? View.GONE : View.VISIBLE);
+                if (lista.isEmpty()) {
+                    mostrarErrorConsulta();
+                    return;
+                }
+                tvSinConexion.setVisibility(View.VISIBLE);
                 mostrarLista(lista);
                 finalizarCarga(true);
             });
@@ -443,16 +456,30 @@ public class ExplorarFragment extends Fragment {
         progressBarSiguiente.setVisibility(View.GONE);
         rvExplorar.setVisibility(View.GONE);
         tvVacio.setVisibility(View.GONE);
+        contenedorError.setVisibility(View.GONE);
+        tvSinConexion.setVisibility(View.GONE);
     }
 
     private void mostrarLista(List<PublicacionResumen> lista) {
         progressBar.setVisibility(View.GONE);
+        contenedorError.setVisibility(View.GONE);
         adapter.actualizarLista(lista);
         tvVacio.setText(esCatalogoGeneral()
-                ? "No hay publicaciones para mostrar"
-                : "No hay resultados para esta busqueda");
+                ? "Todavía no hay publicaciones."
+                : "No encontramos publicaciones con esos criterios.");
         tvVacio.setVisibility(lista.isEmpty() ? View.VISIBLE : View.GONE);
         rvExplorar.setVisibility(lista.isEmpty() ? View.GONE : View.VISIBLE);
+    }
+
+    private void mostrarErrorConsulta() {
+        tvSinConexion.setVisibility(View.GONE);
+        progressBar.setVisibility(View.GONE);
+        progressBarSiguiente.setVisibility(View.GONE);
+        rvExplorar.setVisibility(View.GONE);
+        tvVacio.setVisibility(View.GONE);
+        contenedorError.setVisibility(View.VISIBLE);
+        cargandoInicial = false;
+        cargandoSiguiente = false;
     }
 
     private void finalizarCarga(boolean esInicial) {
