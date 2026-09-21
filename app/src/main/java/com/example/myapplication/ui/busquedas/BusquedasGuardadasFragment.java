@@ -10,6 +10,7 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.navigation.Navigation;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -17,6 +18,7 @@ import com.example.myapplication.R;
 import com.example.myapplication.model.BusquedaGuardadaResponseDto;
 import com.example.myapplication.network.ApiService;
 import com.example.myapplication.network.RetrofitClient;
+import com.example.myapplication.ui.explorar.ExplorarFragment;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -55,7 +57,7 @@ public class BusquedasGuardadasFragment extends Fragment {
         contenedorError = view.findViewById(R.id.contenedorError);
 
         rvBusquedasGuardadas.setLayoutManager(new LinearLayoutManager(requireContext()));
-        adapter = new BusquedasGuardadasAdapter(new ArrayList<>());
+        adapter = new BusquedasGuardadasAdapter(new ArrayList<>(), this::aplicarBusquedaGuardada);
         rvBusquedasGuardadas.setAdapter(adapter);
 
         view.findViewById(R.id.btnReintentar).setOnClickListener(v -> cargarBusquedas(true));
@@ -74,6 +76,38 @@ public class BusquedasGuardadasFragment extends Fragment {
             llamadaEnCurso = null;
         }
         super.onDestroyView();
+    }
+
+    private void aplicarBusquedaGuardada(BusquedaGuardadaResponseDto busqueda) {
+        apiService.marcarBusquedaRevisada(busqueda.id).enqueue(new Callback<Void>() {
+            @Override
+            public void onResponse(@NonNull Call<Void> call, @NonNull Response<Void> response) {
+                // Si falla, igual reaplicamos la búsqueda en Explorar.
+            }
+
+            @Override
+            public void onFailure(@NonNull Call<Void> call, @NonNull Throwable t) {
+                // Igual: el PATCH no debe bloquear la navegación.
+            }
+        });
+
+        Bundle args = new Bundle();
+        args.putBoolean(ExplorarFragment.ARG_APLICAR_BUSQUEDA, true);
+        args.putString(ExplorarFragment.ARG_QUERY, busqueda.query);
+        if (busqueda.categoriaId != null) {
+            args.putLong(ExplorarFragment.ARG_CATEGORIA_ID, busqueda.categoriaId);
+        }
+        if (busqueda.precioMin != null) {
+            args.putDouble(ExplorarFragment.ARG_PRECIO_MIN, busqueda.precioMin);
+        }
+        if (busqueda.precioMax != null) {
+            args.putDouble(ExplorarFragment.ARG_PRECIO_MAX, busqueda.precioMax);
+        }
+        args.putString(ExplorarFragment.ARG_ESTADO_ARTICULO, busqueda.estadoArticulo);
+        args.putString(ExplorarFragment.ARG_ZONA, busqueda.zona);
+
+        Navigation.findNavController(requireView())
+                .navigate(R.id.action_busquedasGuardadasFragment_to_explorarFragment, args);
     }
 
     private void cargarBusquedas(boolean mostrarProgress) {

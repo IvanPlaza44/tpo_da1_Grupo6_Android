@@ -68,7 +68,13 @@
         android:id="@+id/busquedasGuardadasFragment"
         android:name="com.example.myapplication.ui.busquedas.BusquedasGuardadasFragment"
         android:label="Búsquedas guardadas"
-        tools:layout="@layout/fragment_busquedas_guardadas" />
+        tools:layout="@layout/fragment_busquedas_guardadas">
+
+        <action
+            android:id="@+id/action_busquedasGuardadasFragment_to_explorarFragment"
+            app:destination="@id/explorarFragment" />
+
+    </fragment>
 
     <fragment
         android:id="@+id/publicacionDetalleFragment"

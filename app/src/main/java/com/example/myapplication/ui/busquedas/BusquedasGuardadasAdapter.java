@@ -16,10 +16,16 @@ import java.util.List;
 
 public class BusquedasGuardadasAdapter extends RecyclerView.Adapter<BusquedasGuardadasAdapter.ViewHolder> {
 
-    private List<BusquedaGuardadaResponseDto> lista;
+    public interface OnItemClickListener {
+        void onClick(BusquedaGuardadaResponseDto busqueda);
+    }
 
-    public BusquedasGuardadasAdapter(List<BusquedaGuardadaResponseDto> lista) {
+    private List<BusquedaGuardadaResponseDto> lista;
+    private final OnItemClickListener listener;
+
+    public BusquedasGuardadasAdapter(List<BusquedaGuardadaResponseDto> lista, OnItemClickListener listener) {
         this.lista = lista != null ? lista : new ArrayList<>();
+        this.listener = listener;
     }
 
     public void actualizarLista(List<BusquedaGuardadaResponseDto> nueva) {
@@ -40,6 +46,7 @@ public class BusquedasGuardadasAdapter extends RecyclerView.Adapter<BusquedasGua
         BusquedaGuardadaResponseDto item = lista.get(position);
         holder.tvNombre.setText(item.nombre != null ? item.nombre : "(sin nombre)");
         holder.tvHayNovedades.setVisibility(item.hayNovedades ? View.VISIBLE : View.GONE);
+        holder.itemView.setOnClickListener(v -> listener.onClick(item));
     }
 
     @Override
