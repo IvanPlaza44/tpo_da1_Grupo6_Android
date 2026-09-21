@@ -49,6 +49,18 @@
     </fragment>
 
     <fragment
+        android:id="@+id/favoritosFragment"
+        android:name="com.example.myapplication.ui.favoritos.FavoritosFragment"
+        android:label="Favoritos"
+        tools:layout="@layout/fragment_favoritos">
+
+        <action
+            android:id="@+id/action_favoritosFragment_to_publicacionDetalleFragment"
+            app:destination="@id/publicacionDetalleFragment" />
+
+    </fragment>
+
+    <fragment
         android:id="@+id/publicacionDetalleFragment"
         android:name="com.example.myapplication.ui.detail.PublicacionDetalleFragment"
         android:label="Detalle"
