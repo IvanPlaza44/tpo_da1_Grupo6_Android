@@ -9,6 +9,7 @@ import com.example.myapplication.model.EmailRequest;
 import com.example.myapplication.model.LoginRequest;
 import com.example.myapplication.model.Publicacion.PublicacionDetalle;
 import com.example.myapplication.model.Publicacion.PublicacionRequest;
+import com.example.myapplication.model.Publicacion.FavoritoResponseDto;
 import com.example.myapplication.model.Publicacion.PublicacionResumen;
 import com.example.myapplication.model.Usuario;
 import com.example.myapplication.model.UsuarioUpdateRequest;
@@ -25,6 +26,7 @@ import retrofit2.http.Query;
 
 import retrofit2.Call;
 import retrofit2.http.Body;
+import retrofit2.http.DELETE;
 import retrofit2.http.GET;
 import retrofit2.http.POST;
 import retrofit2.http.PUT;
@@ -173,4 +175,15 @@ public interface ApiService {
 
     @PUT("api/ofertas/{ofertaId}/rechazar")
     Call<Void> rechazarOferta(@Path("ofertaId") long ofertaId);
+
+    // ---------- FAVORITOS ----------
+
+    @GET("api/favoritos")
+    Call<List<FavoritoResponseDto>> listarFavoritos();
+
+    @POST("api/favoritos/{publicacionId}")
+    Call<Void> agregarFavorito(@Path("publicacionId") long publicacionId);
+
+    @DELETE("api/favoritos/{publicacionId}")
+    Call<Void> quitarFavorito(@Path("publicacionId") long publicacionId);
 }
