@@ -15,6 +15,11 @@
         <action
             android:id="@+id/action_profile_to_editProfile"
             app:destination="@id/editProfileFragment" />
+
+        <action
+            android:id="@+id/action_profile_to_historial"
+            app:destination="@id/historialFragment" />
+
     </fragment>
 
     <!-- EditProfileFragment: formulario de edición -->
@@ -33,5 +38,10 @@
             android:name="userId"
             app:argType="long" />
     </fragment>
+
+    <fragment
+        android:id="@+id/historialFragment"
+        android:name="com.example.myapplication.ui.historial.HistorialFragment"
+        android:label="Historial y calificaciones" />
 
 </navigation>
