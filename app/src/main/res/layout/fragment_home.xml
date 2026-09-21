@@ -60,6 +60,13 @@
             android:text="Favoritos" />
 
         <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnBusquedasGuardadas"
+            style="@style/Widget.Material3.Button.TextButton"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Búsquedas guardadas" />
+
+        <com.google.android.material.button.MaterialButton
             android:id="@+id/btnPerfil"
             style="@style/Widget.Material3.Button.TextButton"
             android:layout_width="match_parent"

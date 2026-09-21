@@ -46,6 +46,9 @@ public class HomeFragment extends Fragment {
         view.findViewById(R.id.btnFavoritos).setOnClickListener(v ->
                 Navigation.findNavController(v).navigate(R.id.action_homeFragment_to_favoritosFragment));
 
+        view.findViewById(R.id.btnBusquedasGuardadas).setOnClickListener(v ->
+                Navigation.findNavController(v).navigate(R.id.action_homeFragment_to_busquedasGuardadasFragment));
+
         view.findViewById(R.id.btnPerfil).setOnClickListener(v ->
                 Navigation.findNavController(v).navigate(R.id.action_homeFragment_to_profileFragment));
     }
