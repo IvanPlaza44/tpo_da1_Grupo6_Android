@@ -14,7 +14,10 @@ import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
 public class RetrofitClient {
-    private static final String BASE_URL = "http://10.0.2.2:8080/";
+
+    // Físico por USB con "adb reverse tcp:8080 tcp:8080": localhost
+    // Emulador (AVD): 10.0.2.2
+    private static final String BASE_URL = "http://localhost:8080/";
 
     private static Retrofit retrofit;
 
