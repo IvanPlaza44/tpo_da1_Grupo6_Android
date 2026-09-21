@@ -7,6 +7,7 @@ import com.example.myapplication.model.Publicacion.CategoriaDto;
 import com.example.myapplication.model.AuthResponse;
 import com.example.myapplication.model.EmailRequest;
 import com.example.myapplication.model.LoginRequest;
+import com.example.myapplication.model.PublicacionDetalleDto; // Asegurate de que esta importación exista
 import com.example.myapplication.model.Publicacion.PublicacionDetalle;
 import com.example.myapplication.model.Publicacion.PublicacionRequest;
 import com.example.myapplication.model.Publicacion.FavoritoResponseDto;
@@ -23,12 +24,14 @@ import java.util.List;
 import com.example.myapplication.model.OtpVerifyRequest;
 import com.example.myapplication.model.Publicacion.PaginaDto;
 import retrofit2.http.Query;
+import com.example.myapplication.model.AuthResponse;
 
 import retrofit2.Call;
 import retrofit2.http.Body;
 import retrofit2.http.DELETE;
 import retrofit2.http.GET;
 import retrofit2.http.POST;
+import retrofit2.http.Path;
 import retrofit2.http.PUT;
 import retrofit2.http.Path;
 import okhttp3.MultipartBody;
@@ -45,6 +48,12 @@ import retrofit2.http.PATCH;
  */
 public interface ApiService {
 
+    @POST("api/auth/login")
+    Call<AuthResponse> login(@Body LoginRequest body);
+
+    // Nuevo endpoint para traer el detalle y la zona de entrega
+    @GET("api/publicaciones/{id}")
+    Call<PublicacionDetalleDto> getDetallePublicacion(@Path("id") Long id);
     @GET("api/publicaciones")
     Call<PaginaDto<PublicacionResumen>> explorar(
             @Query("pagina") int pagina,
@@ -82,9 +91,6 @@ public interface ApiService {
 
     @POST("api/auth/otp/verificar")
     Call<AuthResponse> verificarOtp(@Body OtpVerifyRequest body);
-
-    @POST("api/auth/login")
-    Call<AuthResponse> login(@Body LoginRequest body);
 
     @POST("api/auth/registro")
     Call<Void> registrar(@Body LoginRequest request);
