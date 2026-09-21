@@ -54,6 +54,7 @@ public class ProfileFragment extends Fragment {
     private TextView tvOperaciones;
     private Button btnEditar;
     private Button btnHistorial;
+    private Button btnMisOfertas;
     private SwitchMaterial switchBiometria;
     private Button btnCerrarSesion;
     private ApiService apiService;
@@ -85,6 +86,7 @@ public class ProfileFragment extends Fragment {
         btnHistorial = view.findViewById(R.id.btnHistorial);
         switchBiometria = view.findViewById(R.id.switchBiometria);
         btnCerrarSesion = view.findViewById(R.id.btnCerrarSesion);
+        btnMisOfertas = view.findViewById(R.id.btnMisOfertas);
 
         sessionManager = new SessionManager(requireContext());
 
@@ -103,6 +105,10 @@ public class ProfileFragment extends Fragment {
 
         btnHistorial.setOnClickListener(v ->
                 Navigation.findNavController(view).navigate(R.id.action_profile_to_historial)
+        );
+
+        btnMisOfertas.setOnClickListener(v ->
+                Navigation.findNavController(view).navigate(R.id.action_profile_to_misOfertas)
         );
 
         switchBiometria.setChecked(sessionManager.isBiometriaActivada());
@@ -203,5 +209,6 @@ public class ProfileFragment extends Fragment {
         btnHistorial = null;
         switchBiometria = null;
         btnCerrarSesion = null;
+        btnMisOfertas = null;
     }
 }
