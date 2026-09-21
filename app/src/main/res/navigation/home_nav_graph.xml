@@ -65,6 +65,12 @@
     </fragment>
 
     <fragment
+        android:id="@+id/busquedasGuardadasFragment"
+        android:name="com.example.myapplication.ui.busquedas.BusquedasGuardadasFragment"
+        android:label="Búsquedas guardadas"
+        tools:layout="@layout/fragment_busquedas_guardadas" />
+
+    <fragment
         android:id="@+id/publicacionDetalleFragment"
         android:name="com.example.myapplication.ui.detail.PublicacionDetalleFragment"
         android:label="Detalle"
