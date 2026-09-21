@@ -24,6 +24,10 @@
             app:destination="@id/explorarFragment" />
 
         <action
+            android:id="@+id/action_homeFragment_to_favoritosFragment"
+            app:destination="@id/favoritosFragment" />
+
+        <action
             android:id="@+id/action_homeFragment_to_profileFragment"
             app:destination="@id/profile_nav_graph" />
 
