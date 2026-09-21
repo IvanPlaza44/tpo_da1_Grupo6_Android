@@ -1,5 +1,7 @@
 package com.example.myapplication.ui.detail;
 
+import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -60,6 +62,7 @@ public class PublicacionDetalleFragment extends Fragment {
     private LinearLayout seccionOfertasRecibidas;
     private TextView tvSinOfertas;
     private RecyclerView rvOfertas;
+    private String zonaDeEntregaGuardada = ""; // Para guardar la zona
 
     public static PublicacionDetalleFragment newInstance(long publicacionId) {
         PublicacionDetalleFragment fragment = new PublicacionDetalleFragment();
@@ -152,6 +155,7 @@ public class PublicacionDetalleFragment extends Fragment {
 
     private void mostrarDetalle(PublicacionDetalle dto) {
         esPropia = dto.esPropia;
+        zonaDeEntregaGuardada = dto.zonaEntrega; // Guardamos la zona para el mapa
 
         tvTitulo.setText(dto.titulo);
         tvPrecio.setText(String.format(Locale.getDefault(), "$ %.2f", dto.precio != null ? dto.precio : 0));
@@ -181,6 +185,7 @@ public class PublicacionDetalleFragment extends Fragment {
         seccionInteresado.setVisibility(esPropia ? View.GONE : View.VISIBLE);
         tvSoyVendedor.setVisibility(esPropia ? View.VISIBLE : View.GONE);
         seccionOfertasRecibidas.setVisibility(esPropia ? View.VISIBLE : View.GONE);
+
         if (esPropia) {
             btnFavorito.setVisibility(View.GONE);
             cargarOfertas();
@@ -281,23 +286,23 @@ public class PublicacionDetalleFragment extends Fragment {
                     } else {
                         tvSinOfertas.setVisibility(View.GONE);
                         rvOfertas.setVisibility(View.VISIBLE);
+
                         rvOfertas.setAdapter(new OfertasAdapter(response.body(), new OfertasAdapter.OnAccionOfertaListener() {
                             @Override
                             public void onAceptar(OfertaResponseDto oferta) {
-                                responderOferta(oferta.id, true);
+                                responderOferta(oferta.id, true, oferta);
                             }
 
                             @Override
                             public void onRechazar(OfertaResponseDto oferta) {
-                                responderOferta(oferta.id, false);
+                                responderOferta(oferta.id, false, oferta);
                             }
                         }));
-
                     }
                 }
             }
 
-            private void responderOferta(long ofertaId, boolean aceptar) {
+            private void responderOferta(long ofertaId, boolean aceptar, OfertaResponseDto oferta) {
                 Call<Void> call = aceptar ? apiService.aceptarOferta(ofertaId) : apiService.rechazarOferta(ofertaId);
 
                 call.enqueue(new Callback<Void>() {
@@ -309,6 +314,12 @@ public class PublicacionDetalleFragment extends Fragment {
                                     aceptar ? "Oferta aceptada" : "Oferta rechazada",
                                     Toast.LENGTH_SHORT).show();
                             cargarOfertas();
+
+                            // Si se acepta la oferta con éxito, se intenta abrir el mapa.
+                            if(aceptar){
+                                abrirMapaDeEntrega();
+                            }
+
                         } else {
                             Toast.makeText(requireContext(), "No se pudo actualizar la oferta", Toast.LENGTH_SHORT).show();
                         }
@@ -328,6 +339,7 @@ public class PublicacionDetalleFragment extends Fragment {
             }
         });
     }
+
     private void cargarPreguntas() {
         apiService.listarPreguntas(publicacionId).enqueue(new Callback<List<PreguntaResponseDto>>() {
             @Override
@@ -435,6 +447,21 @@ public class PublicacionDetalleFragment extends Fragment {
                         Toast.makeText(requireContext(), "Sin conexión", Toast.LENGTH_SHORT).show();
                     }
                 });
+    }
+
+    private void abrirMapaDeEntrega() {
+        if (zonaDeEntregaGuardada != null && !zonaDeEntregaGuardada.trim().isEmpty()) {
+            Uri gmmIntentUri = Uri.parse("geo:0,0?q=" + Uri.encode(zonaDeEntregaGuardada));
+            Intent mapIntent = new Intent(Intent.ACTION_VIEW, gmmIntentUri);
+
+            try {
+                startActivity(mapIntent);
+            } catch (android.content.ActivityNotFoundException e) {
+                Toast.makeText(requireContext(), "No se encontró ninguna aplicación de mapas instalada", Toast.LENGTH_SHORT).show();
+            }
+        } else {
+            Toast.makeText(requireContext(), "No hay una zona de entrega definida para buscar", Toast.LENGTH_SHORT).show();
+        }
     }
 
     private void mostrarCargando() {
