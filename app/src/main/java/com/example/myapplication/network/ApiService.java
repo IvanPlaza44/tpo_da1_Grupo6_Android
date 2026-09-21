@@ -167,4 +167,10 @@ public interface ApiService {
 
     @GET("api/usuarios/{id}")
     Call<PerfilPublicoResponseDto> obtenerPerfilPublico(@Path("id") long id);
+
+    @PUT("api/ofertas/{ofertaId}/aceptar")
+    Call<Void> aceptarOferta(@Path("ofertaId") long ofertaId);
+
+    @PUT("api/ofertas/{ofertaId}/rechazar")
+    Call<Void> rechazarOferta(@Path("ofertaId") long ofertaId);
 }

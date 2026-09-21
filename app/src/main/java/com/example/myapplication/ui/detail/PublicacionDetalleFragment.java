@@ -195,9 +195,45 @@ public class PublicacionDetalleFragment extends Fragment {
                     } else {
                         tvSinOfertas.setVisibility(View.GONE);
                         rvOfertas.setVisibility(View.VISIBLE);
-                        rvOfertas.setAdapter(new OfertasAdapter(response.body()));
+                        rvOfertas.setAdapter(new OfertasAdapter(response.body(), new OfertasAdapter.OnAccionOfertaListener() {
+                            @Override
+                            public void onAceptar(OfertaResponseDto oferta) {
+                                responderOferta(oferta.id, true);
+                            }
+
+                            @Override
+                            public void onRechazar(OfertaResponseDto oferta) {
+                                responderOferta(oferta.id, false);
+                            }
+                        }));
+
                     }
                 }
+            }
+
+            private void responderOferta(long ofertaId, boolean aceptar) {
+                Call<Void> call = aceptar ? apiService.aceptarOferta(ofertaId) : apiService.rechazarOferta(ofertaId);
+
+                call.enqueue(new Callback<Void>() {
+                    @Override
+                    public void onResponse(@NonNull Call<Void> call, @NonNull Response<Void> response) {
+                        if (!isAdded()) return;
+                        if (response.isSuccessful()) {
+                            Toast.makeText(requireContext(),
+                                    aceptar ? "Oferta aceptada" : "Oferta rechazada",
+                                    Toast.LENGTH_SHORT).show();
+                            cargarOfertas();
+                        } else {
+                            Toast.makeText(requireContext(), "No se pudo actualizar la oferta", Toast.LENGTH_SHORT).show();
+                        }
+                    }
+
+                    @Override
+                    public void onFailure(@NonNull Call<Void> call, @NonNull Throwable t) {
+                        if (!isAdded()) return;
+                        Toast.makeText(requireContext(), "Sin conexión", Toast.LENGTH_SHORT).show();
+                    }
+                });
             }
 
             @Override

@@ -3,6 +3,8 @@ package com.example.myapplication.ui.detail;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -16,10 +18,17 @@ import java.util.Locale;
 
 public class OfertasAdapter extends RecyclerView.Adapter<OfertasAdapter.OfertaViewHolder> {
 
-    private final List<OfertaResponseDto> ofertas;
+    public interface OnAccionOfertaListener {
+        void onAceptar(OfertaResponseDto oferta);
+        void onRechazar(OfertaResponseDto oferta);
+    }
 
-    public OfertasAdapter(List<OfertaResponseDto> ofertas) {
+    private final List<OfertaResponseDto> ofertas;
+    private final OnAccionOfertaListener listener;
+
+    public OfertasAdapter(List<OfertaResponseDto> ofertas, OnAccionOfertaListener listener) {
         this.ofertas = ofertas;
+        this.listener = listener;
     }
 
     @NonNull
@@ -44,6 +53,14 @@ public class OfertasAdapter extends RecyclerView.Adapter<OfertasAdapter.OfertaVi
         } else {
             holder.tvMensaje.setVisibility(View.GONE);
         }
+
+        boolean esPendiente = "PENDIENTE".equals(oferta.estado);
+        holder.layoutAcciones.setVisibility(esPendiente ? View.VISIBLE : View.GONE);
+
+        if (esPendiente) {
+            holder.btnAceptar.setOnClickListener(v -> listener.onAceptar(oferta));
+            holder.btnRechazar.setOnClickListener(v -> listener.onRechazar(oferta));
+        }
     }
 
     @Override
@@ -53,6 +70,8 @@ public class OfertasAdapter extends RecyclerView.Adapter<OfertasAdapter.OfertaVi
 
     static class OfertaViewHolder extends RecyclerView.ViewHolder {
         TextView tvAutor, tvMonto, tvMensaje, tvEstado;
+        LinearLayout layoutAcciones;
+        Button btnAceptar, btnRechazar;
 
         OfertaViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -60,6 +79,9 @@ public class OfertasAdapter extends RecyclerView.Adapter<OfertasAdapter.OfertaVi
             tvMonto = itemView.findViewById(R.id.tvOfertaMonto);
             tvMensaje = itemView.findViewById(R.id.tvOfertaMensaje);
             tvEstado = itemView.findViewById(R.id.tvOfertaEstado);
+            layoutAcciones = itemView.findViewById(R.id.layoutAccionesOferta);
+            btnAceptar = itemView.findViewById(R.id.btnAceptarOferta);
+            btnRechazar = itemView.findViewById(R.id.btnRechazarOferta);
         }
     }
 }

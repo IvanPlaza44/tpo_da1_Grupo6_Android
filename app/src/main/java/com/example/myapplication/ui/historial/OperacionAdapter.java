@@ -46,7 +46,9 @@ public class OperacionAdapter extends RecyclerView.Adapter<OperacionAdapter.Oper
         holder.tvArticulo.setText(op.publicacionTitulo);
         holder.tvMonto.setText(String.format(Locale.getDefault(), "$ %.2f", op.montoFinal));
 
-        String contraparte = esCompra ? op.vendedorNombre : op.compradorNombre;
+        String nombre = esCompra ? op.vendedorNombre : op.compradorNombre;
+        long id = esCompra ? op.vendedorId : op.compradorId;
+        String contraparte = (nombre != null && !nombre.isEmpty()) ? nombre : "Usuario #" + id;
         holder.tvContraparte.setText((esCompra ? "Vendedor: " : "Comprador: ") + contraparte);
 
         String fecha = op.fechaEntrega != null ? op.fechaEntrega : op.fechaAcordada;
