@@ -101,6 +101,13 @@
             android:layout_height="wrap_content"
             android:textColor="@android:color/darker_gray" />
 
+        <Button
+            android:id="@+id/btnHistorial"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="24dp"
+            android:text="Historial y calificaciones" />
+
         <View
             android:layout_width="match_parent"
             android:layout_height="1dp"

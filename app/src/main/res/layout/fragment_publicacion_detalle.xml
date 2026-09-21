@@ -85,6 +85,12 @@
                 android:layout_height="wrap_content"
                 android:textStyle="bold" />
 
+            <Button
+                android:id="@+id/btnVerPerfilVendedor"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Ver perfil del vendedor" />
+
             <LinearLayout
                 android:id="@+id/seccionInteresado"
                 android:layout_width="match_parent"
@@ -143,6 +149,36 @@
 
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/rvPreguntas"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:nestedScrollingEnabled="false" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/seccionOfertasRecibidas"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:layout_marginTop="16dp"
+            android:visibility="gone">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Ofertas recibidas"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/tvSinOfertas"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Todavía no recibiste ofertas"
+                android:textColor="#757575"
+                android:visibility="gone" />
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/rvOfertas"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:nestedScrollingEnabled="false" />

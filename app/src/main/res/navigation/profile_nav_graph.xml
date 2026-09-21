@@ -17,6 +17,10 @@
             app:destination="@id/editProfileFragment" />
 
         <action
+            android:id="@+id/action_profile_to_historial"
+            app:destination="@id/historialFragment" />
+
+        <action
             android:id="@+id/action_profileFragment_to_loginFragment"
             app:destination="@id/auth_nav_graph"
             app:popUpTo="@id/home_nav_graph"
@@ -29,15 +33,12 @@
         android:name="com.example.myapplication.ui.EditProfileFragment"
         android:label="Editar perfil" />
 
-    <!-- PublicProfileFragment: perfil de OTRO usuario -->
-    <fragment
-        android:id="@+id/publicProfileFragment"
-        android:name="com.example.myapplication.ui.PublicProfileFragment"
-        android:label="Perfil público">
+    <!-- PublicProfileFragment ahora está declarado en nav_graph.xml
+         para poder abrirlo desde el detalle de la publicación. -->
 
-        <argument
-            android:name="userId"
-            app:argType="long" />
-    </fragment>
+    <fragment
+        android:id="@+id/historialFragment"
+        android:name="com.example.myapplication.ui.historial.HistorialFragment"
+        android:label="Historial y calificaciones" />
 
 </navigation>

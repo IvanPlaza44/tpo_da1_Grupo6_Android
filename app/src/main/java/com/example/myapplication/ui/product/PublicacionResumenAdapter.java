@@ -19,6 +19,7 @@ public class PublicacionResumenAdapter extends RecyclerView.Adapter<PublicacionR
     public interface OnAccionListener {
         void onPausar(PublicacionResumen p);
         void onReactivar(PublicacionResumen p);
+        void onVerDetalle(PublicacionResumen p);
     }
 
     private List<PublicacionResumen> lista;
@@ -48,6 +49,7 @@ public class PublicacionResumenAdapter extends RecyclerView.Adapter<PublicacionR
 
         holder.tvTitulo.setText(p.titulo != null ? p.titulo : "(sin titulo)");
         holder.tvPrecio.setText(p.precio != null ? "$" + p.precio : "");
+        holder.itemView.setOnClickListener(v -> listener.onVerDetalle(p));
 
         String estado = p.estado != null ? p.estado : "";
         holder.tvEstado.setText(estado);

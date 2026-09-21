@@ -16,7 +16,6 @@ import androidx.fragment.app.Fragment;
 import androidx.navigation.Navigation;
 
 import com.example.myapplication.R;
-import com.example.myapplication.model.Reputacion;
 import com.example.myapplication.model.Usuario;
 import com.example.myapplication.network.ApiService;
 import com.example.myapplication.network.RetrofitClient;
@@ -53,17 +52,16 @@ public class ProfileFragment extends Fragment {
     private TextView tvEstrellas;
     private TextView tvOperaciones;
     private Button btnEditar;
+    private Button btnHistorial;
     private SwitchMaterial switchBiometria;
     private Button btnCerrarSesion;
-
     private ApiService apiService;
     private SessionManager sessionManager;
-    private long usuarioId;
 
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
-                              @Nullable Bundle savedInstanceState) {
+                             @Nullable Bundle savedInstanceState) {
         // Solo inflamos (convertimos el XML en objetos View en memoria).
         // No tocar vistas todavía: recién existen "en papel", no las agarramos acá.
         return inflater.inflate(R.layout.fragment_profile, container, false);
@@ -83,13 +81,11 @@ public class ProfileFragment extends Fragment {
         tvEstrellas = view.findViewById(R.id.tvEstrellas);
         tvOperaciones = view.findViewById(R.id.tvOperaciones);
         btnEditar = view.findViewById(R.id.btnEditar);
+        btnHistorial = view.findViewById(R.id.btnHistorial);
         switchBiometria = view.findViewById(R.id.switchBiometria);
         btnCerrarSesion = view.findViewById(R.id.btnCerrarSesion);
 
-        // SessionManager guarda el token y el id del usuario logueado
-        // (se completó en el login, con guardarSesion()).
         sessionManager = new SessionManager(requireContext());
-        usuarioId = sessionManager.getUsuarioId();
 
         // RetrofitClient arma el cliente HTTP UNA sola vez (patrón singleton)
         // con el interceptor que agrega "Authorization: Bearer <token>"
@@ -97,12 +93,15 @@ public class ProfileFragment extends Fragment {
         apiService = RetrofitClient.getApiService(requireContext());
 
         cargarPerfil();
-        cargarReputacion();
 
         // Navegamos a la pantalla de edición usando el NavController,
         // tal como se vio en "Navegar entre Fragments" de Navigation Component.
         btnEditar.setOnClickListener(v ->
                 Navigation.findNavController(view).navigate(R.id.action_profile_to_editProfile)
+        );
+
+        btnHistorial.setOnClickListener(v ->
+                Navigation.findNavController(view).navigate(R.id.action_profile_to_historial)
         );
 
         switchBiometria.setChecked(sessionManager.isBiometriaActivada());
@@ -120,9 +119,14 @@ public class ProfileFragment extends Fragment {
         // enqueue() ejecuta la llamada en un hilo separado, de forma asíncrona.
         // NUNCA usamos execute(): eso bloquearía el Main Thread y Android
         // tiraría NetworkOnMainThreadException (Consideración 1 de la clase de Retrofit).
-        apiService.obtenerUsuario(usuarioId).enqueue(new Callback<Usuario>() {
+        //
+        // GET /api/usuarios/me devuelve el perfil propio COMPLETO: email, teléfono
+        // y también la reputación (promedio de estrellas y operaciones).
+        // GET /api/usuarios/{id} devuelve solo el perfil público de otra persona.
+        apiService.obtenerMiPerfil().enqueue(new Callback<Usuario>() {
             @Override
             public void onResponse(Call<Usuario> call, Response<Usuario> response) {
+                if (!isAdded()) return;
                 // onResponse() se llama SIEMPRE que el servidor contestó algo,
                 // pero eso no significa que salió bien: puede ser un 401 o 404.
                 // Por eso SIEMPRE validamos isSuccessful() antes de usar el body
@@ -133,7 +137,25 @@ public class ProfileFragment extends Fragment {
                     tvEmail.setText(usuario.getEmail());
                     tvTelefono.setText(usuario.getTelefono());
                     tvZona.setText(usuario.getZona());
-                    // TODO: si usan Glide/Picasso, acá cargarían usuario.getFotoUrl() en ivFotoPerfil
+
+                    // Reputación: viene en la misma respuesta.
+                    Double promedio = usuario.getPromedioEstrellas();
+                    if (promedio != null && promedio > 0) {
+                        tvEstrellas.setText(String.format("⭐ %.1f / 5", promedio));
+                    } else {
+                        // Si todavía no tiene calificaciones, mostramos un mensaje neutro
+                        // en vez de un error (no es realmente una falla).
+                        tvEstrellas.setText("Sin calificaciones todavía");
+                    }
+                    long total = usuario.getOperacionesComoComprador()
+                            + usuario.getOperacionesComoVendedor();
+                    tvOperaciones.setText(String.format(
+                            "%d operaciones (%d como comprador, %d como vendedor)",
+                            total,
+                            usuario.getOperacionesComoComprador(),
+                            usuario.getOperacionesComoVendedor()));
+                    // TODO: cargar usuario.getFotoUrl() en ivFotoPerfil cuando el backend
+                    // incluya la foto en el DTO
                 } else if (response.code() == 401) {
                     // 401 Unauthorized: el token venció o es inválido.
                     Toast.makeText(getContext(), "Tu sesión expiró, volvé a iniciar sesión", Toast.LENGTH_SHORT).show();
@@ -152,33 +174,8 @@ public class ProfileFragment extends Fragment {
                 // onFailure() se dispara cuando NO hubo respuesta del servidor:
                 // sin internet, timeout, DNS caído, etc. (error de red, no de HTTP).
                 Log.e(TAG, "Error de red: " + t.getMessage());
+                if (!isAdded()) return;
                 Toast.makeText(getContext(), "Sin conexión, intentá de nuevo", Toast.LENGTH_SHORT).show();
-            }
-        });
-    }
-
-    private void cargarReputacion() {
-        apiService.obtenerReputacion(usuarioId).enqueue(new Callback<Reputacion>() {
-            @Override
-            public void onResponse(Call<Reputacion> call, Response<Reputacion> response) {
-                if (response.isSuccessful() && response.body() != null) {
-                    Reputacion rep = response.body();
-                    tvEstrellas.setText(String.format("⭐ %.1f / 5", rep.getPromedioEstrellas()));
-                    tvOperaciones.setText(String.format(
-                            "%d operaciones (%d como comprador, %d como vendedor)",
-                            rep.getTotalOperaciones(),
-                            rep.getCantidadComoComprador(),
-                            rep.getCantidadComoVendedor()));
-                } else {
-                    // Si el usuario todavía no tiene calificaciones, mostramos un mensaje neutro
-                    // en vez de un error (no es realmente una falla).
-                    tvEstrellas.setText("Sin calificaciones todavía");
-                }
-            }
-
-            @Override
-            public void onFailure(Call<Reputacion> call, Throwable t) {
-                Log.e(TAG, "Error de red: " + t.getMessage());
             }
         });
     }
@@ -198,6 +195,7 @@ public class ProfileFragment extends Fragment {
         tvEstrellas = null;
         tvOperaciones = null;
         btnEditar = null;
+        btnHistorial = null;
         switchBiometria = null;
         btnCerrarSesion = null;
     }
