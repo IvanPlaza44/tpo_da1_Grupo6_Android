@@ -6,6 +6,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
@@ -19,6 +20,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.myapplication.R;
+import com.example.myapplication.model.Publicacion.FavoritoResponseDto;
 import com.example.myapplication.model.Publicacion.OfertaRequestDto;
 import com.example.myapplication.model.Publicacion.OfertaResponseDto;
 import com.example.myapplication.model.Publicacion.PreguntaRequestDto;
@@ -43,6 +45,8 @@ public class PublicacionDetalleFragment extends Fragment {
 
     private long publicacionId;
     private boolean esPropia = false;
+    private boolean esFavorito = false;
+    private boolean actualizandoFavorito = false;
     private ApiService apiService;
 
     private ProgressBar progressBar;
@@ -52,6 +56,7 @@ public class PublicacionDetalleFragment extends Fragment {
     private RecyclerView rvFotos, rvPreguntas;
     private EditText etPregunta, etMontoOferta;
     private Button btnPreguntar, btnOfertar, btnVerPerfilVendedor;
+    private ImageButton btnFavorito;
     private LinearLayout seccionOfertasRecibidas;
     private TextView tvSinOfertas;
     private RecyclerView rvOfertas;
@@ -104,6 +109,8 @@ public class PublicacionDetalleFragment extends Fragment {
         btnPreguntar = view.findViewById(R.id.btnPreguntar);
         btnOfertar = view.findViewById(R.id.btnOfertar);
         btnVerPerfilVendedor = view.findViewById(R.id.btnVerPerfilVendedor);
+        btnFavorito = view.findViewById(R.id.btnFavorito);
+        btnFavorito.setOnClickListener(v -> alternarFavorito());
 
         rvFotos.setLayoutManager(new LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false));
         rvPreguntas.setLayoutManager(new LinearLayoutManager(requireContext()));
@@ -175,12 +182,91 @@ public class PublicacionDetalleFragment extends Fragment {
         tvSoyVendedor.setVisibility(esPropia ? View.VISIBLE : View.GONE);
         seccionOfertasRecibidas.setVisibility(esPropia ? View.VISIBLE : View.GONE);
         if (esPropia) {
+            btnFavorito.setVisibility(View.GONE);
             cargarOfertas();
+        } else {
+            btnFavorito.setVisibility(View.VISIBLE);
+            btnFavorito.setEnabled(false);
+            esFavorito = false;
+            actualizarIconoFavorito();
+            cargarEstadoFavorito();
         }
 
         contenido.setVisibility(View.VISIBLE);
         progressBar.setVisibility(View.GONE);
         tvError.setVisibility(View.GONE);
+    }
+
+    private void cargarEstadoFavorito() {
+        apiService.listarFavoritos().enqueue(new Callback<List<FavoritoResponseDto>>() {
+            @Override
+            public void onResponse(@NonNull Call<List<FavoritoResponseDto>> call,
+                                   @NonNull Response<List<FavoritoResponseDto>> response) {
+                if (!isAdded() || esPropia) return;
+                esFavorito = false;
+                if (response.isSuccessful() && response.body() != null) {
+                    for (FavoritoResponseDto favorito : response.body()) {
+                        if (favorito.publicacion != null && favorito.publicacion.id == publicacionId) {
+                            esFavorito = true;
+                            break;
+                        }
+                    }
+                }
+                actualizarIconoFavorito();
+                btnFavorito.setEnabled(true);
+            }
+
+            @Override
+            public void onFailure(@NonNull Call<List<FavoritoResponseDto>> call, @NonNull Throwable t) {
+                if (!isAdded() || esPropia) return;
+                esFavorito = false;
+                actualizarIconoFavorito();
+                btnFavorito.setEnabled(true);
+            }
+        });
+    }
+
+    private void actualizarIconoFavorito() {
+        btnFavorito.setImageResource(esFavorito
+                ? R.drawable.ic_favorito_lleno
+                : R.drawable.ic_favorito_borde);
+        btnFavorito.setContentDescription(esFavorito
+                ? "Quitar de favoritos"
+                : "Agregar a favoritos");
+    }
+
+    private void alternarFavorito() {
+        if (esPropia || actualizandoFavorito) return;
+
+        actualizandoFavorito = true;
+        btnFavorito.setEnabled(false);
+
+        Call<Void> call = esFavorito
+                ? apiService.quitarFavorito(publicacionId)
+                : apiService.agregarFavorito(publicacionId);
+
+        call.enqueue(new Callback<Void>() {
+            @Override
+            public void onResponse(@NonNull Call<Void> call, @NonNull Response<Void> response) {
+                if (!isAdded()) return;
+                actualizandoFavorito = false;
+                btnFavorito.setEnabled(true);
+                if (response.isSuccessful()) {
+                    esFavorito = !esFavorito;
+                    actualizarIconoFavorito();
+                } else {
+                    Toast.makeText(requireContext(), "No se pudo actualizar el favorito", Toast.LENGTH_SHORT).show();
+                }
+            }
+
+            @Override
+            public void onFailure(@NonNull Call<Void> call, @NonNull Throwable t) {
+                if (!isAdded()) return;
+                actualizandoFavorito = false;
+                btnFavorito.setEnabled(true);
+                Toast.makeText(requireContext(), "No se pudo actualizar el favorito", Toast.LENGTH_SHORT).show();
+            }
+        });
     }
 
     private void cargarOfertas() {
