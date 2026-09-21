@@ -6,9 +6,11 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.Fragment;
 import androidx.navigation.Navigation;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -32,6 +34,8 @@ public class BusquedasGuardadasFragment extends Fragment {
     private ApiService apiService;
     private BusquedasGuardadasAdapter adapter;
     private Call<List<BusquedaGuardadaResponseDto>> llamadaEnCurso;
+    private Call<Void> llamadaEliminar;
+    private boolean eliminando = false;
 
     private RecyclerView rvBusquedasGuardadas;
     private ProgressBar progressBar;
@@ -57,7 +61,17 @@ public class BusquedasGuardadasFragment extends Fragment {
         contenedorError = view.findViewById(R.id.contenedorError);
 
         rvBusquedasGuardadas.setLayoutManager(new LinearLayoutManager(requireContext()));
-        adapter = new BusquedasGuardadasAdapter(new ArrayList<>(), this::aplicarBusquedaGuardada);
+        adapter = new BusquedasGuardadasAdapter(new ArrayList<>(), new BusquedasGuardadasAdapter.OnItemClickListener() {
+            @Override
+            public void onClick(BusquedaGuardadaResponseDto busqueda) {
+                aplicarBusquedaGuardada(busqueda);
+            }
+
+            @Override
+            public void onEliminar(BusquedaGuardadaResponseDto busqueda) {
+                confirmarEliminar(busqueda);
+            }
+        });
         rvBusquedasGuardadas.setAdapter(adapter);
 
         view.findViewById(R.id.btnReintentar).setOnClickListener(v -> cargarBusquedas(true));
@@ -74,6 +88,10 @@ public class BusquedasGuardadasFragment extends Fragment {
         if (llamadaEnCurso != null) {
             llamadaEnCurso.cancel();
             llamadaEnCurso = null;
+        }
+        if (llamadaEliminar != null) {
+            llamadaEliminar.cancel();
+            llamadaEliminar = null;
         }
         super.onDestroyView();
     }
@@ -108,6 +126,51 @@ public class BusquedasGuardadasFragment extends Fragment {
 
         Navigation.findNavController(requireView())
                 .navigate(R.id.action_busquedasGuardadasFragment_to_explorarFragment, args);
+    }
+
+    private void confirmarEliminar(BusquedaGuardadaResponseDto busqueda) {
+        if (eliminando) return;
+
+        new AlertDialog.Builder(requireContext())
+                .setMessage("¿Eliminar esta búsqueda guardada?")
+                .setNegativeButton("Cancelar", null)
+                .setPositiveButton("Eliminar", (dialog, which) -> eliminarBusqueda(busqueda))
+                .show();
+    }
+
+    private void eliminarBusqueda(BusquedaGuardadaResponseDto busqueda) {
+        if (eliminando) return;
+
+        eliminando = true;
+        if (llamadaEliminar != null) {
+            llamadaEliminar.cancel();
+        }
+
+        llamadaEliminar = apiService.eliminarBusquedaGuardada(busqueda.id);
+        llamadaEliminar.enqueue(new Callback<Void>() {
+            @Override
+            public void onResponse(@NonNull Call<Void> call, @NonNull Response<Void> response) {
+                if (!isAdded() || call.isCanceled()) return;
+                eliminando = false;
+                llamadaEliminar = null;
+                if (response.isSuccessful()) {
+                    adapter.eliminarPorId(busqueda.id);
+                    if (adapter.getItemCount() == 0) {
+                        mostrarVacio();
+                    }
+                } else {
+                    Toast.makeText(requireContext(), "No se pudo eliminar la búsqueda", Toast.LENGTH_SHORT).show();
+                }
+            }
+
+            @Override
+            public void onFailure(@NonNull Call<Void> call, @NonNull Throwable t) {
+                if (!isAdded() || call.isCanceled()) return;
+                eliminando = false;
+                llamadaEliminar = null;
+                Toast.makeText(requireContext(), "No se pudo eliminar la búsqueda", Toast.LENGTH_SHORT).show();
+            }
+        });
     }
 
     private void cargarBusquedas(boolean mostrarProgress) {

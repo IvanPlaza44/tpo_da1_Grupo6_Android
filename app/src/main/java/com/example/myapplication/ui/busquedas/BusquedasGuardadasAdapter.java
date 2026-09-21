@@ -3,6 +3,7 @@ package com.example.myapplication.ui.busquedas;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -18,6 +19,7 @@ public class BusquedasGuardadasAdapter extends RecyclerView.Adapter<BusquedasGua
 
     public interface OnItemClickListener {
         void onClick(BusquedaGuardadaResponseDto busqueda);
+        void onEliminar(BusquedaGuardadaResponseDto busqueda);
     }
 
     private List<BusquedaGuardadaResponseDto> lista;
@@ -31,6 +33,16 @@ public class BusquedasGuardadasAdapter extends RecyclerView.Adapter<BusquedasGua
     public void actualizarLista(List<BusquedaGuardadaResponseDto> nueva) {
         this.lista = nueva != null ? new ArrayList<>(nueva) : new ArrayList<>();
         notifyDataSetChanged();
+    }
+
+    public void eliminarPorId(long id) {
+        for (int i = 0; i < lista.size(); i++) {
+            if (lista.get(i).id == id) {
+                lista.remove(i);
+                notifyItemRemoved(i);
+                return;
+            }
+        }
     }
 
     @NonNull
@@ -47,6 +59,7 @@ public class BusquedasGuardadasAdapter extends RecyclerView.Adapter<BusquedasGua
         holder.tvNombre.setText(item.nombre != null ? item.nombre : "(sin nombre)");
         holder.tvHayNovedades.setVisibility(item.hayNovedades ? View.VISIBLE : View.GONE);
         holder.itemView.setOnClickListener(v -> listener.onClick(item));
+        holder.btnEliminar.setOnClickListener(v -> listener.onEliminar(item));
     }
 
     @Override
@@ -57,11 +70,13 @@ public class BusquedasGuardadasAdapter extends RecyclerView.Adapter<BusquedasGua
     static class ViewHolder extends RecyclerView.ViewHolder {
         TextView tvNombre;
         TextView tvHayNovedades;
+        Button btnEliminar;
 
         ViewHolder(@NonNull View itemView) {
             super(itemView);
             tvNombre = itemView.findViewById(R.id.tvNombre);
             tvHayNovedades = itemView.findViewById(R.id.tvHayNovedades);
+            btnEliminar = itemView.findViewById(R.id.btnEliminar);
         }
     }
 }
