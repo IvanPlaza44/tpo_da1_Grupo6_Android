@@ -84,6 +84,11 @@ public interface ApiService {
     @GET("api/usuarios/{id}")
     Call<Usuario> obtenerUsuario(@Path("id") long id);
 
+    // GET /api/usuarios/me -> tu perfil completo (con email y telefono).
+    // El backend te identifica por el token, por eso no lleva id.
+    @GET("api/usuarios/me")
+    Call<Usuario> obtenerMiPerfil();
+
     // PUT /api/usuarios/me -> actualiza nombre/telefono/zona del usuario logueado.
     // El backend lo identifica por el token (Authorization), por eso no lleva id.
     // @Body serializa el objeto UsuarioUpdateRequest a JSON automaticamente.

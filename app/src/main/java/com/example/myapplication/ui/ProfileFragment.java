@@ -60,7 +60,7 @@ public class ProfileFragment extends Fragment {
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
-                              @Nullable Bundle savedInstanceState) {
+                             @Nullable Bundle savedInstanceState) {
         // Solo inflamos (convertimos el XML en objetos View en memoria).
         // No tocar vistas todavía: recién existen "en papel", no las agarramos acá.
         return inflater.inflate(R.layout.fragment_profile, container, false);
@@ -105,7 +105,10 @@ public class ProfileFragment extends Fragment {
         // enqueue() ejecuta la llamada en un hilo separado, de forma asíncrona.
         // NUNCA usamos execute(): eso bloquearía el Main Thread y Android
         // tiraría NetworkOnMainThreadException (Consideración 1 de la clase de Retrofit).
-        apiService.obtenerUsuario(usuarioId).enqueue(new Callback<Usuario>() {
+        //
+        // Usamos GET /api/usuarios/me (perfil propio, con email y teléfono) en vez de
+        // GET /api/usuarios/{id}, que devuelve solo el perfil público.
+        apiService.obtenerMiPerfil().enqueue(new Callback<Usuario>() {
             @Override
             public void onResponse(Call<Usuario> call, Response<Usuario> response) {
                 // onResponse() se llama SIEMPRE que el servidor contestó algo,
