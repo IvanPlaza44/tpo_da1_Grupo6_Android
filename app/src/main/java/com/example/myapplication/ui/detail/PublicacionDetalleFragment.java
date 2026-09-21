@@ -153,10 +153,13 @@ public class PublicacionDetalleFragment extends Fragment {
         tvZona.setText("Zona de entrega: " + dto.zonaEntrega);
         tvFecha.setText("Publicado: " + dto.fechaPublicacion);
 
-        String estrellas = dto.vendedorPromedioEstrellas != null
+        String nombreVendedor = dto.vendedorNombre != null && !dto.vendedorNombre.isEmpty()
+                ? dto.vendedorNombre
+                : "Vendedor sin nombre";
+        String estrellas = dto.vendedorPromedioEstrellas != null && dto.vendedorPromedioEstrellas > 0
                 ? String.format(Locale.getDefault(), "%.1f★", dto.vendedorPromedioEstrellas)
                 : "Sin calificaciones";
-        tvVendedor.setText(dto.vendedorNombre + " · " + estrellas);
+        tvVendedor.setText(nombreVendedor + " · " + estrellas);
 
         btnVerPerfilVendedor.setVisibility(dto.esPropia ? View.GONE : View.VISIBLE);
         btnVerPerfilVendedor.setOnClickListener(v -> {

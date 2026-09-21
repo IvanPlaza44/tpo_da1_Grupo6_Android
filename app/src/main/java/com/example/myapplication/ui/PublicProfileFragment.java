@@ -149,7 +149,9 @@ public class PublicProfileFragment extends Fragment {
         // Reputación (viene en la misma respuesta).
         if (perfil.promedioEstrellas > 0) {
             tvEstrellas.setText(String.format("⭐ %.1f / 5", perfil.promedioEstrellas));
-            tvOperaciones.setText(String.format("%d calificaciones", perfil.totalCalificaciones));
+            tvOperaciones.setText(perfil.totalCalificaciones == 1
+                    ? "1 calificación"
+                    : String.format("%d calificaciones", perfil.totalCalificaciones));
         } else {
             tvEstrellas.setText("Sin calificaciones todavía");
             tvOperaciones.setText("");
