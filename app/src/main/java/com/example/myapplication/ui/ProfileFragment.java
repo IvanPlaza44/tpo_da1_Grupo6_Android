@@ -16,11 +16,9 @@ import androidx.fragment.app.Fragment;
 import androidx.navigation.Navigation;
 
 import com.example.myapplication.R;
-import com.example.myapplication.model.Reputacion;
 import com.example.myapplication.model.Usuario;
 import com.example.myapplication.network.ApiService;
 import com.example.myapplication.network.RetrofitClient;
-import com.example.myapplication.session.SessionManager;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -54,8 +52,6 @@ public class ProfileFragment extends Fragment {
     private Button btnEditar;
     private Button btnHistorial;
     private ApiService apiService;
-    private SessionManager sessionManager;
-    private long usuarioId;
 
     @Nullable
     @Override
@@ -82,18 +78,12 @@ public class ProfileFragment extends Fragment {
         btnEditar = view.findViewById(R.id.btnEditar);
         btnHistorial = view.findViewById(R.id.btnHistorial);
 
-        // SessionManager guarda el token y el id del usuario logueado
-        // (se completó en el login, con guardarSesion()).
-        sessionManager = new SessionManager(requireContext());
-        usuarioId = sessionManager.getUsuarioId();
-
         // RetrofitClient arma el cliente HTTP UNA sola vez (patrón singleton)
         // con el interceptor que agrega "Authorization: Bearer <token>"
         // automáticamente en cada request (visto en la clase de JWT).
         apiService = RetrofitClient.getApiService(requireContext());
 
         cargarPerfil();
-        cargarReputacion();
 
         // Navegamos a la pantalla de edición usando el NavController,
         // tal como se vio en "Navegar entre Fragments" de Navigation Component.
@@ -111,8 +101,9 @@ public class ProfileFragment extends Fragment {
         // NUNCA usamos execute(): eso bloquearía el Main Thread y Android
         // tiraría NetworkOnMainThreadException (Consideración 1 de la clase de Retrofit).
         //
-        // Usamos GET /api/usuarios/me (perfil propio, con email y teléfono) en vez de
-        // GET /api/usuarios/{id}, que devuelve solo el perfil público.
+        // GET /api/usuarios/me devuelve el perfil propio COMPLETO: email, teléfono
+        // y también la reputación (promedio de estrellas y operaciones).
+        // GET /api/usuarios/{id} devuelve solo el perfil público de otra persona.
         apiService.obtenerMiPerfil().enqueue(new Callback<Usuario>() {
             @Override
             public void onResponse(Call<Usuario> call, Response<Usuario> response) {
@@ -127,7 +118,25 @@ public class ProfileFragment extends Fragment {
                     tvEmail.setText(usuario.getEmail());
                     tvTelefono.setText(usuario.getTelefono());
                     tvZona.setText(usuario.getZona());
-                    // TODO: si usan Glide/Picasso, acá cargarían usuario.getFotoUrl() en ivFotoPerfil
+
+                    // Reputación: viene en la misma respuesta.
+                    Double promedio = usuario.getPromedioEstrellas();
+                    if (promedio != null && promedio > 0) {
+                        tvEstrellas.setText(String.format("⭐ %.1f / 5", promedio));
+                    } else {
+                        // Si todavía no tiene calificaciones, mostramos un mensaje neutro
+                        // en vez de un error (no es realmente una falla).
+                        tvEstrellas.setText("Sin calificaciones todavía");
+                    }
+                    long total = usuario.getOperacionesComoComprador()
+                            + usuario.getOperacionesComoVendedor();
+                    tvOperaciones.setText(String.format(
+                            "%d operaciones (%d como comprador, %d como vendedor)",
+                            total,
+                            usuario.getOperacionesComoComprador(),
+                            usuario.getOperacionesComoVendedor()));
+                    // TODO: cargar usuario.getFotoUrl() en ivFotoPerfil cuando el backend
+                    // incluya la foto en el DTO
                 } else if (response.code() == 401) {
                     // 401 Unauthorized: el token venció o es inválido.
                     Toast.makeText(getContext(), "Tu sesión expiró, volvé a iniciar sesión", Toast.LENGTH_SHORT).show();
@@ -146,34 +155,8 @@ public class ProfileFragment extends Fragment {
                 // onFailure() se dispara cuando NO hubo respuesta del servidor:
                 // sin internet, timeout, DNS caído, etc. (error de red, no de HTTP).
                 Log.e(TAG, "Error de red: " + t.getMessage());
-                Toast.makeText(getContext(), "Sin conexión, intentá de nuevo", Toast.LENGTH_SHORT).show();
-            }
-        });
-    }
-
-    private void cargarReputacion() {
-        apiService.obtenerReputacion(usuarioId).enqueue(new Callback<Reputacion>() {
-            @Override
-            public void onResponse(Call<Reputacion> call, Response<Reputacion> response) {
                 if (!isAdded()) return;
-                if (response.isSuccessful() && response.body() != null) {
-                    Reputacion rep = response.body();
-                    tvEstrellas.setText(String.format("⭐ %.1f / 5", rep.getPromedioEstrellas()));
-                    tvOperaciones.setText(String.format(
-                            "%d operaciones (%d como comprador, %d como vendedor)",
-                            rep.getTotalOperaciones(),
-                            rep.getCantidadComoComprador(),
-                            rep.getCantidadComoVendedor()));
-                } else {
-                    // Si el usuario todavía no tiene calificaciones, mostramos un mensaje neutro
-                    // en vez de un error (no es realmente una falla).
-                    tvEstrellas.setText("Sin calificaciones todavía");
-                }
-            }
-
-            @Override
-            public void onFailure(Call<Reputacion> call, Throwable t) {
-                Log.e(TAG, "Error de red: " + t.getMessage());
+                Toast.makeText(getContext(), "Sin conexión, intentá de nuevo", Toast.LENGTH_SHORT).show();
             }
         });
     }
