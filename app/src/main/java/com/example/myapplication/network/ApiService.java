@@ -1,5 +1,8 @@
 package com.example.myapplication.network;
 
+import com.example.myapplication.model.PerfilPublicoResponseDto;
+import com.example.myapplication.model.Publicacion.OperacionResponseDto;
+import com.example.myapplication.model.Publicacion.CalificacionOperacionRequestDto;
 import com.example.myapplication.model.Publicacion.CategoriaDto;
 import com.example.myapplication.model.AuthResponse;
 import com.example.myapplication.model.EmailRequest;
@@ -142,4 +145,19 @@ public interface ApiService {
 
     @GET("api/publicaciones/{publicacionId}/ofertas")
     Call<List<OfertaResponseDto>> listarOfertas(@Path("publicacionId") long publicacionId);
+
+    @GET("api/operaciones/mias")
+    Call<List<OperacionResponseDto>> misOperaciones();
+
+    @GET("api/operaciones/{operacionId}")
+    Call<OperacionResponseDto> detalleOperacion(@Path("operacionId") long operacionId);
+
+    @POST("api/operaciones/{operacionId}/calificar")
+    Call<Void> calificarOperacion(
+            @Path("operacionId") long operacionId,
+            @Body CalificacionOperacionRequestDto body
+    );
+
+    @GET("api/usuarios/{id}")
+    Call<PerfilPublicoResponseDto> obtenerPerfilPublico(@Path("id") long id);
 }

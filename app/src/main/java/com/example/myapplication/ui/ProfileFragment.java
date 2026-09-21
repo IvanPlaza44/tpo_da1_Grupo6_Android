@@ -52,7 +52,7 @@ public class ProfileFragment extends Fragment {
     private TextView tvEstrellas;
     private TextView tvOperaciones;
     private Button btnEditar;
-
+    private Button btnHistorial;
     private ApiService apiService;
     private SessionManager sessionManager;
     private long usuarioId;
@@ -80,6 +80,7 @@ public class ProfileFragment extends Fragment {
         tvEstrellas = view.findViewById(R.id.tvEstrellas);
         tvOperaciones = view.findViewById(R.id.tvOperaciones);
         btnEditar = view.findViewById(R.id.btnEditar);
+        btnHistorial = view.findViewById(R.id.btnHistorial);
 
         // SessionManager guarda el token y el id del usuario logueado
         // (se completó en el login, con guardarSesion()).
@@ -99,6 +100,10 @@ public class ProfileFragment extends Fragment {
         btnEditar.setOnClickListener(v ->
                 Navigation.findNavController(view).navigate(R.id.action_profile_to_editProfile)
         );
+
+        btnHistorial.setOnClickListener(v ->
+                Navigation.findNavController(view).navigate(R.id.action_profile_to_historial)
+        );
     }
 
     private void cargarPerfil() {
@@ -111,6 +116,7 @@ public class ProfileFragment extends Fragment {
         apiService.obtenerMiPerfil().enqueue(new Callback<Usuario>() {
             @Override
             public void onResponse(Call<Usuario> call, Response<Usuario> response) {
+                if (!isAdded()) return;
                 // onResponse() se llama SIEMPRE que el servidor contestó algo,
                 // pero eso no significa que salió bien: puede ser un 401 o 404.
                 // Por eso SIEMPRE validamos isSuccessful() antes de usar el body
@@ -149,6 +155,7 @@ public class ProfileFragment extends Fragment {
         apiService.obtenerReputacion(usuarioId).enqueue(new Callback<Reputacion>() {
             @Override
             public void onResponse(Call<Reputacion> call, Response<Reputacion> response) {
+                if (!isAdded()) return;
                 if (response.isSuccessful() && response.body() != null) {
                     Reputacion rep = response.body();
                     tvEstrellas.setText(String.format("⭐ %.1f / 5", rep.getPromedioEstrellas()));
@@ -186,5 +193,6 @@ public class ProfileFragment extends Fragment {
         tvEstrellas = null;
         tvOperaciones = null;
         btnEditar = null;
+        btnHistorial = null;
     }
 }

@@ -15,6 +15,11 @@
         <action
             android:id="@+id/action_profile_to_editProfile"
             app:destination="@id/editProfileFragment" />
+
+        <action
+            android:id="@+id/action_profile_to_historial"
+            app:destination="@id/historialFragment" />
+
     </fragment>
 
     <!-- EditProfileFragment: formulario de edición -->
@@ -22,5 +27,13 @@
         android:id="@+id/editProfileFragment"
         android:name="com.example.myapplication.ui.EditProfileFragment"
         android:label="Editar perfil" />
+
+    <!-- PublicProfileFragment ahora está declarado en nav_graph.xml
+         para poder abrirlo desde el detalle de la publicación. -->
+
+    <fragment
+        android:id="@+id/historialFragment"
+        android:name="com.example.myapplication.ui.historial.HistorialFragment"
+        android:label="Historial y calificaciones" />
 
 </navigation>
