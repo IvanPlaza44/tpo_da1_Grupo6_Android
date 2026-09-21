@@ -185,6 +185,7 @@ public class PublicacionDetalleFragment extends Fragment {
         seccionInteresado.setVisibility(esPropia ? View.GONE : View.VISIBLE);
         tvSoyVendedor.setVisibility(esPropia ? View.VISIBLE : View.GONE);
         seccionOfertasRecibidas.setVisibility(esPropia ? View.VISIBLE : View.GONE);
+
         if (esPropia) {
             btnFavorito.setVisibility(View.GONE);
             cargarOfertas();
@@ -285,25 +286,23 @@ public class PublicacionDetalleFragment extends Fragment {
                     } else {
                         tvSinOfertas.setVisibility(View.GONE);
                         rvOfertas.setVisibility(View.VISIBLE);
-                        // Pasamos el listener para que se abra el mapa al tocar "Aceptar"
-                        rvOfertas.setAdapter(new OfertasAdapter(response.body(), oferta -> aceptarOfertaYAbrirMapa(oferta)));
+
                         rvOfertas.setAdapter(new OfertasAdapter(response.body(), new OfertasAdapter.OnAccionOfertaListener() {
                             @Override
                             public void onAceptar(OfertaResponseDto oferta) {
-                                responderOferta(oferta.id, true);
+                                responderOferta(oferta.id, true, oferta);
                             }
 
                             @Override
                             public void onRechazar(OfertaResponseDto oferta) {
-                                responderOferta(oferta.id, false);
+                                responderOferta(oferta.id, false, oferta);
                             }
                         }));
-
                     }
                 }
             }
 
-            private void responderOferta(long ofertaId, boolean aceptar) {
+            private void responderOferta(long ofertaId, boolean aceptar, OfertaResponseDto oferta) {
                 Call<Void> call = aceptar ? apiService.aceptarOferta(ofertaId) : apiService.rechazarOferta(ofertaId);
 
                 call.enqueue(new Callback<Void>() {
@@ -315,6 +314,12 @@ public class PublicacionDetalleFragment extends Fragment {
                                     aceptar ? "Oferta aceptada" : "Oferta rechazada",
                                     Toast.LENGTH_SHORT).show();
                             cargarOfertas();
+
+                            // Si se acepta la oferta con éxito, se intenta abrir el mapa.
+                            if(aceptar){
+                                abrirMapaDeEntrega();
+                            }
+
                         } else {
                             Toast.makeText(requireContext(), "No se pudo actualizar la oferta", Toast.LENGTH_SHORT).show();
                         }
@@ -444,19 +449,15 @@ public class PublicacionDetalleFragment extends Fragment {
                 });
     }
 
-    private void aceptarOfertaYAbrirMapa(OfertaResponseDto oferta) {
-        Toast.makeText(requireContext(), "Aceptando oferta de " + oferta.autorNombre, Toast.LENGTH_SHORT).show();
-
-        // Lanzamos Google Maps buscando la zona de entrega
+    private void abrirMapaDeEntrega() {
         if (zonaDeEntregaGuardada != null && !zonaDeEntregaGuardada.trim().isEmpty()) {
             Uri gmmIntentUri = Uri.parse("geo:0,0?q=" + Uri.encode(zonaDeEntregaGuardada));
             Intent mapIntent = new Intent(Intent.ACTION_VIEW, gmmIntentUri);
-            mapIntent.setPackage("com.google.android.apps.maps");
 
-            if (mapIntent.resolveActivity(requireActivity().getPackageManager()) != null) {
+            try {
                 startActivity(mapIntent);
-            } else {
-                Toast.makeText(requireContext(), "Google Maps no está instalado", Toast.LENGTH_SHORT).show();
+            } catch (android.content.ActivityNotFoundException e) {
+                Toast.makeText(requireContext(), "No se encontró ninguna aplicación de mapas instalada", Toast.LENGTH_SHORT).show();
             }
         } else {
             Toast.makeText(requireContext(), "No hay una zona de entrega definida para buscar", Toast.LENGTH_SHORT).show();
