@@ -1,5 +1,8 @@
 package com.example.myapplication.network;
 
+import com.example.myapplication.model.PerfilPublicoResponseDto;
+import com.example.myapplication.model.Publicacion.OperacionResponseDto;
+import com.example.myapplication.model.Publicacion.CalificacionOperacionRequestDto;
 import com.example.myapplication.model.Publicacion.CategoriaDto;
 import com.example.myapplication.model.AuthResponse;
 import com.example.myapplication.model.EmailRequest;
@@ -19,6 +22,8 @@ import com.example.myapplication.model.Publicacion.OfertaRequestDto;
 import com.example.myapplication.model.Publicacion.OfertaResponseDto;
 import java.util.List;
 import com.example.myapplication.model.OtpVerifyRequest;
+import com.example.myapplication.model.Publicacion.PaginaDto;
+import retrofit2.http.Query;
 
 import retrofit2.Call;
 import retrofit2.http.Body;
@@ -47,16 +52,22 @@ public interface ApiService {
     // Nuevo endpoint para traer el detalle y la zona de entrega
     @GET("api/publicaciones/{id}")
     Call<PublicacionDetalleDto> getDetallePublicacion(@Path("id") Long id);
+    @GET("api/publicaciones")
+    Call<PaginaDto<PublicacionResumen>> explorar(
+            @Query("pagina") int pagina,
+            @Query("tamanio") int tamanio
+    );
+
     @GET("api/categorias")
     Call<List<CategoriaDto>> obtenerCategorias();
 
     @GET("api/publicaciones/borrador")
     Call<PublicacionDetalle> obtenerBorrador();
 
-    @PUT("api/publicaciones/{id}")
+    @PUT("api/publicaciones/me")
     Call<PublicacionDetalle> guardarPaso(@Path("id") long publicacionId, @Body PublicacionRequest body);
 
-    @POST("api/publicaciones/{id}/publicar")
+    @POST("api/publicaciones/me/publicar")
     Call<Void> publicar(@Path("id") long publicacionId);
 
     @Multipart
@@ -85,10 +96,11 @@ public interface ApiService {
     @GET("api/usuarios/{id}")
     Call<Usuario> obtenerUsuario(@Path("id") long id);
 
-    // PUT /api/usuarios/5 -> actualiza nombre/telefono/zona.
+    // PUT /api/usuarios/me -> actualiza nombre/telefono/zona del usuario logueado.
+    // El backend lo identifica por el token (Authorization), por eso no lleva id.
     // @Body serializa el objeto UsuarioUpdateRequest a JSON automaticamente.
-    @PUT("api/usuarios/{id}")
-    Call<Usuario> actualizarUsuario(@Path("id") long id, @Body UsuarioUpdateRequest body);
+    @PUT("api/usuarios/me")
+    Call<Usuario> actualizarUsuario(@Body UsuarioUpdateRequest body);
 
     // GET /api/usuarios/5/reputacion -> trae el promedio de estrellas y operaciones.
     @GET("api/usuarios/{id}/reputacion")
@@ -137,4 +149,19 @@ public interface ApiService {
 
     @GET("api/publicaciones/{publicacionId}/ofertas")
     Call<List<OfertaResponseDto>> listarOfertas(@Path("publicacionId") long publicacionId);
+
+    @GET("api/operaciones/mias")
+    Call<List<OperacionResponseDto>> misOperaciones();
+
+    @GET("api/operaciones/{operacionId}")
+    Call<OperacionResponseDto> detalleOperacion(@Path("operacionId") long operacionId);
+
+    @POST("api/operaciones/{operacionId}/calificar")
+    Call<Void> calificarOperacion(
+            @Path("operacionId") long operacionId,
+            @Body CalificacionOperacionRequestDto body
+    );
+
+    @GET("api/usuarios/{id}")
+    Call<PerfilPublicoResponseDto> obtenerPerfilPublico(@Path("id") long id);
 }

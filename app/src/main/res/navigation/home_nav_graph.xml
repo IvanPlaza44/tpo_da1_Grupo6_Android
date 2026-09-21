@@ -25,6 +25,14 @@
             android:id="@+id/action_homeFragment_to_misPublicacionesFragment"
             app:destination="@id/misPublicacionesFragment" />
 
+        <action
+            android:id="@+id/action_homeFragment_to_explorarFragment"
+            app:destination="@id/explorarFragment" />
+
+        <action
+            android:id="@+id/action_homeFragment_to_profile_nav_graph"
+            app:destination="@id/profile_nav_graph" />
+
     </fragment>
 
 
@@ -33,5 +41,11 @@
         android:name="com.example.myapplication.ui.product.MisPublicacionesFragment"
         android:label="Mis Publicaciones"
         tools:layout="@layout/fragment_mis_publicaciones" />
+
+    <fragment
+        android:id="@+id/explorarFragment"
+        android:name="com.example.myapplication.ui.explorar.ExplorarFragment"
+        android:label="Explorar"
+        tools:layout="@layout/fragment_explorar" />
 
 </navigation>

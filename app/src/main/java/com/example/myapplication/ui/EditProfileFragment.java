@@ -78,7 +78,7 @@ public class EditProfileFragment extends Fragment {
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
-                              @Nullable Bundle savedInstanceState) {
+                             @Nullable Bundle savedInstanceState) {
         return inflater.inflate(R.layout.fragment_edit_profile, container, false);
     }
 
@@ -148,7 +148,9 @@ public class EditProfileFragment extends Fragment {
 
         UsuarioUpdateRequest body = new UsuarioUpdateRequest(nombre, telefono, zona);
 
-        apiService.actualizarUsuario(usuarioId, body).enqueue(new Callback<Usuario>() {
+        // PUT /api/usuarios/me: el backend identifica al usuario por el token,
+        // por eso ya no se manda el id.
+        apiService.actualizarUsuario(body).enqueue(new Callback<Usuario>() {
             @Override
             public void onResponse(Call<Usuario> call, Response<Usuario> response) {
                 if (response.isSuccessful()) {
