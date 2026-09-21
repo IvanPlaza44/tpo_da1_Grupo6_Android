@@ -4,7 +4,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
@@ -25,15 +24,8 @@ public class OfertasAdapter extends RecyclerView.Adapter<OfertasAdapter.OfertaVi
     }
 
     private final List<OfertaResponseDto> ofertas;
-    private final OnOfertaAceptadaListener listener;
     private final OnAccionOfertaListener listener;
 
-    // Creamos una interfaz para escuchar los clics
-    public interface OnOfertaAceptadaListener {
-        void onAceptarClick(OfertaResponseDto oferta);
-    }
-
-    public OfertasAdapter(List<OfertaResponseDto> ofertas, OnOfertaAceptadaListener listener) {
     public OfertasAdapter(List<OfertaResponseDto> ofertas, OnAccionOfertaListener listener) {
         this.ofertas = ofertas;
         this.listener = listener;
@@ -62,9 +54,6 @@ public class OfertasAdapter extends RecyclerView.Adapter<OfertasAdapter.OfertaVi
             holder.tvMensaje.setVisibility(View.GONE);
         }
 
-        // Le avisamos al Fragment que se tocó este botón
-        holder.btnAceptar.setOnClickListener(v -> listener.onAceptarClick(oferta));
-
         boolean esPendiente = "PENDIENTE".equals(oferta.estado);
         holder.layoutAcciones.setVisibility(esPendiente ? View.VISIBLE : View.GONE);
 
@@ -83,7 +72,6 @@ public class OfertasAdapter extends RecyclerView.Adapter<OfertasAdapter.OfertaVi
         TextView tvAutor, tvMonto, tvMensaje, tvEstado;
         LinearLayout layoutAcciones;
         Button btnAceptar, btnRechazar;
-        Button btnAceptar;
 
         OfertaViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -94,7 +82,6 @@ public class OfertasAdapter extends RecyclerView.Adapter<OfertasAdapter.OfertaVi
             layoutAcciones = itemView.findViewById(R.id.layoutAccionesOferta);
             btnAceptar = itemView.findViewById(R.id.btnAceptarOferta);
             btnRechazar = itemView.findViewById(R.id.btnRechazarOferta);
-            btnAceptar = itemView.findViewById(R.id.btnAceptarOferta); // Enlazamos el botón
         }
     }
 }
