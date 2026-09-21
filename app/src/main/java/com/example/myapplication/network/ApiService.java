@@ -10,6 +10,7 @@ import com.example.myapplication.model.LoginRequest;
 import com.example.myapplication.model.PublicacionDetalleDto; // Asegurate de que esta importación exista
 import com.example.myapplication.model.Publicacion.PublicacionDetalle;
 import com.example.myapplication.model.Publicacion.PublicacionRequest;
+import com.example.myapplication.model.Publicacion.FavoritoResponseDto;
 import com.example.myapplication.model.Publicacion.PublicacionResumen;
 import com.example.myapplication.model.Usuario;
 import com.example.myapplication.model.UsuarioUpdateRequest;
@@ -27,6 +28,7 @@ import com.example.myapplication.model.AuthResponse;
 
 import retrofit2.Call;
 import retrofit2.http.Body;
+import retrofit2.http.DELETE;
 import retrofit2.http.GET;
 import retrofit2.http.POST;
 import retrofit2.http.Path;
@@ -173,4 +175,21 @@ public interface ApiService {
 
     @GET("api/usuarios/{id}")
     Call<PerfilPublicoResponseDto> obtenerPerfilPublico(@Path("id") long id);
+
+    @PUT("api/ofertas/{ofertaId}/aceptar")
+    Call<Void> aceptarOferta(@Path("ofertaId") long ofertaId);
+
+    @PUT("api/ofertas/{ofertaId}/rechazar")
+    Call<Void> rechazarOferta(@Path("ofertaId") long ofertaId);
+
+    // ---------- FAVORITOS ----------
+
+    @GET("api/favoritos")
+    Call<List<FavoritoResponseDto>> listarFavoritos();
+
+    @POST("api/favoritos/{publicacionId}")
+    Call<Void> agregarFavorito(@Path("publicacionId") long publicacionId);
+
+    @DELETE("api/favoritos/{publicacionId}")
+    Call<Void> quitarFavorito(@Path("publicacionId") long publicacionId);
 }

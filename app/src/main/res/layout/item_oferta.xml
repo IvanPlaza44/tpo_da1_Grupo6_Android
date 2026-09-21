@@ -36,4 +36,26 @@
         android:layout_marginTop="8dp"
         android:text="Aceptar y Ver Ruta" />
 
+    <LinearLayout
+        android:id="@+id/layoutAccionesOferta"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_marginTop="4dp"
+        android:visibility="gone">
+
+        <Button
+            android:id="@+id/btnAceptarOferta"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="8dp"
+            android:text="Aceptar" />
+
+        <Button
+            android:id="@+id/btnRechazarOferta"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Rechazar" />
+
+    </LinearLayout>
 </LinearLayout>
