@@ -64,10 +64,13 @@ public interface ApiService {
     @GET("api/publicaciones/borrador")
     Call<PublicacionDetalle> obtenerBorrador();
 
-    @PUT("api/publicaciones/me")
+    // PUT /api/publicaciones/{id} -> guarda un paso de la carga guiada (borrador).
+    // La ruta debe contener {id}, porque el parametro usa @Path("id").
+    @PUT("api/publicaciones/{id}")
     Call<PublicacionDetalle> guardarPaso(@Path("id") long publicacionId, @Body PublicacionRequest body);
 
-    @POST("api/publicaciones/me/publicar")
+    // POST /api/publicaciones/{id}/publicar -> pasa el borrador a publicacion activa.
+    @POST("api/publicaciones/{id}/publicar")
     Call<Void> publicar(@Path("id") long publicacionId);
 
     @Multipart
@@ -106,6 +109,12 @@ public interface ApiService {
     // @Body serializa el objeto UsuarioUpdateRequest a JSON automaticamente.
     @PUT("api/usuarios/me")
     Call<Usuario> actualizarUsuario(@Body UsuarioUpdateRequest body);
+
+    // POST /api/usuarios/me/foto -> sube la foto de perfil (multipart, parte "archivo").
+    // Devolvemos Void porque despues la pantalla de Mi perfil vuelve a pedir GET /me.
+    @Multipart
+    @POST("api/usuarios/me/foto")
+    Call<Void> subirFotoPerfil(@Part MultipartBody.Part archivo);
 
     // GET /api/usuarios/5/reputacion -> trae el promedio de estrellas y operaciones.
     @GET("api/usuarios/{id}/reputacion")

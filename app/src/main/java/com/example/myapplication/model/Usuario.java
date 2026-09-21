@@ -1,5 +1,7 @@
 package com.example.myapplication.model;
 
+import com.google.gson.annotations.SerializedName;
+
 /**
  * Modelo de datos que representa a un usuario de la plataforma.
  * Gson (el conversor configurado en RetrofitClient con GsonConverterFactory)
@@ -14,7 +16,12 @@ public class Usuario {
     private String email;
     private String telefono;
     private String zona;
+
+    // El backend la llama "fotoPerfil"; se acepta también "fotoUrl".
+    // El nombre del atributo en Java no cambia, así que los getters siguen igual.
+    @SerializedName(value = "fotoPerfil", alternate = {"fotoUrl"})
     private String fotoUrl;
+
     private String fechaAlta; // se usa para mostrar "antigüedad en la plataforma"
 
     // Reputación: viene dentro de GET /api/usuarios/me (PerfilResponseDto)
