@@ -24,6 +24,8 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.myapplication.R;
 import com.example.myapplication.data.local.AppDatabase;
 import com.example.myapplication.data.local.PublicacionEntity;
+import com.example.myapplication.model.BusquedaGuardadaRequestDto;
+import com.example.myapplication.model.BusquedaGuardadaResponseDto;
 import com.example.myapplication.model.Publicacion.CategoriaDto;
 import com.example.myapplication.model.Publicacion.PaginaDto;
 import com.example.myapplication.model.Publicacion.PublicacionResumen;
@@ -73,6 +75,8 @@ public class ExplorarFragment extends Fragment {
     private boolean ignorarPrimerOrden = true;
     private final List<CategoriaDto> categorias = new ArrayList<>();
     private Call<PaginaDto<PublicacionResumen>> callEnVuelo;
+    private Call<BusquedaGuardadaResponseDto> callGuardarBusqueda;
+    private boolean guardandoBusqueda = false;
 
     // Room no permite operaciones en el hilo principal. Como el proyecto es
     // Java puro (sin coroutines), usamos el mismo patron que el demo de
@@ -106,6 +110,7 @@ public class ExplorarFragment extends Fragment {
             return false;
         });
         view.findViewById(R.id.btnFiltros).setOnClickListener(v -> mostrarDialogFiltros());
+        view.findViewById(R.id.btnGuardarBusqueda).setOnClickListener(v -> mostrarDialogGuardarBusqueda());
 
         Spinner spOrden = view.findViewById(R.id.spOrden);
         spOrden.setAdapter(new ArrayAdapter<>(requireContext(),
@@ -155,6 +160,78 @@ public class ExplorarFragment extends Fragment {
         String trimmed = texto == null ? "" : texto.trim();
         queryActual = trimmed.isEmpty() ? null : trimmed;
         cargarPaginaInicial();
+    }
+
+    private void mostrarDialogGuardarBusqueda() {
+        if (guardandoBusqueda) return;
+
+        EditText etNombre = new EditText(requireContext());
+        etNombre.setHint("Nombre de la búsqueda");
+        etNombre.setInputType(android.text.InputType.TYPE_CLASS_TEXT);
+        etNombre.setMaxLines(1);
+        int padding = (int) (16 * getResources().getDisplayMetrics().density);
+        etNombre.setPadding(padding, padding, padding, padding);
+
+        AlertDialog dialog = new AlertDialog.Builder(requireContext())
+                .setTitle("Guardar búsqueda")
+                .setView(etNombre)
+                .setNegativeButton("Cancelar", null)
+                .setPositiveButton("Guardar", null)
+                .create();
+
+        dialog.setOnShowListener(d -> dialog.getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener(v -> {
+            String nombre = etNombre.getText() != null ? etNombre.getText().toString().trim() : "";
+            if (nombre.isEmpty()) {
+                Toast.makeText(requireContext(), "Ingresá un nombre", Toast.LENGTH_SHORT).show();
+                return;
+            }
+            dialog.dismiss();
+            guardarBusquedaActual(nombre);
+        }));
+
+        dialog.show();
+    }
+
+    private void guardarBusquedaActual(String nombre) {
+        if (guardandoBusqueda) return;
+
+        guardandoBusqueda = true;
+        if (callGuardarBusqueda != null) {
+            callGuardarBusqueda.cancel();
+        }
+
+        BusquedaGuardadaRequestDto body = new BusquedaGuardadaRequestDto();
+        body.nombre = nombre;
+        body.query = queryActual;
+        body.categoriaId = categoriaId;
+        body.precioMin = precioMin;
+        body.precioMax = precioMax;
+        body.estadoArticulo = estadoArticulo;
+        body.zona = zona;
+
+        callGuardarBusqueda = RetrofitClient.getApiService(requireContext()).crearBusquedaGuardada(body);
+        callGuardarBusqueda.enqueue(new Callback<BusquedaGuardadaResponseDto>() {
+            @Override
+            public void onResponse(@NonNull Call<BusquedaGuardadaResponseDto> call,
+                                   @NonNull Response<BusquedaGuardadaResponseDto> response) {
+                if (!isAdded() || call.isCanceled()) return;
+                guardandoBusqueda = false;
+                callGuardarBusqueda = null;
+                if (response.isSuccessful()) {
+                    Toast.makeText(requireContext(), "Búsqueda guardada", Toast.LENGTH_SHORT).show();
+                } else {
+                    Toast.makeText(requireContext(), "No se pudo guardar la búsqueda", Toast.LENGTH_SHORT).show();
+                }
+            }
+
+            @Override
+            public void onFailure(@NonNull Call<BusquedaGuardadaResponseDto> call, @NonNull Throwable t) {
+                if (!isAdded() || call.isCanceled()) return;
+                guardandoBusqueda = false;
+                callGuardarBusqueda = null;
+                Toast.makeText(requireContext(), "No se pudo guardar la búsqueda", Toast.LENGTH_SHORT).show();
+            }
+        });
     }
 
     private void cargarCategorias() {
@@ -497,6 +574,9 @@ public class ExplorarFragment extends Fragment {
         super.onDestroy();
         if (callEnVuelo != null) {
             callEnVuelo.cancel();
+        }
+        if (callGuardarBusqueda != null) {
+            callGuardarBusqueda.cancel();
         }
         executor.shutdown();
     }
