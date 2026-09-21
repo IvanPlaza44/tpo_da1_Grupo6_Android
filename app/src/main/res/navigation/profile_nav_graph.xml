@@ -25,6 +25,11 @@
             app:destination="@id/auth_nav_graph"
             app:popUpTo="@id/home_nav_graph"
             app:popUpToInclusive="true" />
+
+        <action
+            android:id="@+id/action_profile_to_misOfertas"
+            app:destination="@id/misOfertasFragment" />
+
     </fragment>
 
     <!-- EditProfileFragment: formulario de edición -->
@@ -40,5 +45,7 @@
         android:id="@+id/historialFragment"
         android:name="com.example.myapplication.ui.historial.HistorialFragment"
         android:label="Historial y calificaciones" />
+
+    <fragment android:id="@+id/misOfertasFragment" android:name="com.example.myapplication.ui.ofertas.MisOfertasFragment" android:label="Mis ofertas" />
 
 </navigation>

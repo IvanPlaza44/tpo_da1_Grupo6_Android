@@ -173,4 +173,16 @@ public interface ApiService {
 
     @PUT("api/ofertas/{ofertaId}/rechazar")
     Call<Void> rechazarOferta(@Path("ofertaId") long ofertaId);
+
+    @POST("api/ofertas/{ofertaId}/contraofertar")
+    Call<OfertaResponseDto> contraofertar(
+            @Path("ofertaId") long ofertaId,
+            @Body OfertaRequestDto body
+    );
+
+    @GET("api/ofertas/recibidas")
+    Call<List<OfertaResponseDto>> misOfertasRecibidas();
+
+    @GET("api/ofertas/enviadas")
+    Call<List<OfertaResponseDto>> misOfertasEnviadas();
 }
