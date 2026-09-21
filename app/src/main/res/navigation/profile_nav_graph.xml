@@ -28,16 +28,8 @@
         android:name="com.example.myapplication.ui.EditProfileFragment"
         android:label="Editar perfil" />
 
-    <!-- PublicProfileFragment: perfil de OTRO usuario -->
-    <fragment
-        android:id="@+id/publicProfileFragment"
-        android:name="com.example.myapplication.ui.PublicProfileFragment"
-        android:label="Perfil público">
-
-        <argument
-            android:name="userId"
-            app:argType="long" />
-    </fragment>
+    <!-- PublicProfileFragment ahora está declarado en nav_graph.xml
+         para poder abrirlo desde el detalle de la publicación. -->
 
     <fragment
         android:id="@+id/historialFragment"

@@ -18,4 +18,15 @@
             app:argType="long" />
     </fragment>
 
+    <!-- PublicProfileFragment: perfil de OTRO usuario.
+         Está en el grafo principal para poder abrirlo desde el detalle. -->
+    <fragment
+        android:id="@+id/publicProfileFragment"
+        android:name="com.example.myapplication.ui.PublicProfileFragment"
+        android:label="Perfil público">
+        <argument
+            android:name="userId"
+            app:argType="long" />
+    </fragment>
+
 </navigation>

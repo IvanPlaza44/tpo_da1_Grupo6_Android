@@ -14,6 +14,7 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.navigation.Navigation;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -50,7 +51,7 @@ public class PublicacionDetalleFragment extends Fragment {
     private LinearLayout contenido, seccionInteresado;
     private RecyclerView rvFotos, rvPreguntas;
     private EditText etPregunta, etMontoOferta;
-    private Button btnPreguntar, btnOfertar;
+    private Button btnPreguntar, btnOfertar, btnVerPerfilVendedor;
     private LinearLayout seccionOfertasRecibidas;
     private TextView tvSinOfertas;
     private RecyclerView rvOfertas;
@@ -102,6 +103,7 @@ public class PublicacionDetalleFragment extends Fragment {
         etMontoOferta = view.findViewById(R.id.etMontoOferta);
         btnPreguntar = view.findViewById(R.id.btnPreguntar);
         btnOfertar = view.findViewById(R.id.btnOfertar);
+        btnVerPerfilVendedor = view.findViewById(R.id.btnVerPerfilVendedor);
 
         rvFotos.setLayoutManager(new LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false));
         rvPreguntas.setLayoutManager(new LinearLayoutManager(requireContext()));
@@ -155,6 +157,13 @@ public class PublicacionDetalleFragment extends Fragment {
                 ? String.format(Locale.getDefault(), "%.1f★", dto.vendedorPromedioEstrellas)
                 : "Sin calificaciones";
         tvVendedor.setText(dto.vendedorNombre + " · " + estrellas);
+
+        btnVerPerfilVendedor.setVisibility(dto.esPropia ? View.GONE : View.VISIBLE);
+        btnVerPerfilVendedor.setOnClickListener(v -> {
+            Bundle args = new Bundle();
+            args.putLong("userId", dto.vendedorId);
+            Navigation.findNavController(v).navigate(R.id.publicProfileFragment, args);
+        });
 
         List<String> fotos = dto.fotos != null ? dto.fotos : new ArrayList<>();
         rvFotos.setAdapter(new FotosAdapter(fotos));

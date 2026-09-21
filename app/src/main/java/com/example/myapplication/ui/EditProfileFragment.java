@@ -112,7 +112,9 @@ public class EditProfileFragment extends Fragment {
     }
 
     private void cargarDatosActuales() {
-        apiService.obtenerUsuario(usuarioId).enqueue(new Callback<Usuario>() {
+        // GET /api/usuarios/me: perfil propio con teléfono y email.
+        // (GET /api/usuarios/{id} devuelve solo el perfil público.)
+        apiService.obtenerMiPerfil().enqueue(new Callback<Usuario>() {
             @Override
             public void onResponse(Call<Usuario> call, Response<Usuario> response) {
                 if (response.isSuccessful() && response.body() != null) {
