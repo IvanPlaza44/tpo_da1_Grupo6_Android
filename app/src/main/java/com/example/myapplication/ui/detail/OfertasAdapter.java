@@ -3,6 +3,7 @@ package com.example.myapplication.ui.detail;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -17,9 +18,16 @@ import java.util.Locale;
 public class OfertasAdapter extends RecyclerView.Adapter<OfertasAdapter.OfertaViewHolder> {
 
     private final List<OfertaResponseDto> ofertas;
+    private final OnOfertaAceptadaListener listener;
 
-    public OfertasAdapter(List<OfertaResponseDto> ofertas) {
+    // Creamos una interfaz para escuchar los clics
+    public interface OnOfertaAceptadaListener {
+        void onAceptarClick(OfertaResponseDto oferta);
+    }
+
+    public OfertasAdapter(List<OfertaResponseDto> ofertas, OnOfertaAceptadaListener listener) {
         this.ofertas = ofertas;
+        this.listener = listener;
     }
 
     @NonNull
@@ -44,6 +52,9 @@ public class OfertasAdapter extends RecyclerView.Adapter<OfertasAdapter.OfertaVi
         } else {
             holder.tvMensaje.setVisibility(View.GONE);
         }
+
+        // Le avisamos al Fragment que se tocó este botón
+        holder.btnAceptar.setOnClickListener(v -> listener.onAceptarClick(oferta));
     }
 
     @Override
@@ -53,6 +64,7 @@ public class OfertasAdapter extends RecyclerView.Adapter<OfertasAdapter.OfertaVi
 
     static class OfertaViewHolder extends RecyclerView.ViewHolder {
         TextView tvAutor, tvMonto, tvMensaje, tvEstado;
+        Button btnAceptar;
 
         OfertaViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -60,6 +72,7 @@ public class OfertasAdapter extends RecyclerView.Adapter<OfertasAdapter.OfertaVi
             tvMonto = itemView.findViewById(R.id.tvOfertaMonto);
             tvMensaje = itemView.findViewById(R.id.tvOfertaMensaje);
             tvEstado = itemView.findViewById(R.id.tvOfertaEstado);
+            btnAceptar = itemView.findViewById(R.id.btnAceptarOferta); // Enlazamos el botón
         }
     }
 }

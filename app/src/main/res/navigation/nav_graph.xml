@@ -1,14 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <navigation xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/nav_graph"
-    app:startDestination="@id/mapaFragment">
-
-    <fragment
-        android:id="@+id/loginFragment"
-        android:name="com.example.myapplication.ui.LoginFragment"
-        android:label="Login"
-        tools:layout="@layout/fragment_login">
     app:startDestination="@id/auth_nav_graph">
 
     <include app:graph="@navigation/auth_nav_graph"/>

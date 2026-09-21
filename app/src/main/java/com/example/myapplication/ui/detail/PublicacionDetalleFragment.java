@@ -1,5 +1,7 @@
 package com.example.myapplication.ui.detail;
 
+import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -54,6 +56,7 @@ public class PublicacionDetalleFragment extends Fragment {
     private LinearLayout seccionOfertasRecibidas;
     private TextView tvSinOfertas;
     private RecyclerView rvOfertas;
+    private String zonaDeEntregaGuardada = ""; // Para guardar la zona
 
     public static PublicacionDetalleFragment newInstance(long publicacionId) {
         PublicacionDetalleFragment fragment = new PublicacionDetalleFragment();
@@ -143,6 +146,7 @@ public class PublicacionDetalleFragment extends Fragment {
 
     private void mostrarDetalle(PublicacionDetalle dto) {
         esPropia = dto.esPropia;
+        zonaDeEntregaGuardada = dto.zonaEntrega; // Guardamos la zona para el mapa
 
         tvTitulo.setText(dto.titulo);
         tvPrecio.setText(String.format(Locale.getDefault(), "$ %.2f", dto.precio != null ? dto.precio : 0));
@@ -183,7 +187,8 @@ public class PublicacionDetalleFragment extends Fragment {
                     } else {
                         tvSinOfertas.setVisibility(View.GONE);
                         rvOfertas.setVisibility(View.VISIBLE);
-                        rvOfertas.setAdapter(new OfertasAdapter(response.body()));
+                        // Pasamos el listener para que se abra el mapa al tocar "Aceptar"
+                        rvOfertas.setAdapter(new OfertasAdapter(response.body(), oferta -> aceptarOfertaYAbrirMapa(oferta)));
                     }
                 }
             }
@@ -194,6 +199,7 @@ public class PublicacionDetalleFragment extends Fragment {
             }
         });
     }
+
     private void cargarPreguntas() {
         apiService.listarPreguntas(publicacionId).enqueue(new Callback<List<PreguntaResponseDto>>() {
             @Override
@@ -301,6 +307,25 @@ public class PublicacionDetalleFragment extends Fragment {
                         Toast.makeText(requireContext(), "Sin conexión", Toast.LENGTH_SHORT).show();
                     }
                 });
+    }
+
+    private void aceptarOfertaYAbrirMapa(OfertaResponseDto oferta) {
+        Toast.makeText(requireContext(), "Aceptando oferta de " + oferta.autorNombre, Toast.LENGTH_SHORT).show();
+
+        // Lanzamos Google Maps buscando la zona de entrega
+        if (zonaDeEntregaGuardada != null && !zonaDeEntregaGuardada.trim().isEmpty()) {
+            Uri gmmIntentUri = Uri.parse("geo:0,0?q=" + Uri.encode(zonaDeEntregaGuardada));
+            Intent mapIntent = new Intent(Intent.ACTION_VIEW, gmmIntentUri);
+            mapIntent.setPackage("com.google.android.apps.maps");
+
+            if (mapIntent.resolveActivity(requireActivity().getPackageManager()) != null) {
+                startActivity(mapIntent);
+            } else {
+                Toast.makeText(requireContext(), "Google Maps no está instalado", Toast.LENGTH_SHORT).show();
+            }
+        } else {
+            Toast.makeText(requireContext(), "No hay una zona de entrega definida para buscar", Toast.LENGTH_SHORT).show();
+        }
     }
 
     private void mostrarCargando() {

@@ -37,9 +37,6 @@ public class ExplorarFragment extends Fragment {
     private TextView tvVacio;
     private ExplorarAdapter adapter;
 
-    // Room no permite operaciones en el hilo principal. Como el proyecto es
-    // Java puro (sin coroutines), usamos el mismo patron que el demo de
-    // Storage del profesor: un ExecutorService para todo lo que toca Room.
     private final ExecutorService executor = Executors.newSingleThreadExecutor();
 
     @Nullable
@@ -61,12 +58,6 @@ public class ExplorarFragment extends Fragment {
         adapter = new ExplorarAdapter(new ArrayList<>(), publicacion -> {
             Bundle args = new Bundle();
             args.putLong("publicacionId", publicacion.id);
-            // Navegamos directo por id de destino (sin <action> en el XML):
-            // publicacionDetalleFragment vive en product_nav_graph, un grafo
-            // distinto al de este fragment (home_nav_graph). Definir una
-            // <action> apuntando a un id interno de OTRO grafo incluido nos
-            // rompio la app antes; navegar por id directo desde codigo es la
-            // forma segura de cruzar grafos que ya validamos en este proyecto.
             Navigation.findNavController(view)
                     .navigate(R.id.publicacionDetalleFragment, args);
         });

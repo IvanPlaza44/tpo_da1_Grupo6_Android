@@ -25,7 +25,7 @@ import retrofit2.Response;
 
 public class MapaFragment extends Fragment {
 
-    private String direccionReal = ""; // Arranca vacío hasta que la API responda
+    private String direccionReal = "";
 
     @Nullable
     @Override
@@ -38,22 +38,17 @@ public class MapaFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
 
         Button btnComoLlegar = view.findViewById(R.id.btnComoLlegar);
-
-        // Deshabilitamos el botón un segundo hasta que llegue el dato de la API
         btnComoLlegar.setEnabled(false);
         btnComoLlegar.setText("Cargando ubicación...");
 
-        // Llamada a la API. Usamos el ID 1 de prueba, después esto te lo pasan por Argumentos
         Long idPublicacionPrueba = 1L;
-        ApiService apiService = RetrofitClient.getApiService();
+        ApiService apiService = RetrofitClient.getApiService(getContext());
 
         apiService.getDetallePublicacion(idPublicacionPrueba).enqueue(new Callback<PublicacionDetalleDto>() {
             @Override
-            public void onResponse(Call<PublicacionDetalleDto> call, Response<PublicacionDetalleDto> response) {
+            public void onResponse(@NonNull Call<PublicacionDetalleDto> call, @NonNull Response<PublicacionDetalleDto> response) {
                 if (response.isSuccessful() && response.body() != null) {
-                    // ¡Llegó el dato del backend de Iván!
                     direccionReal = response.body().getZonaEntrega();
-
                     btnComoLlegar.setEnabled(true);
                     btnComoLlegar.setText("Cómo llegar (Abrir Maps)");
                 } else {
@@ -62,26 +57,24 @@ public class MapaFragment extends Fragment {
             }
 
             @Override
-            public void onFailure(Call<PublicacionDetalleDto> call, Throwable t) {
+            public void onFailure(@NonNull Call<PublicacionDetalleDto> call, @NonNull Throwable t) {
                 Log.e("MapaFragment", "Fallo la red: " + t.getMessage());
                 Toast.makeText(getContext(), "Error de red", Toast.LENGTH_SHORT).show();
             }
         });
 
-        // Configuración del clic del botón
         btnComoLlegar.setOnClickListener(v -> {
-            if (direccionReal.isEmpty()) return;
+            if (direccionReal == null || direccionReal.isEmpty()) return;
 
-            // Le pasamos la dirección real (en texto o coordenadas) al intent de Google
-            Uri gmmIntentUri = Uri.parse("google.navigation:q=" + Uri.encode(direccionReal));
+            // Intent universal para abrir mapas o navegación
+            Uri gmmIntentUri = Uri.parse("geo:0,0?q=" + Uri.encode(direccionReal));
             Intent mapIntent = new Intent(Intent.ACTION_VIEW, gmmIntentUri);
-            mapIntent.setPackage("com.google.android.apps.maps");
 
-            if (mapIntent.resolveActivity(requireActivity().getPackageManager()) != null) {
+            // Eliminamos el setPackage estricto para que Android elija la app de mapas instalada
+            try {
                 startActivity(mapIntent);
-            } else {
-                Intent defaultMapIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("geo:0,0?q=" + Uri.encode(direccionReal)));
-                startActivity(defaultMapIntent);
+            } catch (Exception e) {
+                Toast.makeText(getContext(), "No se encontró una aplicación de mapas instalada", Toast.LENGTH_SHORT).show();
             }
         });
     }

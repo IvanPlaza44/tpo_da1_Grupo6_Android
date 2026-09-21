@@ -72,7 +72,6 @@ public class MisPublicacionesFragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
-        // Por si volvemos de pausar/reactivar u otra pantalla, refrescamos la lista
         if (adapter != null) cargarMisPublicaciones();
     }
 
