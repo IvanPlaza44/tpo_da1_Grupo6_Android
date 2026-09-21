@@ -5,6 +5,8 @@ import com.example.myapplication.model.Publicacion.OperacionResponseDto;
 import com.example.myapplication.model.Publicacion.CalificacionOperacionRequestDto;
 import com.example.myapplication.model.Publicacion.CategoriaDto;
 import com.example.myapplication.model.AuthResponse;
+import com.example.myapplication.model.BusquedaGuardadaRequestDto;
+import com.example.myapplication.model.BusquedaGuardadaResponseDto;
 import com.example.myapplication.model.EmailRequest;
 import com.example.myapplication.model.LoginRequest;
 import com.example.myapplication.model.Publicacion.PublicacionDetalle;
@@ -186,4 +188,18 @@ public interface ApiService {
 
     @DELETE("api/favoritos/{publicacionId}")
     Call<Void> quitarFavorito(@Path("publicacionId") long publicacionId);
+
+    // ---------- BUSQUEDAS GUARDADAS ----------
+
+    @GET("api/busquedas-guardadas")
+    Call<List<BusquedaGuardadaResponseDto>> listarBusquedasGuardadas();
+
+    @POST("api/busquedas-guardadas")
+    Call<BusquedaGuardadaResponseDto> crearBusquedaGuardada(@Body BusquedaGuardadaRequestDto body);
+
+    @DELETE("api/busquedas-guardadas/{id}")
+    Call<Void> eliminarBusquedaGuardada(@Path("id") long id);
+
+    @PATCH("api/busquedas-guardadas/{id}/revisada")
+    Call<Void> marcarBusquedaRevisada(@Path("id") long id);
 }
