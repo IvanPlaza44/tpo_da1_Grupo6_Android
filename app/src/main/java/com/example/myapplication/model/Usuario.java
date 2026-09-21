@@ -17,6 +17,11 @@ public class Usuario {
     private String fotoUrl;
     private String fechaAlta; // se usa para mostrar "antigüedad en la plataforma"
 
+    // Reputación: viene dentro de GET /api/usuarios/me (PerfilResponseDto)
+    private Double promedioEstrellas;
+    private long operacionesComoComprador;
+    private long operacionesComoVendedor;
+
     // Constructor vacío requerido por Gson para deserializar el JSON
     public Usuario() {
     }
@@ -42,4 +47,8 @@ public class Usuario {
 
     public String getFechaAlta() { return fechaAlta; }
     public void setFechaAlta(String fechaAlta) { this.fechaAlta = fechaAlta; }
+
+    public Double getPromedioEstrellas() { return promedioEstrellas; }
+    public long getOperacionesComoComprador() { return operacionesComoComprador; }
+    public long getOperacionesComoVendedor() { return operacionesComoVendedor; }
 }

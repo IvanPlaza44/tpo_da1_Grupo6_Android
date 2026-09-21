@@ -55,7 +55,14 @@ public interface ApiService {
     @GET("api/publicaciones")
     Call<PaginaDto<PublicacionResumen>> explorar(
             @Query("pagina") int pagina,
-            @Query("tamanio") int tamanio
+            @Query("tamanio") int tamanio,
+            @Query("query") String query,
+            @Query("categoriaId") Long categoriaId,
+            @Query("precioMin") Double precioMin,
+            @Query("precioMax") Double precioMax,
+            @Query("estadoArticulo") String estadoArticulo,
+            @Query("zona") String zona,
+            @Query("orden") String orden
     );
 
     @GET("api/categorias")
@@ -92,6 +99,11 @@ public interface ApiService {
     // @Path("id") reemplaza el "{id}" de la URL por el valor que le pasemos.
     @GET("api/usuarios/{id}")
     Call<Usuario> obtenerUsuario(@Path("id") long id);
+
+    // GET /api/usuarios/me -> tu perfil completo (con email y telefono).
+    // El backend te identifica por el token, por eso no lleva id.
+    @GET("api/usuarios/me")
+    Call<Usuario> obtenerMiPerfil();
 
     // PUT /api/usuarios/me -> actualiza nombre/telefono/zona del usuario logueado.
     // El backend lo identifica por el token (Authorization), por eso no lleva id.

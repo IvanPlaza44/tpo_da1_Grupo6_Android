@@ -85,6 +85,12 @@
                 android:layout_height="wrap_content"
                 android:textStyle="bold" />
 
+            <Button
+                android:id="@+id/btnVerPerfilVendedor"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Ver perfil del vendedor" />
+
             <LinearLayout
                 android:id="@+id/seccionInteresado"
                 android:layout_width="match_parent"
