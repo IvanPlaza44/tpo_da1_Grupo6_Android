@@ -21,6 +21,7 @@ import com.example.myapplication.model.Usuario;
 import com.example.myapplication.network.ApiService;
 import com.example.myapplication.network.RetrofitClient;
 import com.example.myapplication.session.SessionManager;
+import com.google.android.material.switchmaterial.SwitchMaterial;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -52,6 +53,8 @@ public class ProfileFragment extends Fragment {
     private TextView tvEstrellas;
     private TextView tvOperaciones;
     private Button btnEditar;
+    private SwitchMaterial switchBiometria;
+    private Button btnCerrarSesion;
 
     private ApiService apiService;
     private SessionManager sessionManager;
@@ -80,6 +83,8 @@ public class ProfileFragment extends Fragment {
         tvEstrellas = view.findViewById(R.id.tvEstrellas);
         tvOperaciones = view.findViewById(R.id.tvOperaciones);
         btnEditar = view.findViewById(R.id.btnEditar);
+        switchBiometria = view.findViewById(R.id.switchBiometria);
+        btnCerrarSesion = view.findViewById(R.id.btnCerrarSesion);
 
         // SessionManager guarda el token y el id del usuario logueado
         // (se completó en el login, con guardarSesion()).
@@ -99,6 +104,16 @@ public class ProfileFragment extends Fragment {
         btnEditar.setOnClickListener(v ->
                 Navigation.findNavController(view).navigate(R.id.action_profile_to_editProfile)
         );
+
+        switchBiometria.setChecked(sessionManager.isBiometriaActivada());
+        switchBiometria.setOnCheckedChangeListener((buttonView, isChecked) ->
+                sessionManager.setBiometriaActivada(isChecked));
+
+        btnCerrarSesion.setOnClickListener(v -> {
+            sessionManager.cerrarSesion();
+            Navigation.findNavController(view)
+                    .navigate(R.id.action_profileFragment_to_loginFragment);
+        });
     }
 
     private void cargarPerfil() {
@@ -183,5 +198,7 @@ public class ProfileFragment extends Fragment {
         tvEstrellas = null;
         tvOperaciones = null;
         btnEditar = null;
+        switchBiometria = null;
+        btnCerrarSesion = null;
     }
 }
