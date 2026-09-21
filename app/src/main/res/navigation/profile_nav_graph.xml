@@ -20,6 +20,11 @@
             android:id="@+id/action_profile_to_historial"
             app:destination="@id/historialFragment" />
 
+        <action
+            android:id="@+id/action_profileFragment_to_loginFragment"
+            app:destination="@id/auth_nav_graph"
+            app:popUpTo="@id/home_nav_graph"
+            app:popUpToInclusive="true" />
     </fragment>
 
     <!-- EditProfileFragment: formulario de edición -->

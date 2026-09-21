@@ -4,7 +4,6 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -14,11 +13,8 @@ import androidx.navigation.Navigation;
 
 import com.example.myapplication.R;
 import com.example.myapplication.session.SessionManager;
-import com.google.android.material.switchmaterial.SwitchMaterial;
 
 public class HomeFragment extends Fragment {
-
-    private SessionManager sessionManager;
 
     @Nullable
     @Override
@@ -32,15 +28,14 @@ public class HomeFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        sessionManager = new SessionManager(requireContext());
+        SessionManager sessionManager = new SessionManager(requireContext());
+        String email = sessionManager.getEmail();
 
-        TextView tvWelcome = view.findViewById(R.id.tvWelcome);
-        tvWelcome.setText("¡Login exitoso! Token guardado: " + sessionManager.getToken());
+        TextView tvSubtitulo = view.findViewById(R.id.tvSubtitulo);
+        tvSubtitulo.setText(email != null && !email.isEmpty() ? email : "Bienvenido");
 
-        SwitchMaterial switchBiometria = view.findViewById(R.id.switchBiometria);
-        switchBiometria.setChecked(sessionManager.isBiometriaActivada());
-        switchBiometria.setOnCheckedChangeListener((buttonView, isChecked) ->
-                sessionManager.setBiometriaActivada(isChecked));
+        view.findViewById(R.id.btnExplorar).setOnClickListener(v ->
+                Navigation.findNavController(v).navigate(R.id.action_homeFragment_to_explorarFragment));
 
         view.findViewById(R.id.btnPublicar).setOnClickListener(v ->
                 Navigation.findNavController(v).navigate(R.id.action_homeFragment_to_publicarFragment));
@@ -48,17 +43,7 @@ public class HomeFragment extends Fragment {
         view.findViewById(R.id.btnMisPublicaciones).setOnClickListener(v ->
                 Navigation.findNavController(v).navigate(R.id.action_homeFragment_to_misPublicacionesFragment));
 
-        Button btnLogout = view.findViewById(R.id.btnLogout);
-        btnLogout.setOnClickListener(v -> {
-            sessionManager.cerrarSesion();
-            Navigation.findNavController(view)
-                    .navigate(R.id.action_homeFragment_to_loginFragment);
-        });
-
-        view.findViewById(R.id.btnExplorar).setOnClickListener(v ->
-                Navigation.findNavController(v).navigate(R.id.action_homeFragment_to_explorarFragment));
-
         view.findViewById(R.id.btnPerfil).setOnClickListener(v ->
-                Navigation.findNavController(v).navigate(R.id.action_homeFragment_to_profile_nav_graph));
+                Navigation.findNavController(v).navigate(R.id.action_homeFragment_to_profileFragment));
     }
 }
