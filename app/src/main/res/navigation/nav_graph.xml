@@ -20,6 +20,10 @@
             app:argType="long" />
     </fragment>
 
+    <action
+        android:id="@+id/action_global_mapaFragment"
+        app:destination="@id/mapaFragment" />
+
     <fragment
         android:id="@+id/publicacionDetalleFragment"
         android:name="com.example.myapplication.ui.detail.PublicacionDetalleFragment"

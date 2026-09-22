@@ -21,12 +21,20 @@ public class OperacionAdapter extends RecyclerView.Adapter<OperacionAdapter.Oper
         void onCalificar(OperacionResponseDto operacion);
     }
 
+    public interface OnPuntoEncuentroListener {
+        void onPuntoEncuentro(OperacionResponseDto operacion);
+    }
+
     private final List<OperacionResponseDto> operaciones;
     private final OnCalificarListener listener;
+    private final OnPuntoEncuentroListener puntoEncuentroListener;
 
-    public OperacionAdapter(List<OperacionResponseDto> operaciones, OnCalificarListener listener) {
+    public OperacionAdapter(List<OperacionResponseDto> operaciones,
+                            OnCalificarListener listener,
+                            OnPuntoEncuentroListener puntoEncuentroListener) {
         this.operaciones = operaciones;
         this.listener = listener;
+        this.puntoEncuentroListener = puntoEncuentroListener;
     }
 
     @NonNull
@@ -54,6 +62,14 @@ public class OperacionAdapter extends RecyclerView.Adapter<OperacionAdapter.Oper
         String fecha = op.fechaEntrega != null ? op.fechaEntrega : op.fechaAcordada;
         holder.tvFecha.setText(fecha != null && fecha.length() >= 10 ? fecha.substring(0, 10) : "");
 
+        boolean pendiente = op.estado == null || "PENDIENTE_ENTREGA".equals(op.estado);
+        if (pendiente) {
+            holder.btnPuntoEncuentro.setVisibility(View.VISIBLE);
+            holder.btnPuntoEncuentro.setOnClickListener(v -> puntoEncuentroListener.onPuntoEncuentro(op));
+        } else {
+            holder.btnPuntoEncuentro.setVisibility(View.GONE);
+        }
+
         if (op.puedeCalificar) {
             holder.btnCalificar.setVisibility(View.VISIBLE);
             holder.btnCalificar.setOnClickListener(v -> listener.onCalificar(op));
@@ -69,7 +85,7 @@ public class OperacionAdapter extends RecyclerView.Adapter<OperacionAdapter.Oper
 
     static class OperacionViewHolder extends RecyclerView.ViewHolder {
         TextView tvTipo, tvArticulo, tvMonto, tvContraparte, tvFecha;
-        Button btnCalificar;
+        Button btnCalificar, btnPuntoEncuentro;
 
         OperacionViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -79,6 +95,7 @@ public class OperacionAdapter extends RecyclerView.Adapter<OperacionAdapter.Oper
             tvContraparte = itemView.findViewById(R.id.tvContraparte);
             tvFecha = itemView.findViewById(R.id.tvFecha);
             btnCalificar = itemView.findViewById(R.id.btnCalificar);
+            btnPuntoEncuentro = itemView.findViewById(R.id.btnPuntoEncuentro);
         }
     }
 }

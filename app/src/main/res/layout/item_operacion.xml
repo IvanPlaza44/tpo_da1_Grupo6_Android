@@ -53,6 +53,15 @@
             android:textAppearance="@style/TextAppearance.Ronda.Caption" />
 
         <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnPuntoEncuentro"
+            style="@style/Widget.Ronda.Button.Outlined"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/spacing_s"
+            android:text="Punto de encuentro"
+            android:visibility="gone" />
+
+        <com.google.android.material.button.MaterialButton
             android:id="@+id/btnCalificar"
             style="@style/Widget.Ronda.Button.Outlined"
             android:layout_width="wrap_content"
