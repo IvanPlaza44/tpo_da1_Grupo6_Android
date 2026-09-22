@@ -3,6 +3,7 @@ package com.example.myapplication.network;
 import com.example.myapplication.model.PerfilPublicoResponseDto;
 import com.example.myapplication.model.Publicacion.OperacionResponseDto;
 import com.example.myapplication.model.Publicacion.CalificacionOperacionRequestDto;
+import com.example.myapplication.model.Publicacion.PuntoEncuentroRequestDto;
 import com.example.myapplication.model.Publicacion.CategoriaDto;
 import com.example.myapplication.model.AuthResponse;
 import com.example.myapplication.model.BusquedaGuardadaRequestDto;
@@ -26,7 +27,6 @@ import java.util.List;
 import com.example.myapplication.model.OtpVerifyRequest;
 import com.example.myapplication.model.Publicacion.PaginaDto;
 import retrofit2.http.Query;
-import com.example.myapplication.model.AuthResponse;
 
 import retrofit2.Call;
 import retrofit2.http.Body;
@@ -35,7 +35,6 @@ import retrofit2.http.GET;
 import retrofit2.http.POST;
 import retrofit2.http.Path;
 import retrofit2.http.PUT;
-import retrofit2.http.Path;
 import okhttp3.MultipartBody;
 import retrofit2.http.Multipart;
 import retrofit2.http.Part;
@@ -172,11 +171,27 @@ public interface ApiService {
     @GET("api/publicaciones/{publicacionId}/ofertas")
     Call<List<OfertaResponseDto>> listarOfertas(@Path("publicacionId") long publicacionId);
 
+    // ---------- OPERACIONES (coordinacion de entrega y calificacion) ----------
+
     @GET("api/operaciones/mias")
     Call<List<OperacionResponseDto>> misOperaciones();
 
     @GET("api/operaciones/{operacionId}")
     Call<OperacionResponseDto> detalleOperacion(@Path("operacionId") long operacionId);
+
+    // PUT /api/operaciones/{id}/punto-encuentro -> carga o actualiza donde se van a
+    // encontrar (lat/long para el mapa). La puede cargar cualquiera de las dos partes.
+    @PUT("api/operaciones/{operacionId}/punto-encuentro")
+    Call<OperacionResponseDto> definirPuntoEncuentro(
+            @Path("operacionId") long operacionId,
+            @Body PuntoEncuentroRequestDto body
+    );
+
+    // PUT /api/operaciones/{id}/entregada -> marca la entrega como realizada.
+    // Esto es lo que dispara que la publicacion pase a VENDIDA y abre la ventana
+    // de 7 dias para calificar (puedeCalificar pasa a true recien despues de esto).
+    @PUT("api/operaciones/{operacionId}/entregada")
+    Call<Void> marcarEntregada(@Path("operacionId") long operacionId);
 
     @POST("api/operaciones/{operacionId}/calificar")
     Call<Void> calificarOperacion(
@@ -229,3 +244,4 @@ public interface ApiService {
     @PATCH("api/busquedas-guardadas/{id}/revisada")
     Call<Void> marcarBusquedaRevisada(@Path("id") long id);
 }
+ 
