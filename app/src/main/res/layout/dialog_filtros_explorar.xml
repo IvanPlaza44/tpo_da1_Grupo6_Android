@@ -90,15 +90,24 @@
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Zona"
+        android:text="@string/filter_zona_label"
         android:textAppearance="@style/TextAppearance.Ronda.Label" />
 
+    <com.google.android.material.switchmaterial.SwitchMaterial
+        android:id="@+id/switchUsarMiZona"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/spacing_s"
+        android:layout_marginBottom="@dimen/spacing_s"
+        android:text="@string/filter_usar_mi_zona" />
+
     <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/tilZonaFiltro"
         style="@style/Widget.Ronda.TextInputLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginBottom="@dimen/spacing_l"
-        android:hint="Opcional">
+        android:hint="@string/filter_zona_hint">
 
         <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/etZonaFiltro"
