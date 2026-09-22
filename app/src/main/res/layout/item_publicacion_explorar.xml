@@ -31,13 +31,34 @@
             android:layout_weight="1"
             android:orientation="vertical">
 
-            <TextView
-                android:id="@+id/tvTitulo"
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:ellipsize="end"
-                android:maxLines="2"
-                android:textAppearance="@style/TextAppearance.Ronda.Title" />
+                android:gravity="center_vertical"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:id="@+id/tvTitulo"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:ellipsize="end"
+                    android:maxLines="2"
+                    android:textAppearance="@style/TextAppearance.Ronda.Title" />
+
+                <ImageButton
+                    android:id="@+id/btnFavorito"
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:background="?attr/selectableItemBackgroundBorderless"
+                    android:contentDescription="Favorito"
+                    android:padding="@dimen/spacing_xs"
+                    android:scaleType="fitCenter"
+                    android:src="@drawable/ic_favorito_borde"
+                    android:visibility="gone"
+                    app:tint="@color/primary" />
+
+            </LinearLayout>
 
             <TextView
                 android:id="@+id/tvPrecio"
