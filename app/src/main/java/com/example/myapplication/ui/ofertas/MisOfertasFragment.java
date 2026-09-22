@@ -18,6 +18,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.myapplication.R;
+import com.example.myapplication.ui.MapaFragment;
 import com.example.myapplication.model.Publicacion.OfertaRequestDto;
 import com.example.myapplication.model.Publicacion.OfertaResponseDto;
 import com.example.myapplication.network.ApiService;
@@ -109,12 +110,12 @@ public class MisOfertasFragment extends Fragment {
                     rvMisOfertas.setAdapter(new MisOfertasAdapter(lista, esRecibidas, new MisOfertasAdapter.OnAccionListener() {
                         @Override
                         public void onAceptar(OfertaResponseDto oferta) {
-                            responder(oferta.id, true);
+                            responder(oferta, true);
                         }
 
                         @Override
                         public void onRechazar(OfertaResponseDto oferta) {
-                            responder(oferta.id, false);
+                            responder(oferta, false);
                         }
 
                         @Override
@@ -136,8 +137,8 @@ public class MisOfertasFragment extends Fragment {
         });
     }
 
-    private void responder(long ofertaId, boolean aceptar) {
-        Call<Void> call = aceptar ? apiService.aceptarOferta(ofertaId) : apiService.rechazarOferta(ofertaId);
+    private void responder(OfertaResponseDto oferta, boolean aceptar) {
+        Call<Void> call = aceptar ? apiService.aceptarOferta(oferta.id) : apiService.rechazarOferta(oferta.id);
 
         call.enqueue(new Callback<Void>() {
             @Override
@@ -148,6 +149,9 @@ public class MisOfertasFragment extends Fragment {
                             aceptar ? "Oferta aceptada" : "Oferta rechazada",
                             Toast.LENGTH_SHORT).show();
                     cargarOfertas();
+                    if (aceptar) {
+                        MapaFragment.abrirTrasAceptarOferta(MisOfertasFragment.this, apiService, oferta.publicacionId);
+                    }
                 } else {
                     Toast.makeText(requireContext(), "No se pudo actualizar la oferta", Toast.LENGTH_SHORT).show();
                 }

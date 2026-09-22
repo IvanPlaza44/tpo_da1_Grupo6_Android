@@ -21,6 +21,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.myapplication.R;
+import com.example.myapplication.ui.MapaFragment;
 import com.example.myapplication.model.Publicacion.CalificacionOperacionRequestDto;
 import com.example.myapplication.model.Publicacion.OperacionResponseDto;
 import com.example.myapplication.network.ApiService;
@@ -150,7 +151,12 @@ public class HistorialFragment extends Fragment {
 
         tvVacio.setVisibility(filtradas.isEmpty() ? View.VISIBLE : View.GONE);
         rvOperaciones.setVisibility(filtradas.isEmpty() ? View.GONE : View.VISIBLE);
-        rvOperaciones.setAdapter(new OperacionAdapter(filtradas, this::mostrarDialogoCalificar));
+        rvOperaciones.setAdapter(new OperacionAdapter(
+                filtradas, this::mostrarDialogoCalificar, this::abrirPuntoEncuentro));
+    }
+
+    private void abrirPuntoEncuentro(OperacionResponseDto operacion) {
+        MapaFragment.abrir(this, operacion.id);
     }
 
     private void mostrarDialogoCalificar(OperacionResponseDto operacion) {

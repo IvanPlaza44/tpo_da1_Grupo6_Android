@@ -14,11 +14,15 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.navigation.Navigation;
 
-import com.example.myapplication.model.PublicacionDetalleDto;
+import com.example.myapplication.R;
 import com.example.myapplication.model.Publicacion.OperacionResponseDto;
+import com.example.myapplication.model.Publicacion.PublicacionDetalle;
 import com.example.myapplication.network.ApiService;
 import com.google.android.material.button.MaterialButton;
+
+import java.util.List;
 
 import javax.inject.Inject;
 
@@ -43,16 +47,77 @@ public class MapaFragment extends Fragment {
 
     private long operacionId;
     private String direccionParaBuscar = "";
+    private Double latitud;
+    private Double longitud;
     @Inject ApiService apiService;
 
     private TextView tvArticulo, tvEstado;
     private MaterialButton btnComoLlegar, btnMarcarEntregada;
 
+    /** Abre esta pantalla desde cualquier grafo anidado (detalle, ofertas, historial). */
+    public static void abrir(Fragment fragment, long operacionId) {
+        if (!fragment.isAdded() || fragment.getView() == null || operacionId <= 0) return;
+        Bundle args = new Bundle();
+        args.putLong("operacionId", operacionId);
+        try {
+            Navigation.findNavController(fragment.requireView())
+                    .navigate(R.id.action_global_mapaFragment, args);
+        } catch (IllegalArgumentException e) {
+            Log.e(TAG, "No se pudo abrir el punto de encuentro", e);
+            Toast.makeText(fragment.requireContext(),
+                    "No se pudo abrir el punto de encuentro", Toast.LENGTH_LONG).show();
+        }
+    }
+
+    /**
+     * Aceptar una oferta no devuelve el id de la operación. Buscamos la recién
+     * creada (PENDIENTE_ENTREGA de esa publicación) y abrimos el punto de encuentro.
+     */
+    public static void abrirTrasAceptarOferta(Fragment fragment, ApiService apiService, long publicacionId) {
+        apiService.misOperaciones().enqueue(new Callback<List<OperacionResponseDto>>() {
+            @Override
+            public void onResponse(@NonNull Call<List<OperacionResponseDto>> call,
+                                   @NonNull Response<List<OperacionResponseDto>> response) {
+                if (!fragment.isAdded()) return;
+
+                OperacionResponseDto pendiente = null;
+                OperacionResponseDto cualquiera = null;
+                if (response.isSuccessful() && response.body() != null) {
+                    for (OperacionResponseDto operacion : response.body()) {
+                        if (operacion.publicacionId != publicacionId) continue;
+                        if (cualquiera == null) cualquiera = operacion;
+                        if ("PENDIENTE_ENTREGA".equals(operacion.estado)) {
+                            pendiente = operacion;
+                            break;
+                        }
+                    }
+                }
+
+                OperacionResponseDto elegida = pendiente != null ? pendiente : cualquiera;
+                if (elegida != null) {
+                    abrir(fragment, elegida.id);
+                } else {
+                    Toast.makeText(fragment.requireContext(),
+                            "La oferta se aceptó, pero no encontramos la operación para coordinar la entrega",
+                            Toast.LENGTH_LONG).show();
+                }
+            }
+
+            @Override
+            public void onFailure(@NonNull Call<List<OperacionResponseDto>> call, @NonNull Throwable t) {
+                if (!fragment.isAdded()) return;
+                Toast.makeText(fragment.requireContext(),
+                        "La oferta se aceptó, pero no se pudo abrir el mapa (sin conexión)",
+                        Toast.LENGTH_LONG).show();
+            }
+        });
+    }
+
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
-        return inflater.inflate(com.example.myapplication.R.layout.fragment_mapa, container, false);
+        return inflater.inflate(R.layout.fragment_mapa, container, false);
     }
 
     @Override
@@ -63,10 +128,10 @@ public class MapaFragment extends Fragment {
             operacionId = getArguments().getLong("operacionId");
         }
 
-        tvArticulo = view.findViewById(com.example.myapplication.R.id.tvArticulo);
-        tvEstado = view.findViewById(com.example.myapplication.R.id.tvEstado);
-        btnComoLlegar = view.findViewById(com.example.myapplication.R.id.btnComoLlegar);
-        btnMarcarEntregada = view.findViewById(com.example.myapplication.R.id.btnMarcarEntregada);
+        tvArticulo = view.findViewById(R.id.tvArticulo);
+        tvEstado = view.findViewById(R.id.tvEstado);
+        btnComoLlegar = view.findViewById(R.id.btnComoLlegar);
+        btnMarcarEntregada = view.findViewById(R.id.btnMarcarEntregada);
 
         if (operacionId <= 0) {
             tvEstado.setText("No se pudo identificar la operación.");
@@ -98,11 +163,12 @@ public class MapaFragment extends Fragment {
                         btnMarcarEntregada.setEnabled(true);
                     }
 
-                    // La operación todavía no tiene una dirección propia cargada
-                    // (eso se guarda con PUT /api/operaciones/{id}/punto-encuentro,
-                    // que hoy no tiene una pantalla para completarlo). Mientras tanto,
-                    // usamos la zona de entrega que puso el vendedor al publicar.
-                    cargarZonaDeLaPublicacion(op.publicacionId);
+                    if (tieneUbicacion(op.direccionEncuentro, op.latitudEncuentro, op.longitudEncuentro)) {
+                        aplicarUbicacion(op.direccionEncuentro, op.latitudEncuentro, op.longitudEncuentro);
+                    } else {
+                        // Todavía no cargaron lat/long. Usamos la zona de entrega de la publicación.
+                        cargarZonaDeLaPublicacion(op.publicacionId);
+                    }
                 } else {
                     tvEstado.setText("No se pudo cargar la operación (código " + response.code() + ").");
                 }
@@ -118,24 +184,23 @@ public class MapaFragment extends Fragment {
     }
 
     private void cargarZonaDeLaPublicacion(long publicacionId) {
-        apiService.getDetallePublicacion(publicacionId).enqueue(new Callback<PublicacionDetalleDto>() {
+        apiService.getDetalle(publicacionId).enqueue(new Callback<PublicacionDetalle>() {
             @Override
-            public void onResponse(@NonNull Call<PublicacionDetalleDto> call,
-                                   @NonNull Response<PublicacionDetalleDto> response) {
+            public void onResponse(@NonNull Call<PublicacionDetalle> call,
+                                   @NonNull Response<PublicacionDetalle> response) {
                 if (!isAdded()) return;
 
                 if (response.isSuccessful() && response.body() != null
-                        && response.body().getZonaEntrega() != null) {
-                    direccionParaBuscar = response.body().getZonaEntrega();
-                    btnComoLlegar.setEnabled(true);
-                    btnComoLlegar.setText("Cómo llegar (Abrir Maps)");
+                        && response.body().zonaEntrega != null
+                        && !response.body().zonaEntrega.trim().isEmpty()) {
+                    aplicarUbicacion(response.body().zonaEntrega, null, null);
                 } else {
                     btnComoLlegar.setText("Ubicación no disponible");
                 }
             }
 
             @Override
-            public void onFailure(@NonNull Call<PublicacionDetalleDto> call, @NonNull Throwable t) {
+            public void onFailure(@NonNull Call<PublicacionDetalle> call, @NonNull Throwable t) {
                 if (!isAdded()) return;
                 Log.e(TAG, "Fallo la red: " + t.getMessage());
                 btnComoLlegar.setText("Ubicación no disponible");
@@ -143,12 +208,31 @@ public class MapaFragment extends Fragment {
         });
     }
 
+    private boolean tieneUbicacion(String direccion, Double lat, Double lng) {
+        return (lat != null && lng != null) || (direccion != null && !direccion.trim().isEmpty());
+    }
+
+    private void aplicarUbicacion(String direccion, Double lat, Double lng) {
+        latitud = lat;
+        longitud = lng;
+        direccionParaBuscar = direccion != null ? direccion.trim() : "";
+        btnComoLlegar.setEnabled(true);
+        btnComoLlegar.setText("Cómo llegar (Abrir Maps)");
+    }
+
     private void abrirMapaExterno() {
-        if (direccionParaBuscar == null || direccionParaBuscar.trim().isEmpty()) return;
+        Uri uri;
+        if (latitud != null && longitud != null) {
+            uri = Uri.parse("https://www.google.com/maps/dir/?api=1&destination="
+                    + latitud + "," + longitud);
+        } else if (direccionParaBuscar != null && !direccionParaBuscar.isEmpty()) {
+            uri = Uri.parse("https://www.google.com/maps/dir/?api=1&destination="
+                    + Uri.encode(direccionParaBuscar));
+        } else {
+            return;
+        }
 
-        Uri gmmIntentUri = Uri.parse("geo:0,0?q=" + Uri.encode(direccionParaBuscar));
-        Intent mapIntent = new Intent(Intent.ACTION_VIEW, gmmIntentUri);
-
+        Intent mapIntent = new Intent(Intent.ACTION_VIEW, uri);
         try {
             startActivity(mapIntent);
         } catch (ActivityNotFoundException e) {
