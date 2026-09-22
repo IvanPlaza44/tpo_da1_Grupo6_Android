@@ -67,8 +67,9 @@ public class BusquedasGuardadasAdapter extends RecyclerView.Adapter<BusquedasGua
 
     private static void bindResumen(ViewHolder holder, BusquedaGuardadaResponseDto item) {
         List<String> partes = new ArrayList<>();
-        if (item.query != null && !item.query.trim().isEmpty()) {
-            partes.add(item.query.trim());
+        String textoBusqueda = item.queryParaExplorar();
+        if (textoBusqueda != null) {
+            partes.add(textoBusqueda);
         }
         if (item.estadoArticulo != null && !item.estadoArticulo.trim().isEmpty()) {
             partes.add(item.estadoArticulo.trim());

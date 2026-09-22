@@ -50,6 +50,26 @@
         android:label="Explorar"
         tools:layout="@layout/fragment_explorar">
 
+        <argument
+            android:name="aplicarBusquedaGuardada"
+            android:defaultValue="false"
+            app:argType="boolean" />
+        <argument
+            android:name="query"
+            android:defaultValue="@null"
+            app:argType="string"
+            app:nullable="true" />
+        <argument
+            android:name="estadoArticulo"
+            android:defaultValue="@null"
+            app:argType="string"
+            app:nullable="true" />
+        <argument
+            android:name="zona"
+            android:defaultValue="@null"
+            app:argType="string"
+            app:nullable="true" />
+
         <action
             android:id="@+id/action_explorarFragment_to_publicacionDetalleFragment"
             app:destination="@id/publicacionDetalleFragment" />

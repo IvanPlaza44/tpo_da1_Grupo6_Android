@@ -32,6 +32,7 @@ import com.example.myapplication.model.Publicacion.FavoritoResponseDto;
 import com.example.myapplication.model.Publicacion.PaginaDto;
 import com.example.myapplication.model.Publicacion.PublicacionResumen;
 import com.example.myapplication.network.ApiService;
+import com.example.myapplication.session.ExplorarCriteriosPendiente;
 import com.example.myapplication.session.SessionManager;
 
 import java.util.ArrayList;
@@ -67,6 +68,11 @@ public class ExplorarFragment extends Fragment {
     public static final String ARG_ESTADO_ARTICULO = "estadoArticulo";
     public static final String ARG_ZONA = "zona";
 
+    /** Criterios recibidos al crear el fragment; la UI se sincroniza en onViewCreated. */
+    private boolean sincronizarUiBusquedaGuardada;
+
+    private long idGeneracionCarga;
+
     @Inject ApiService apiService;
     @Inject SessionManager sessionManager;
 
@@ -96,9 +102,11 @@ public class ExplorarFragment extends Fragment {
     /** Filtro de cercanía: usa {@link #zona} obtenida de GET /me al aplicar. */
     private boolean usarMiZona = false;
     private String ordenActual = "RECIENTES";
-    // true hasta terminar el setup (y setSelection programático). Evita un
-    // segundo GET si el Spinner dispara onItemSelected al poner RECIENTES.
+    // true hasta el primer onItemSelected automático del Spinner. Ese evento
+    // no debe disparar otro GET: si corre después de leer los argumentos,
+    // cancelaría la carga que ya trae el query y los filtros.
     private boolean silenciarCambioOrden = true;
+    private boolean actualizandoBuscador = false;
     private final List<CategoriaDto> categorias = new ArrayList<>();
     private Call<PaginaDto<PublicacionResumen>> callEnVuelo;
     private Call<BusquedaGuardadaResponseDto> callGuardarBusqueda;
@@ -114,6 +122,12 @@ public class ExplorarFragment extends Fragment {
     // Java puro (sin coroutines), usamos el mismo patron que el demo de
     // Storage del profesor: un ExecutorService para todo lo que toca Room.
     private final ExecutorService executor = Executors.newSingleThreadExecutor();
+
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        consumirCriteriosBusquedaGuardadaEntrantes();
+    }
 
     @Nullable
     @Override
@@ -135,6 +149,7 @@ public class ExplorarFragment extends Fragment {
         progressBarSiguiente = view.findViewById(R.id.progressBarSiguiente);
         etBuscar = view.findViewById(R.id.etBuscar);
         etBuscar.setOnEditorActionListener((v, actionId, event) -> {
+            if (actualizandoBuscador) return true;
             if (actionId == EditorInfo.IME_ACTION_SEARCH) {
                 aplicarBusqueda(etBuscar.getText().toString());
                 return true;
@@ -147,21 +162,6 @@ public class ExplorarFragment extends Fragment {
         spOrden = view.findViewById(R.id.spOrden);
         spOrden.setAdapter(new ArrayAdapter<>(requireContext(),
                 android.R.layout.simple_spinner_dropdown_item, ORDENES_VISIBLE));
-        spOrden.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            @Override
-            public void onItemSelected(AdapterView<?> parent, View selectedView, int position, long id) {
-                if (silenciarCambioOrden) {
-                    return;
-                }
-                ordenActual = ORDENES_BACKEND[position];
-                cargarPaginaInicial();
-            }
-
-            @Override
-            public void onNothingSelected(AdapterView<?> parent) {
-                ordenActual = "RECIENTES";
-            }
-        });
 
         rvExplorar.setLayoutManager(new LinearLayoutManager(requireContext()));
         adapter = new ExplorarAdapter(new ArrayList<>(), publicacion -> {
@@ -179,20 +179,140 @@ public class ExplorarFragment extends Fragment {
             }
         });
 
-        Bundle args = getArguments();
-        if (args != null && args.getBoolean(ARG_APLICAR_BUSQUEDA, false)) {
-            aplicarCriteriosDesdeArgs(args);
+        if (sincronizarUiBusquedaGuardada) {
+            sincronizarUiConCriteriosActuales();
+            sincronizarUiBusquedaGuardada = false;
         }
+
+        silenciarCambioOrden = true;
+        spOrden.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View selectedView, int position, long id) {
+                if (silenciarCambioOrden) {
+                    silenciarCambioOrden = false;
+                    return;
+                }
+                ordenActual = ORDENES_BACKEND[position];
+                cargarPaginaInicial();
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+                ordenActual = "RECIENTES";
+            }
+        });
+        spOrden.setSelection(indiceOrdenActual(), false);
 
         cargarCategorias();
         cargarEstadoFavoritos();
         cargarPaginaInicial();
-        spOrden.post(() -> silenciarCambioOrden = false);
+    }
+
+    @Override
+    public void onDestroyView() {
+        if (callEnVuelo != null) {
+            callEnVuelo.cancel();
+            callEnVuelo = null;
+        }
+        super.onDestroyView();
+    }
+
+    public static Bundle crearArgumentosBusquedaGuardada(BusquedaGuardadaResponseDto busqueda) {
+        Bundle args = new Bundle();
+        args.putBoolean(ARG_APLICAR_BUSQUEDA, true);
+        args.putString(ARG_QUERY, busqueda.queryParaExplorar());
+        if (busqueda.categoriaId != null) {
+            args.putLong(ARG_CATEGORIA_ID, busqueda.categoriaId);
+        }
+        if (busqueda.precioMin != null) {
+            args.putDouble(ARG_PRECIO_MIN, busqueda.precioMin);
+        }
+        if (busqueda.precioMax != null) {
+            args.putDouble(ARG_PRECIO_MAX, busqueda.precioMax);
+        }
+        args.putString(ARG_ESTADO_ARTICULO, busqueda.estadoArticulo);
+        args.putString(ARG_ZONA, busqueda.zona);
+        return args;
+    }
+
+    private void consumirCriteriosBusquedaGuardadaEntrantes() {
+        if (ExplorarCriteriosPendiente.hayPendiente()) {
+            asignarCriteriosBusqueda(
+                    textoONull(ExplorarCriteriosPendiente.getQuery()),
+                    ExplorarCriteriosPendiente.getCategoriaId(),
+                    ExplorarCriteriosPendiente.getPrecioMin(),
+                    ExplorarCriteriosPendiente.getPrecioMax(),
+                    textoONull(ExplorarCriteriosPendiente.getEstadoArticulo()),
+                    textoONull(ExplorarCriteriosPendiente.getZona()));
+            ExplorarCriteriosPendiente.limpiar();
+            sincronizarUiBusquedaGuardada = true;
+            return;
+        }
+        Bundle args = getArguments();
+        if (args == null || !args.getBoolean(ARG_APLICAR_BUSQUEDA, false)) {
+            return;
+        }
+        Double min = args.containsKey(ARG_PRECIO_MIN) ? args.getDouble(ARG_PRECIO_MIN) : null;
+        Double max = args.containsKey(ARG_PRECIO_MAX) ? args.getDouble(ARG_PRECIO_MAX) : null;
+        Long cat = args.containsKey(ARG_CATEGORIA_ID) ? args.getLong(ARG_CATEGORIA_ID) : null;
+        asignarCriteriosBusqueda(
+                textoONull(args.getString(ARG_QUERY)),
+                cat,
+                min,
+                max,
+                textoONull(args.getString(ARG_ESTADO_ARTICULO)),
+                textoONull(args.getString(ARG_ZONA)));
+        sincronizarUiBusquedaGuardada = true;
+    }
+
+    private void asignarCriteriosBusqueda(
+            @Nullable String query,
+            @Nullable Long categoria,
+            @Nullable Double min,
+            @Nullable Double max,
+            @Nullable String estado,
+            @Nullable String zonaGuardada) {
+        queryActual = query;
+        categoriaId = categoria;
+        precioMin = min;
+        precioMax = max;
+        estadoArticulo = estado;
+        zona = zonaGuardada;
+        usarMiZona = false;
+        ordenActual = "RECIENTES";
+    }
+
+    private void sincronizarUiConCriteriosActuales() {
+        actualizandoBuscador = true;
+        etBuscar.setText(queryActual != null ? queryActual : "");
+        actualizandoBuscador = false;
+        silenciarCambioOrden = true;
+        if (spOrden != null) {
+            spOrden.setSelection(indiceOrdenActual(), false);
+        }
+    }
+
+    private int indiceOrdenActual() {
+        for (int i = 0; i < ORDENES_BACKEND.length; i++) {
+            if (ORDENES_BACKEND[i].equals(ordenActual)) {
+                return i;
+            }
+        }
+        return 0;
     }
 
     @Override
     public void onResume() {
         super.onResume();
+        if (ExplorarCriteriosPendiente.hayPendiente()) {
+            consumirCriteriosBusquedaGuardadaEntrantes();
+            if (etBuscar != null) {
+                sincronizarUiConCriteriosActuales();
+                cargarPaginaInicial();
+            } else {
+                sincronizarUiBusquedaGuardada = true;
+            }
+        }
         cargarEstadoFavoritos();
     }
 
@@ -308,21 +428,6 @@ public class ExplorarFragment extends Fragment {
         });
     }
 
-    private void aplicarCriteriosDesdeArgs(Bundle args) {
-        queryActual = textoONull(args.getString(ARG_QUERY));
-        categoriaId = args.containsKey(ARG_CATEGORIA_ID) ? args.getLong(ARG_CATEGORIA_ID) : null;
-        precioMin = args.containsKey(ARG_PRECIO_MIN) ? args.getDouble(ARG_PRECIO_MIN) : null;
-        precioMax = args.containsKey(ARG_PRECIO_MAX) ? args.getDouble(ARG_PRECIO_MAX) : null;
-        estadoArticulo = textoONull(args.getString(ARG_ESTADO_ARTICULO));
-        zona = textoONull(args.getString(ARG_ZONA));
-        usarMiZona = false;
-        ordenActual = "RECIENTES";
-
-        etBuscar.setText(queryActual != null ? queryActual : "");
-        silenciarCambioOrden = true;
-        spOrden.setSelection(0);
-    }
-
     private static String textoONull(String valor) {
         if (valor == null) return null;
         String trimmed = valor.trim();
@@ -337,6 +442,15 @@ public class ExplorarFragment extends Fragment {
 
     private void mostrarDialogGuardarBusqueda() {
         if (guardandoBusqueda) return;
+
+        String textoBuscador = etBuscar.getText() != null ? etBuscar.getText().toString().trim() : "";
+        if (textoBuscador.isEmpty()) {
+            Toast.makeText(requireContext(),
+                    "Escribí algo en el buscador antes de guardar",
+                    Toast.LENGTH_SHORT).show();
+            return;
+        }
+        queryActual = textoBuscador;
 
         EditText etNombre = new EditText(requireContext());
         etNombre.setHint("Nombre de la búsqueda");
@@ -372,6 +486,8 @@ public class ExplorarFragment extends Fragment {
         if (callGuardarBusqueda != null) {
             callGuardarBusqueda.cancel();
         }
+
+        queryActual = textoONull(etBuscar.getText() != null ? etBuscar.getText().toString() : null);
 
         BusquedaGuardadaRequestDto body = new BusquedaGuardadaRequestDto();
         body.nombre = nombre;
@@ -639,12 +755,16 @@ public class ExplorarFragment extends Fragment {
     }
 
     private void cargarPaginaInicial() {
+        idGeneracionCarga++;
         cargandoInicial = true;
         cargandoSiguiente = false;
         paginaActual = -1;
         totalPaginas = 0;
+        if (adapter != null) {
+            adapter.actualizarLista(new ArrayList<>());
+        }
         mostrarCarga();
-        pedirPagina(0, true);
+        pedirPagina(0, true, idGeneracionCarga);
     }
 
     private void intentarCargarSiCercaDelFinal() {
@@ -663,14 +783,14 @@ public class ExplorarFragment extends Fragment {
 
         cargandoSiguiente = true;
         progressBarSiguiente.setVisibility(View.VISIBLE);
-        pedirPagina(paginaActual + 1, false);
+        pedirPagina(paginaActual + 1, false, idGeneracionCarga);
     }
 
-    private void pedirPagina(int pagina, boolean esInicial) {
+    private void pedirPagina(int pagina, boolean esInicial, long generacion) {
         if (callEnVuelo != null) {
             callEnVuelo.cancel();
+            callEnVuelo = null;
         }
-
         callEnVuelo = apiService.explorar(
                 pagina,
                 TAMANIO_PAGINA,
@@ -686,7 +806,8 @@ public class ExplorarFragment extends Fragment {
             @Override
             public void onResponse(@NonNull Call<PaginaDto<PublicacionResumen>> call,
                                    @NonNull Response<PaginaDto<PublicacionResumen>> response) {
-                if (!isAdded() || call.isCanceled()) return;
+                if (!isAdded() || call.isCanceled() || call != callEnVuelo) return;
+                if (generacion != idGeneracionCarga) return;
 
                 if (response.isSuccessful() && response.body() != null) {
                     PaginaDto<PublicacionResumen> body = response.body();
@@ -717,7 +838,8 @@ public class ExplorarFragment extends Fragment {
 
             @Override
             public void onFailure(@NonNull Call<PaginaDto<PublicacionResumen>> call, @NonNull Throwable t) {
-                if (!isAdded() || call.isCanceled()) return;
+                if (!isAdded() || call.isCanceled() || call != callEnVuelo) return;
+                if (generacion != idGeneracionCarga) return;
                 if (esInicial) {
                     manejarFalloCargaInicial();
                 } else {
@@ -728,7 +850,9 @@ public class ExplorarFragment extends Fragment {
     }
 
     private void manejarFalloCargaInicial() {
-        if (!esCatalogoGeneral()) {
+        boolean hayTextoEnBuscador = etBuscar != null
+                && !etBuscar.getText().toString().trim().isEmpty();
+        if (!esCatalogoGeneral() || hayTextoEnBuscador || queryActual != null) {
             mostrarErrorConsulta();
             return;
         }
