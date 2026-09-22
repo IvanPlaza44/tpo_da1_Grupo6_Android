@@ -1,94 +1,137 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
-    android:gravity="center"
-    android:padding="32dp">
+    android:background="@color/surface"
+    android:fillViewport="true">
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Ronda"
-        android:textSize="28sp"
-        android:textStyle="bold"
-        android:layout_marginBottom="24dp" />
-
-    <com.google.android.material.textfield.TextInputLayout
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="12dp">
+        android:layout_height="match_parent"
+        android:gravity="center_vertical"
+        android:orientation="vertical"
+        android:paddingHorizontal="@dimen/spacing_xl"
+        android:paddingVertical="@dimen/spacing_l">
 
-        <com.google.android.material.textfield.TextInputEditText
-            android:id="@+id/etUsuario"
+        <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="Usuario o email"
-            android:inputType="textEmailAddress" />
+            android:gravity="center_horizontal"
+            android:text="Ronda"
+            android:textAppearance="@style/TextAppearance.Ronda.Brand" />
 
-    </com.google.android.material.textfield.TextInputLayout>
-
-    <com.google.android.material.textfield.TextInputLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="16dp"
-        app:passwordToggleEnabled="true">
-
-        <com.google.android.material.textfield.TextInputEditText
-            android:id="@+id/etPassword"
+        <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/spacing_xs"
+            android:gravity="center_horizontal"
+            android:text="Comprá y vendé cerca tuyo"
+            android:textAppearance="@style/TextAppearance.Ronda.BodySecondary" />
+
+        <com.google.android.material.textfield.TextInputLayout
+            style="@style/Widget.Ronda.TextInputLayout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/spacing_l"
+            android:hint="Usuario o email">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/etUsuario"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="textEmailAddress" />
+
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <com.google.android.material.textfield.TextInputLayout
+            style="@style/Widget.Ronda.TextInputLayout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/spacing_m"
             android:hint="Contraseña"
-            android:inputType="textPassword" />
+            app:passwordToggleEnabled="true">
 
-    </com.google.android.material.textfield.TextInputLayout>
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/etPassword"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="textPassword" />
 
-    <TextView
-        android:id="@+id/tvError"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textColor="#D32F2F"
-        android:visibility="gone"
-        android:layout_marginBottom="12dp" />
+        </com.google.android.material.textfield.TextInputLayout>
 
-    <Button
-        android:id="@+id/btnLogin"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Ingresar" />
+        <TextView
+            android:id="@+id/tvError"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/spacing_s"
+            android:textAppearance="@style/TextAppearance.Ronda.Error"
+            android:visibility="gone" />
 
-    <TextView
-        android:id="@+id/tvIngresarConCodigo"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="¿No tenés contraseña? Ingresar con código"
-        android:textColor="#1976D2"
-        android:layout_marginTop="16dp" />
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnLogin"
+            style="@style/Widget.Ronda.Button"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/spacing_l"
+            android:text="Ingresar" />
 
-    <ProgressBar
-        android:id="@+id/progressBar"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:visibility="gone"
-        android:layout_marginTop="16dp" />
+        <TextView
+            android:id="@+id/tvIngresarConCodigo"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="@dimen/spacing_m"
+            android:padding="@dimen/spacing_s"
+            android:text="¿No tenés contraseña? Ingresar con código"
+            android:textAppearance="@style/TextAppearance.Ronda.Link" />
 
-    <ImageButton
-        android:id="@+id/btnBiometric"
-        android:layout_width="56dp"
-        android:layout_height="56dp"
-        android:layout_margin="16dp"
-        android:background="?attr/selectableItemBackgroundBorderless"
-        android:contentDescription="Ingreso biométrico"
-        android:src="@android:drawable/ic_lock_lock" />
+        <ProgressBar
+            android:id="@+id/progressBar"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="@dimen/spacing_m"
+            android:indeterminateTint="@color/primary"
+            android:visibility="gone" />
 
-    <TextView
-        android:id="@+id/tvIrARegistro"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="¿No tenés cuenta? Registrate"
-        android:textColor="#1976D2"
-        android:layout_marginTop="16dp"
-        android:padding="8dp" />
+        <TextView
+            android:id="@+id/tvIrARegistro"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="@dimen/spacing_l"
+            android:padding="@dimen/spacing_s"
+            android:text="¿No tenés cuenta? Registrate"
+            android:textAppearance="@style/TextAppearance.Ronda.Link" />
 
-</LinearLayout>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/spacing_m"
+            android:gravity="center"
+            android:orientation="vertical">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Ingreso con huella"
+                android:textAppearance="@style/TextAppearance.Ronda.Caption" />
+
+            <ImageButton
+                android:id="@+id/btnBiometric"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:layout_marginTop="@dimen/spacing_xs"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:contentDescription="Ingreso biométrico"
+                android:padding="@dimen/spacing_s"
+                android:scaleType="centerInside"
+                android:src="@android:drawable/ic_lock_lock"
+                app:tint="@color/on_surface_variant" />
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+</ScrollView>

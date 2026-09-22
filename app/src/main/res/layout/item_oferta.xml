@@ -1,61 +1,78 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:orientation="vertical"
-    android:paddingVertical="8dp">
-
-    <TextView
-        android:id="@+id/tvOfertaAutor"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textStyle="bold" />
-
-    <TextView
-        android:id="@+id/tvOfertaMonto"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textSize="16sp" />
-
-    <TextView
-        android:id="@+id/tvOfertaMensaje"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:visibility="gone" />
-
-    <TextView
-        android:id="@+id/tvOfertaEstado"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textColor="#757575" />
-
-    <Button
-        android:id="@+id/btnAceptarOferta"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
-        android:text="Aceptar y Ver Ruta" />
+    android:layout_marginBottom="@dimen/list_item_spacing"
+    app:cardBackgroundColor="@color/surface"
+    app:cardCornerRadius="@dimen/card_corner_radius"
+    app:cardElevation="0dp"
+    app:strokeColor="@color/outline_variant"
+    app:strokeWidth="1dp">
 
     <LinearLayout
-        android:id="@+id/layoutAccionesOferta"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:layout_marginTop="4dp"
-        android:visibility="gone">
+        android:orientation="vertical"
+        android:padding="@dimen/spacing_m">
 
-        <Button
-            android:id="@+id/btnAceptarOferta"
+        <TextView
+            android:id="@+id/tvOfertaMonto"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginEnd="8dp"
-            android:text="Aceptar" />
+            android:textAppearance="@style/TextAppearance.Ronda.Title"
+            android:textColor="@color/primary" />
 
-        <Button
-            android:id="@+id/btnRechazarOferta"
+        <TextView
+            android:id="@+id/tvOfertaEstado"
+            style="@style/Widget.Ronda.ReadOnlyChip"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Rechazar" />
+            android:layout_marginTop="@dimen/spacing_xs"
+            android:background="@drawable/bg_chip_articulo"
+            android:textColor="@color/chip_articulo_text" />
+
+        <TextView
+            android:id="@+id/tvOfertaAutor"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/spacing_s"
+            android:textAppearance="@style/TextAppearance.Ronda.Caption" />
+
+        <TextView
+            android:id="@+id/tvOfertaMensaje"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/spacing_xs"
+            android:textAppearance="@style/TextAppearance.Ronda.BodySecondary"
+            android:visibility="gone" />
+
+        <LinearLayout
+            android:id="@+id/layoutAccionesOferta"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/spacing_m"
+            android:orientation="vertical"
+            android:visibility="gone">
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnAceptarOferta"
+                style="@style/Widget.Ronda.Button"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Aceptar" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnRechazarOferta"
+                style="@style/Widget.Ronda.Button.Text.Destructive"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="end"
+                android:layout_marginTop="@dimen/spacing_xs"
+                android:text="Rechazar" />
+
+        </LinearLayout>
 
     </LinearLayout>
-</LinearLayout>
+
+</com.google.android.material.card.MaterialCardView>

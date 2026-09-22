@@ -1,3 +1,8 @@
 <resources>
-    <string name="app_name">My Application</string>
+    <string name="app_name">Ronda</string>
+
+    <!-- Estados compartidos (commits posteriores) -->
+    <string name="state_error_generic">No se pudo cargar. Revisá tu conexión e intentá de nuevo.</string>
+    <string name="action_retry">Reintentar</string>
+    <string name="banner_offline">Sin conexión. Mostrando datos guardados; pueden estar desactualizados.</string>
 </resources>

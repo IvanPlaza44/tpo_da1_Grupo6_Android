@@ -1,145 +1,347 @@
 <?xml version="1.0" encoding="utf-8"?>
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:background="@color/surface"
+    android:fillViewport="true">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:padding="24dp">
+        android:paddingHorizontal="@dimen/screen_padding_horizontal"
+        android:paddingTop="@dimen/spacing_l"
+        android:paddingBottom="@dimen/spacing_xl">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Publicar producto"
+            android:textAppearance="@style/TextAppearance.Ronda.Headline" />
 
         <TextView
             android:id="@+id/tvPaso"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:textSize="16sp"
-            android:textStyle="bold"
-            android:text="Paso 1 de 3" />
+            android:layout_marginTop="@dimen/spacing_xs"
+            android:text="Paso 1 de 3"
+            android:textAppearance="@style/TextAppearance.Ronda.BodySecondary" />
 
-        <!-- PASO 1: datos basicos -->
+        <com.google.android.material.progressindicator.LinearProgressIndicator
+            android:id="@+id/progressPasos"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/spacing_m"
+            android:max="3"
+            android:progress="1"
+            app:indicatorColor="@color/primary"
+            app:trackColor="@color/surface_variant"
+            app:trackCornerRadius="@dimen/chip_corner_radius" />
+
         <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/spacing_s"
+            android:orientation="horizontal">
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:text="Datos"
+                android:textAppearance="@style/TextAppearance.Ronda.Caption" />
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:text="Precio y zona"
+                android:textAppearance="@style/TextAppearance.Ronda.Caption" />
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:text="Fotos y publicar"
+                android:textAppearance="@style/TextAppearance.Ronda.Caption" />
+
+        </LinearLayout>
+
+        <!-- PASO 1 -->
+        <com.google.android.material.card.MaterialCardView
             android:id="@+id/stepUno"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:layout_marginTop="16dp">
+            android:layout_marginTop="@dimen/spacing_l"
+            app:cardBackgroundColor="@color/surface"
+            app:cardCornerRadius="@dimen/card_corner_radius"
+            app:cardElevation="0dp"
+            app:contentPadding="@dimen/spacing_m"
+            app:strokeColor="@color/outline_variant"
+            app:strokeWidth="1dp">
 
-            <EditText
-                android:id="@+id/etTitulo"
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="Titulo del articulo" />
+                android:orientation="vertical">
 
-            <EditText
-                android:id="@+id/etDescripcion"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:hint="Descripcion"
-                android:minLines="3"
-                android:inputType="textMultiLine"
-                android:layout_marginTop="12dp" />
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Información del artículo"
+                    android:textAppearance="@style/TextAppearance.Ronda.Label" />
 
-            <Spinner
-                android:id="@+id/spCategoria"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="12dp" />
-        </LinearLayout>
+                <com.google.android.material.textfield.TextInputLayout
+                    style="@style/Widget.Ronda.TextInputLayout"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/spacing_m"
+                    android:hint="Titulo del articulo">
 
-        <!-- PASO 2: precio, estado, zona -->
-        <LinearLayout
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/etTitulo"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:inputType="text" />
+
+                </com.google.android.material.textfield.TextInputLayout>
+
+                <com.google.android.material.textfield.TextInputLayout
+                    style="@style/Widget.Ronda.TextInputLayout"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/spacing_m"
+                    android:hint="Descripcion">
+
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/etDescripcion"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:inputType="textMultiLine"
+                        android:minLines="3" />
+
+                </com.google.android.material.textfield.TextInputLayout>
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/spacing_m"
+                    android:text="Categoría"
+                    android:textAppearance="@style/TextAppearance.Ronda.Label" />
+
+                <Spinner
+                    android:id="@+id/spCategoria"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/spacing_s"
+                    android:background="@drawable/bg_spinner_outline"
+                    android:minHeight="48dp"
+                    android:padding="@dimen/spacing_s" />
+
+            </LinearLayout>
+
+        </com.google.android.material.card.MaterialCardView>
+
+        <!-- PASO 2 -->
+        <com.google.android.material.card.MaterialCardView
             android:id="@+id/stepDos"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical"
+            android:layout_marginTop="@dimen/spacing_l"
             android:visibility="gone"
-            android:layout_marginTop="16dp">
+            app:cardBackgroundColor="@color/surface"
+            app:cardCornerRadius="@dimen/card_corner_radius"
+            app:cardElevation="0dp"
+            app:contentPadding="@dimen/spacing_m"
+            app:strokeColor="@color/outline_variant"
+            app:strokeWidth="1dp">
 
-            <EditText
-                android:id="@+id/etPrecio"
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="Precio"
-                android:inputType="numberDecimal" />
+                android:orientation="vertical">
 
-            <Spinner
-                android:id="@+id/spEstadoArticulo"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="12dp" />
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Precio y entrega"
+                    android:textAppearance="@style/TextAppearance.Ronda.Label" />
 
-            <EditText
-                android:id="@+id/etZona"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:hint="Zona de entrega (ej: Palermo)"
-                android:layout_marginTop="12dp" />
-        </LinearLayout>
+                <com.google.android.material.textfield.TextInputLayout
+                    style="@style/Widget.Ronda.TextInputLayout"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/spacing_m"
+                    android:hint="Precio">
 
-        <!-- PASO 3: revisar y publicar -->
-        <LinearLayout
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/etPrecio"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:inputType="numberDecimal" />
+
+                </com.google.android.material.textfield.TextInputLayout>
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/spacing_m"
+                    android:text="Estado del articulo"
+                    android:textAppearance="@style/TextAppearance.Ronda.Label" />
+
+                <Spinner
+                    android:id="@+id/spEstadoArticulo"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/spacing_s"
+                    android:background="@drawable/bg_spinner_outline"
+                    android:minHeight="48dp"
+                    android:padding="@dimen/spacing_s" />
+
+                <com.google.android.material.textfield.TextInputLayout
+                    style="@style/Widget.Ronda.TextInputLayout"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/spacing_m"
+                    android:hint="Zona de entrega (ej: Palermo)">
+
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/etZona"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:inputType="text" />
+
+                </com.google.android.material.textfield.TextInputLayout>
+
+            </LinearLayout>
+
+        </com.google.android.material.card.MaterialCardView>
+
+        <!-- PASO 3 -->
+        <com.google.android.material.card.MaterialCardView
             android:id="@+id/stepTres"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical"
+            android:layout_marginTop="@dimen/spacing_l"
             android:visibility="gone"
-            android:layout_marginTop="16dp">
+            app:cardBackgroundColor="@color/surface"
+            app:cardCornerRadius="@dimen/card_corner_radius"
+            app:cardElevation="0dp"
+            app:contentPadding="@dimen/spacing_m"
+            app:strokeColor="@color/outline_variant"
+            app:strokeWidth="1dp">
 
-            <Button
-                android:id="@+id/btnAgregarFotos"
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Agregar fotos" />
+                android:orientation="vertical">
 
-            <HorizontalScrollView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="8dp">
-
-                <LinearLayout
-                    android:id="@+id/llFotos"
-                    android:layout_width="wrap_content"
+                <TextView
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:orientation="horizontal" />
-            </HorizontalScrollView>
+                    android:text="Confirmá antes de publicar"
+                    android:textAppearance="@style/TextAppearance.Ronda.Label" />
 
-            <TextView
-                android:id="@+id/tvFotosEstado"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textSize="12sp"
-                android:layout_marginTop="4dp" />
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/spacing_m"
+                    android:text="Resumen"
+                    android:textAppearance="@style/TextAppearance.Ronda.Label" />
 
-            <TextView
-                android:id="@+id/tvResumen"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:textSize="14sp"
-                android:layout_marginTop="12dp" />
-        </LinearLayout>
+                <TextView
+                    android:id="@+id/tvResumen"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/spacing_s"
+                    android:background="@color/surface_variant"
+                    android:padding="@dimen/spacing_m"
+                    android:textAppearance="@style/TextAppearance.Ronda.BodySecondary" />
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/spacing_l"
+                    android:text="Fotos"
+                    android:textAppearance="@style/TextAppearance.Ronda.Label" />
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btnAgregarFotos"
+                    style="@style/Widget.Ronda.Button.Outlined"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/spacing_s"
+                    android:text="Agregar fotos"
+                    app:icon="@android:drawable/ic_menu_camera"
+                    app:iconGravity="textStart"
+                    app:iconPadding="@dimen/spacing_s" />
+
+                <FrameLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/spacing_s"
+                    android:background="@drawable/bg_fotos_empty_area"
+                    android:minHeight="96dp"
+                    android:padding="@dimen/spacing_s">
+
+                    <HorizontalScrollView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:scrollbars="none">
+
+                        <LinearLayout
+                            android:id="@+id/llFotos"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:gravity="center_vertical"
+                            android:minHeight="80dp"
+                            android:orientation="horizontal" />
+
+                    </HorizontalScrollView>
+
+                </FrameLayout>
+
+                <TextView
+                    android:id="@+id/tvFotosEstado"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/spacing_xs"
+                    android:textAppearance="@style/TextAppearance.Ronda.Caption" />
+
+            </LinearLayout>
+
+        </com.google.android.material.card.MaterialCardView>
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:layout_marginTop="24dp">
+            android:layout_marginTop="@dimen/spacing_l"
+            android:orientation="horizontal">
 
-            <Button
+            <com.google.android.material.button.MaterialButton
                 android:id="@+id/btnAnterior"
+                style="@style/Widget.Ronda.Button.Outlined"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:text="Anterior"
-                android:enabled="false" />
+                android:enabled="false"
+                android:text="Anterior" />
 
-            <Button
+            <com.google.android.material.button.MaterialButton
                 android:id="@+id/btnSiguiente"
+                style="@style/Widget.Ronda.Button"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/spacing_s"
                 android:layout_weight="1"
-                android:layout_marginStart="8dp"
                 android:text="Siguiente" />
+
         </LinearLayout>
+
     </LinearLayout>
+
 </ScrollView>

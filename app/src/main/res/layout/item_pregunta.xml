@@ -1,51 +1,82 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:orientation="vertical"
-    android:paddingVertical="8dp">
-
-    <TextView
-        android:id="@+id/tvAutorNombre"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textStyle="bold" />
-
-    <TextView
-        android:id="@+id/tvMensaje"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="2dp" />
-
-    <TextView
-        android:id="@+id/tvRespuesta"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="4dp"
-        android:layout_marginStart="16dp"
-        android:textColor="#555555"
-        android:visibility="gone" />
+    android:layout_marginBottom="@dimen/list_item_spacing"
+    app:cardBackgroundColor="@color/surface"
+    app:cardCornerRadius="@dimen/card_corner_radius"
+    app:cardElevation="0dp"
+    app:strokeColor="@color/outline_variant"
+    app:strokeWidth="1dp">
 
     <LinearLayout
-        android:id="@+id/layoutResponder"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:layout_marginTop="4dp"
-        android:visibility="gone">
+        android:orientation="vertical"
+        android:padding="@dimen/spacing_m">
 
-        <EditText
-            android:id="@+id/etRespuesta"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:hint="Responder..." />
-
-        <Button
-            android:id="@+id/btnResponder"
+        <TextView
+            android:id="@+id/tvAutorNombre"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Enviar" />
+            android:textAppearance="@style/TextAppearance.Ronda.Label" />
+
+        <TextView
+            android:id="@+id/tvMensaje"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/spacing_xs"
+            android:background="@color/primary_container"
+            android:padding="@dimen/spacing_s"
+            android:textAppearance="@style/TextAppearance.Ronda.Body"
+            android:textColor="@color/on_primary_container" />
+
+        <TextView
+            android:id="@+id/tvRespuesta"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/spacing_m"
+            android:layout_marginTop="@dimen/spacing_s"
+            android:background="@color/surface_variant"
+            android:padding="@dimen/spacing_s"
+            android:textAppearance="@style/TextAppearance.Ronda.BodySecondary"
+            android:visibility="gone" />
+
+        <LinearLayout
+            android:id="@+id/layoutResponder"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/spacing_s"
+            android:gravity="center_vertical"
+            android:orientation="horizontal"
+            android:visibility="gone">
+
+            <com.google.android.material.textfield.TextInputLayout
+                style="@style/Widget.Ronda.TextInputLayout"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="@dimen/spacing_s"
+                android:layout_weight="1"
+                android:hint="Responder…">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/etRespuesta"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:inputType="text" />
+
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnResponder"
+                style="@style/Widget.Ronda.Button.Outlined"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Enviar" />
+
+        </LinearLayout>
+
     </LinearLayout>
 
-</LinearLayout>
+</com.google.android.material.card.MaterialCardView>

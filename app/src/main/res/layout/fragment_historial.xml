@@ -1,103 +1,128 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
-    android:padding="16dp">
+    android:background="@color/surface"
+    android:orientation="vertical">
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Historial de operaciones"
-        android:textSize="20sp"
-        android:textStyle="bold" />
-
-    <!-- Filtro por tipo -->
-    <RadioGroup
-        android:id="@+id/rgTipo"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="12dp"
-        android:orientation="horizontal">
-
-        <RadioButton
-            android:id="@+id/rbTodas"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:checked="true"
-            android:text="Todas" />
-
-        <RadioButton
-            android:id="@+id/rbCompras"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="Compras" />
-
-        <RadioButton
-            android:id="@+id/rbVentas"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="Ventas" />
-
-    </RadioGroup>
-
-    <!-- Filtro por rango de fechas -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
-        android:orientation="horizontal">
+        android:background="@color/surface_variant"
+        android:orientation="vertical"
+        android:paddingHorizontal="@dimen/screen_padding_horizontal"
+        android:paddingTop="@dimen/spacing_l"
+        android:paddingBottom="@dimen/spacing_m">
 
-        <Button
-            android:id="@+id/btnFechaDesde"
-            android:layout_width="0dp"
+        <TextView
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:layout_marginEnd="4dp"
-            android:text="Desde" />
+            android:text="Historial de operaciones"
+            android:textAppearance="@style/TextAppearance.Ronda.Headline" />
 
-        <Button
-            android:id="@+id/btnFechaHasta"
-            android:layout_width="0dp"
+        <TextView
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:layout_marginStart="4dp"
-            android:text="Hasta" />
+            android:layout_marginTop="@dimen/spacing_xs"
+            android:text="Compras, ventas y calificaciones"
+            android:textAppearance="@style/TextAppearance.Ronda.BodySecondary" />
+
+        <RadioGroup
+            android:id="@+id/rgTipo"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/spacing_m"
+            android:orientation="horizontal">
+
+            <RadioButton
+                android:id="@+id/rbTodas"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:checked="true"
+                android:text="Todas" />
+
+            <RadioButton
+                android:id="@+id/rbCompras"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="Compras" />
+
+            <RadioButton
+                android:id="@+id/rbVentas"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="Ventas" />
+
+        </RadioGroup>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/spacing_s"
+            android:orientation="horizontal">
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnFechaDesde"
+                style="@style/Widget.Ronda.Button.Outlined"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="@dimen/spacing_xs"
+                android:layout_weight="1"
+                android:text="Desde" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnFechaHasta"
+                style="@style/Widget.Ronda.Button.Outlined"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/spacing_xs"
+                android:layout_weight="1"
+                android:text="Hasta" />
+
+        </LinearLayout>
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnLimpiarFiltros"
+            style="@style/Widget.Ronda.Button.Text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="end"
+            android:layout_marginTop="@dimen/spacing_xs"
+            android:text="Limpiar filtros" />
 
     </LinearLayout>
-
-    <Button
-        android:id="@+id/btnLimpiarFiltros"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="4dp"
-        android:text="Limpiar filtros"
-        style="?android:attr/buttonStyleSmall" />
 
     <ProgressBar
         android:id="@+id/progressBar"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:layout_marginTop="16dp" />
+        android:layout_gravity="center_horizontal"
+        android:layout_marginTop="@dimen/spacing_m"
+        android:indeterminateTint="@color/primary" />
 
     <TextView
         android:id="@+id/tvVacio"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="24dp"
+        android:layout_marginTop="@dimen/spacing_l"
         android:gravity="center"
+        android:paddingHorizontal="@dimen/spacing_l"
         android:text="No hay operaciones para mostrar"
-        android:textColor="@android:color/darker_gray"
+        android:textAppearance="@style/TextAppearance.Ronda.BodySecondary"
         android:visibility="gone" />
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rvOperaciones"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_marginTop="8dp" />
+        android:layout_height="0dp"
+        android:layout_marginTop="@dimen/spacing_s"
+        android:layout_weight="1"
+        android:clipToPadding="false"
+        android:paddingHorizontal="@dimen/screen_padding_horizontal"
+        android:paddingBottom="@dimen/spacing_s" />
 
 </LinearLayout>

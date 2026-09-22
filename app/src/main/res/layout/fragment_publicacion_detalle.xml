@@ -1,25 +1,31 @@
 <?xml version="1.0" encoding="utf-8"?>
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:background="@color/surface"
+    android:fillViewport="true">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:padding="16dp">
+        android:orientation="vertical">
 
         <ProgressBar
             android:id="@+id/progressBar"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_gravity="center" />
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="@dimen/spacing_xl"
+            android:indeterminateTint="@color/primary" />
 
         <TextView
             android:id="@+id/tvError"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:textColor="#C62828"
+            android:paddingHorizontal="@dimen/screen_padding_horizontal"
+            android:paddingTop="@dimen/spacing_m"
+            android:textAppearance="@style/TextAppearance.Ronda.Error"
             android:visibility="gone" />
 
         <LinearLayout
@@ -29,149 +35,275 @@
             android:orientation="vertical"
             android:visibility="gone">
 
+            <!-- Hero fotos -->
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/rvFotos"
                 android:layout_width="match_parent"
-                android:layout_height="220dp"
-                android:orientation="horizontal" />
+                android:layout_height="280dp"
+                android:background="@color/surface_variant"
+                android:clipToPadding="false"
+                android:orientation="horizontal"
+                android:paddingHorizontal="@dimen/screen_padding_horizontal"
+                android:paddingVertical="@dimen/spacing_s" />
 
             <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="12dp"
-                android:gravity="center_vertical"
-                android:orientation="horizontal">
-
-                <TextView
-                    android:id="@+id/tvTitulo"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:textSize="20sp"
-                    android:textStyle="bold" />
-
-                <ImageButton
-                    android:id="@+id/btnFavorito"
-                    android:layout_width="48dp"
-                    android:layout_height="48dp"
-                    android:background="?attr/selectableItemBackgroundBorderless"
-                    android:contentDescription="Favorito"
-                    android:padding="12dp"
-                    android:scaleType="fitCenter"
-                    android:src="@drawable/ic_favorito_borde"
-                    android:visibility="gone" />
-
-            </LinearLayout>
-
-            <TextView
-                android:id="@+id/tvPrecio"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:textSize="18sp" />
-
-            <TextView
-                android:id="@+id/tvEstadoCategoria"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:textColor="#757575" />
-
-            <TextView
-                android:id="@+id/tvDescripcion"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="12dp" />
-
-            <TextView
-                android:id="@+id/tvZona"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="8dp" />
-
-            <TextView
-                android:id="@+id/tvFecha"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:textColor="#757575" />
-
-            <View
-                android:layout_width="match_parent"
-                android:layout_height="1dp"
-                android:layout_marginVertical="12dp"
-                android:background="#E0E0E0" />
-
-            <TextView
-                android:id="@+id/tvVendedor"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:textStyle="bold" />
-
-            <Button
-                android:id="@+id/btnVerPerfilVendedor"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Ver perfil del vendedor" />
-
-            <LinearLayout
-                android:id="@+id/seccionInteresado"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
-                android:layout_marginTop="16dp">
+                android:paddingHorizontal="@dimen/screen_padding_horizontal"
+                android:paddingTop="@dimen/spacing_m"
+                android:paddingBottom="@dimen/spacing_s">
 
-                <EditText
-                    android:id="@+id/etPregunta"
+                <!-- Título + favorito -->
+                <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:hint="¿Todavía está disponible?" />
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal">
 
-                <Button
-                    android:id="@+id/btnPreguntar"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Preguntar" />
+                    <TextView
+                        android:id="@+id/tvTitulo"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:textAppearance="@style/TextAppearance.Ronda.Headline" />
 
-                <EditText
-                    android:id="@+id/etMontoOferta"
+                    <ImageButton
+                        android:id="@+id/btnFavorito"
+                        android:layout_width="48dp"
+                        android:layout_height="48dp"
+                        android:background="?attr/selectableItemBackgroundBorderless"
+                        android:contentDescription="Favorito"
+                        android:padding="@dimen/spacing_s"
+                        android:scaleType="fitCenter"
+                        android:src="@drawable/ic_favorito_borde"
+                        app:tint="@color/primary"
+                        android:visibility="gone" />
+
+                </LinearLayout>
+
+                <TextView
+                    android:id="@+id/tvPrecio"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="12dp"
-                    android:hint="Tu oferta"
-                    android:inputType="numberDecimal" />
+                    android:layout_marginTop="@dimen/spacing_s"
+                    android:textAppearance="@style/TextAppearance.Ronda.Headline"
+                    android:textColor="@color/primary" />
 
-                <Button
-                    android:id="@+id/btnOfertar"
+                <!-- Metadata -->
+                <TextView
+                    android:id="@+id/tvEstadoCategoria"
+                    style="@style/Widget.Ronda.ReadOnlyChip"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Ofertar" />
+                    android:layout_marginTop="@dimen/spacing_m"
+                    android:background="@drawable/bg_chip_articulo"
+                    android:textColor="@color/chip_articulo_text" />
+
+                <TextView
+                    android:id="@+id/tvZona"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/spacing_s"
+                    android:textAppearance="@style/TextAppearance.Ronda.Caption" />
+
+                <TextView
+                    android:id="@+id/tvFecha"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/spacing_xs"
+                    android:textAppearance="@style/TextAppearance.Ronda.Caption" />
+
+                <!-- Descripción -->
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/spacing_l"
+                    android:text="Descripción"
+                    android:textAppearance="@style/TextAppearance.Ronda.Label" />
+
+                <TextView
+                    android:id="@+id/tvDescripcion"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/spacing_s"
+                    android:textAppearance="@style/TextAppearance.Ronda.Body" />
+
+                <!-- Vendedor -->
+                <com.google.android.material.card.MaterialCardView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/spacing_l"
+                    app:cardBackgroundColor="@color/surface"
+                    app:cardCornerRadius="@dimen/card_corner_radius"
+                    app:cardElevation="0dp"
+                    app:contentPadding="@dimen/spacing_m"
+                    app:strokeColor="@color/outline_variant"
+                    app:strokeWidth="1dp">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical">
+
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:text="Vendedor"
+                            android:textAppearance="@style/TextAppearance.Ronda.Label" />
+
+                        <TextView
+                            android:id="@+id/tvVendedor"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="@dimen/spacing_s"
+                            android:textAppearance="@style/TextAppearance.Ronda.Body" />
+
+                        <com.google.android.material.button.MaterialButton
+                            android:id="@+id/btnVerPerfilVendedor"
+                            style="@style/Widget.Ronda.Button.Outlined"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="@dimen/spacing_m"
+                            android:text="Ver perfil del vendedor" />
+
+                    </LinearLayout>
+
+                </com.google.android.material.card.MaterialCardView>
+
+                <!-- Interesado: oferta + preguntar -->
+                <LinearLayout
+                    android:id="@+id/seccionInteresado"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/spacing_l"
+                    android:orientation="vertical">
+
+                    <com.google.android.material.card.MaterialCardView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        app:cardBackgroundColor="@color/surface"
+                        app:cardCornerRadius="@dimen/card_corner_radius"
+                        app:cardElevation="0dp"
+                        app:contentPadding="@dimen/spacing_m"
+                        app:strokeColor="@color/outline_variant"
+                        app:strokeWidth="1dp">
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="vertical">
+
+                            <TextView
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:text="Hacer una oferta"
+                                android:textAppearance="@style/TextAppearance.Ronda.Label" />
+
+                            <com.google.android.material.textfield.TextInputLayout
+                                style="@style/Widget.Ronda.TextInputLayout"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="@dimen/spacing_m"
+                                android:hint="Tu oferta">
+
+                                <com.google.android.material.textfield.TextInputEditText
+                                    android:id="@+id/etMontoOferta"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:inputType="numberDecimal" />
+
+                            </com.google.android.material.textfield.TextInputLayout>
+
+                            <com.google.android.material.button.MaterialButton
+                                android:id="@+id/btnOfertar"
+                                style="@style/Widget.Ronda.Button"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="@dimen/spacing_s"
+                                android:text="Ofertar" />
+
+                        </LinearLayout>
+
+                    </com.google.android.material.card.MaterialCardView>
+
+                    <com.google.android.material.card.MaterialCardView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/spacing_m"
+                        app:cardBackgroundColor="@color/surface"
+                        app:cardCornerRadius="@dimen/card_corner_radius"
+                        app:cardElevation="0dp"
+                        app:contentPadding="@dimen/spacing_m"
+                        app:strokeColor="@color/outline_variant"
+                        app:strokeWidth="1dp">
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="vertical">
+
+                            <TextView
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:text="Preguntar al vendedor"
+                                android:textAppearance="@style/TextAppearance.Ronda.Label" />
+
+                            <com.google.android.material.textfield.TextInputLayout
+                                style="@style/Widget.Ronda.TextInputLayout"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="@dimen/spacing_m"
+                                android:hint="¿Todavía está disponible?">
+
+                                <com.google.android.material.textfield.TextInputEditText
+                                    android:id="@+id/etPregunta"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:inputType="text" />
+
+                            </com.google.android.material.textfield.TextInputLayout>
+
+                            <com.google.android.material.button.MaterialButton
+                                android:id="@+id/btnPreguntar"
+                                style="@style/Widget.Ronda.Button.Outlined"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="@dimen/spacing_s"
+                                android:text="Preguntar" />
+
+                        </LinearLayout>
+
+                    </com.google.android.material.card.MaterialCardView>
+
+                </LinearLayout>
+
+                <TextView
+                    android:id="@+id/tvSoyVendedor"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/spacing_m"
+                    android:gravity="center"
+                    android:text="Esta es tu publicación"
+                    android:textAppearance="@style/TextAppearance.Ronda.BodySecondary"
+                    android:visibility="gone" />
+
+                <!-- Listado preguntas -->
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/spacing_l"
+                    android:text="Preguntas"
+                    android:textAppearance="@style/TextAppearance.Ronda.Label" />
+
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/rvPreguntas"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/spacing_s"
+                    android:nestedScrollingEnabled="false" />
 
             </LinearLayout>
-
-            <TextView
-                android:id="@+id/tvSoyVendedor"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="16dp"
-                android:text="Esta es tu publicación"
-                android:textStyle="italic"
-                android:visibility="gone" />
-
-            <View
-                android:layout_width="match_parent"
-                android:layout_height="1dp"
-                android:layout_marginVertical="16dp"
-                android:background="#E0E0E0" />
-
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="Preguntas"
-                android:textStyle="bold" />
-
-            <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/rvPreguntas"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:nestedScrollingEnabled="false" />
 
         </LinearLayout>
 
@@ -180,30 +312,35 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:layout_marginTop="16dp"
+            android:paddingHorizontal="@dimen/screen_padding_horizontal"
+            android:paddingTop="@dimen/spacing_m"
+            android:paddingBottom="@dimen/spacing_xl"
             android:visibility="gone">
 
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="Ofertas recibidas"
-                android:textStyle="bold" />
+                android:textAppearance="@style/TextAppearance.Ronda.Label" />
 
             <TextView
                 android:id="@+id/tvSinOfertas"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/spacing_s"
                 android:text="Todavía no recibiste ofertas"
-                android:textColor="#757575"
+                android:textAppearance="@style/TextAppearance.Ronda.BodySecondary"
                 android:visibility="gone" />
 
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/rvOfertas"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/spacing_s"
                 android:nestedScrollingEnabled="false" />
 
         </LinearLayout>
 
     </LinearLayout>
+
 </ScrollView>

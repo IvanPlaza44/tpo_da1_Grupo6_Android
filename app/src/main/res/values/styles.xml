@@ -1,0 +1,130 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <!-- Tipografía (Material 3) -->
+    <style name="TextAppearance.Ronda.Headline" parent="TextAppearance.Material3.HeadlineMedium">
+        <item name="android:textColor">@color/on_surface</item>
+    </style>
+
+    <style name="TextAppearance.Ronda.Title" parent="TextAppearance.Material3.TitleMedium">
+        <item name="android:textColor">@color/on_surface</item>
+    </style>
+
+    <style name="TextAppearance.Ronda.Body" parent="TextAppearance.Material3.BodyLarge">
+        <item name="android:textColor">@color/on_surface</item>
+    </style>
+
+    <style name="TextAppearance.Ronda.BodySecondary" parent="TextAppearance.Material3.BodyMedium">
+        <item name="android:textColor">@color/on_surface_variant</item>
+    </style>
+
+    <style name="TextAppearance.Ronda.Caption" parent="TextAppearance.Material3.BodySmall">
+        <item name="android:textColor">@color/on_surface_variant</item>
+    </style>
+
+    <style name="TextAppearance.Ronda.Label" parent="TextAppearance.Material3.LabelLarge">
+        <item name="android:textColor">@color/on_surface</item>
+    </style>
+
+    <style name="TextAppearance.Ronda.Error" parent="TextAppearance.Material3.BodyMedium">
+        <item name="android:textColor">@color/error</item>
+    </style>
+
+    <style name="TextAppearance.Ronda.Link" parent="TextAppearance.Material3.BodyMedium">
+        <item name="android:textColor">@color/primary</item>
+    </style>
+
+    <style name="TextAppearance.Ronda.Brand" parent="TextAppearance.Material3.HeadlineLarge">
+        <item name="android:fontFamily">@font/nunito_bold</item>
+        <item name="android:textColor">@color/primary</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:textSize">36sp</item>
+    </style>
+
+    <style name="TextAppearance.Ronda.Brand.Small" parent="TextAppearance.Ronda.Headline">
+        <item name="android:fontFamily">@font/nunito_bold</item>
+        <item name="android:textColor">@color/primary</item>
+        <item name="android:textStyle">bold</item>
+    </style>
+
+    <!-- Botones -->
+    <style name="Widget.Ronda.Button" parent="Widget.Material3.Button">
+        <item name="android:minHeight">48dp</item>
+    </style>
+
+    <style name="Widget.Ronda.Button.Outlined" parent="Widget.Material3.Button.OutlinedButton">
+        <item name="android:minHeight">48dp</item>
+    </style>
+
+    <style name="Widget.Ronda.Button.Text" parent="Widget.Material3.Button.TextButton">
+        <item name="android:minHeight">48dp</item>
+    </style>
+
+    <style name="Widget.Ronda.Button.Text.Destructive" parent="Widget.Material3.Button.TextButton">
+        <item name="android:minHeight">48dp</item>
+        <item name="android:textColor">@color/error</item>
+    </style>
+
+    <!-- Inputs -->
+    <style name="Widget.Ronda.TextInputLayout" parent="Widget.Material3.TextInputLayout.OutlinedBox">
+        <item name="boxStrokeColor">@color/primary</item>
+        <item name="hintTextColor">@color/on_surface_variant</item>
+    </style>
+
+    <style name="Widget.Ronda.TextInputLayout.Embedded" parent="Widget.Ronda.TextInputLayout">
+        <item name="boxBackgroundMode">none</item>
+        <item name="boxStrokeWidth">0dp</item>
+        <item name="boxStrokeWidthFocused">0dp</item>
+    </style>
+
+    <style name="Widget.Ronda.Button.Outlined.Compact" parent="Widget.Ronda.Button.Outlined">
+        <item name="android:minHeight">36dp</item>
+        <item name="android:insetTop">0dp</item>
+        <item name="android:insetBottom">0dp</item>
+        <item name="android:textSize">13sp</item>
+    </style>
+
+    <style name="Widget.Ronda.Button.Text.Compact" parent="Widget.Ronda.Button.Text">
+        <item name="android:minHeight">36dp</item>
+        <item name="android:insetTop">0dp</item>
+        <item name="android:insetBottom">0dp</item>
+        <item name="android:textSize">13sp</item>
+    </style>
+
+    <style name="Widget.Ronda.Button.Icon" parent="Widget.Material3.Button.IconButton">
+        <item name="iconTint">@color/primary</item>
+        <item name="android:minWidth">40dp</item>
+        <item name="android:minHeight">40dp</item>
+    </style>
+
+    <style name="Widget.Ronda.Toolbar" parent="Widget.Material3.Toolbar">
+        <item name="android:background">@android:color/transparent</item>
+        <item name="android:minHeight">44dp</item>
+        <item name="android:paddingTop">@dimen/spacing_xs</item>
+        <item name="android:paddingBottom">@dimen/spacing_xs</item>
+        <item name="titleTextColor">@color/on_surface</item>
+        <item name="subtitleTextColor">@color/on_surface_variant</item>
+        <item name="navigationIconTint">@color/primary</item>
+        <item name="android:elevation">0dp</item>
+        <item name="contentInsetStartWithNavigation">0dp</item>
+        <item name="contentInsetStart">0dp</item>
+    </style>
+
+    <!-- Cards -->
+    <style name="Widget.Ronda.CardView" parent="Widget.Material3.CardView.Elevated">
+        <item name="cardCornerRadius">@dimen/card_corner_radius</item>
+        <item name="cardElevation">@dimen/card_elevation</item>
+        <item name="contentPadding">@dimen/card_content_padding</item>
+        <item name="cardBackgroundColor">@color/surface</item>
+    </style>
+
+    <!-- Chip de solo lectura (TextView con fondo drawable) -->
+    <style name="Widget.Ronda.ReadOnlyChip" parent="android:Widget.TextView">
+        <item name="android:paddingLeft">@dimen/chip_padding_horizontal</item>
+        <item name="android:paddingRight">@dimen/chip_padding_horizontal</item>
+        <item name="android:paddingTop">@dimen/chip_padding_vertical</item>
+        <item name="android:paddingBottom">@dimen/chip_padding_vertical</item>
+        <item name="android:textAppearance">@style/TextAppearance.Ronda.Caption</item>
+    </style>
+
+</resources>

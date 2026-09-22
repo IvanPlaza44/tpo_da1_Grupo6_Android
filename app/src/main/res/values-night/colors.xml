@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Marca — primary más claro sobre fondo oscuro -->
+    <color name="primary">#90CAF9</color>
+    <color name="on_primary">#003258</color>
+    <color name="primary_container">#004A77</color>
+    <color name="on_primary_container">#D1E4FF</color>
+
+    <!-- Superficies -->
+    <color name="surface">#121212</color>
+    <color name="on_surface">#E3E2E6</color>
+    <color name="surface_variant">#1E252B</color>
+    <color name="on_surface_variant">#B0BEC5</color>
+
+    <!-- Bordes -->
+    <color name="outline">#938F99</color>
+    <color name="outline_variant">#3A3F44</color>
+
+    <!-- Error -->
+    <color name="error">#EF9A9A</color>
+    <color name="on_error">#690005</color>
+    <color name="error_container">#93000A</color>
+    <color name="on_error_container">#FFDAD6</color>
+
+    <!-- Avisos -->
+    <color name="warning">#FFB74D</color>
+    <color name="on_warning">#4E2600</color>
+    <color name="warning_container">#5D4037</color>
+    <color name="on_warning_container">#FFE0B2</color>
+
+    <color name="image_placeholder">#1E252B</color>
+
+    <color name="chip_articulo_bg">#1E252B</color>
+    <color name="chip_articulo_text">#B0BEC5</color>
+
+    <color name="chip_publicacion_activa_bg">#1B5E20</color>
+    <color name="chip_publicacion_activa_text">#C8E6C9</color>
+    <color name="chip_publicacion_pausada_bg">#E65100</color>
+    <color name="chip_publicacion_pausada_text">#FFE0B2</color>
+    <color name="chip_publicacion_vendida_bg">#424242</color>
+    <color name="chip_publicacion_vendida_text">#E0E0E0</color>
+</resources>

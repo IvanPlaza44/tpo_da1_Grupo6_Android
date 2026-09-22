@@ -1,30 +1,33 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+<com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_marginBottom="8dp"
-    app:cardCornerRadius="8dp"
-    app:cardElevation="2dp">
+    android:layout_marginBottom="@dimen/list_item_spacing"
+    app:cardBackgroundColor="@color/surface"
+    app:cardCornerRadius="@dimen/card_corner_radius"
+    app:cardElevation="0dp"
+    app:strokeColor="@color/outline_variant"
+    app:strokeWidth="1dp">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        android:padding="12dp">
+        android:padding="@dimen/card_content_padding">
 
         <ImageView
             android:id="@+id/ivFoto"
-            android:layout_width="96dp"
-            android:layout_height="96dp"
-            android:background="#E0E0E0"
+            android:layout_width="@dimen/list_thumbnail_size"
+            android:layout_height="@dimen/list_thumbnail_size"
+            android:background="@drawable/bg_image_placeholder"
             android:contentDescription="Foto de la publicación"
             android:scaleType="centerCrop" />
 
         <LinearLayout
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginStart="12dp"
+            android:layout_marginStart="@dimen/spacing_m"
             android:layout_weight="1"
             android:orientation="vertical">
 
@@ -32,43 +35,54 @@
                 android:id="@+id/tvTitulo"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:textSize="16sp"
-                android:textStyle="bold" />
+                android:ellipsize="end"
+                android:maxLines="2"
+                android:textAppearance="@style/TextAppearance.Ronda.Title" />
 
             <TextView
                 android:id="@+id/tvPrecio"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="4dp"
-                android:textSize="14sp" />
+                android:layout_marginTop="@dimen/spacing_xs"
+                android:textAppearance="@style/TextAppearance.Ronda.Title"
+                android:textColor="@color/primary" />
+
+            <TextView
+                android:id="@+id/tvCambioPrecio"
+                style="@style/Widget.Ronda.ReadOnlyChip"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/spacing_xs"
+                android:background="@drawable/bg_chip_warning_container"
+                android:text="El precio cambió"
+                android:textColor="@color/on_warning_container"
+                android:visibility="gone" />
 
             <TextView
                 android:id="@+id/tvEstadoArticulo"
+                style="@style/Widget.Ronda.ReadOnlyChip"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="4dp"
-                android:background="@drawable/bg_chip_estado"
-                android:paddingHorizontal="8dp"
-                android:paddingVertical="2dp"
-                android:textSize="12sp" />
+                android:layout_marginTop="@dimen/spacing_xs"
+                android:background="@drawable/bg_chip_articulo"
+                android:textColor="@color/chip_articulo_text" />
 
             <TextView
                 android:id="@+id/tvZona"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="4dp"
-                android:textColor="#666666"
-                android:textSize="12sp" />
+                android:layout_marginTop="@dimen/spacing_xs"
+                android:textAppearance="@style/TextAppearance.Ronda.Caption" />
 
             <TextView
                 android:id="@+id/tvVendedor"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="2dp"
-                android:textColor="#999999"
-                android:textSize="12sp" />
+                android:layout_marginTop="@dimen/spacing_xs"
+                android:textAppearance="@style/TextAppearance.Ronda.Caption" />
 
         </LinearLayout>
 
     </LinearLayout>
-</androidx.cardview.widget.CardView>
+
+</com.google.android.material.card.MaterialCardView>

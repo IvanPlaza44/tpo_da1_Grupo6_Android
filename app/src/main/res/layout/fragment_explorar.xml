@@ -1,7 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:background="@color/surface">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -12,67 +14,133 @@
             android:id="@+id/tvSinConexion"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="#FFA000"
+            android:background="@drawable/bg_banner_warning"
             android:gravity="center"
-            android:padding="8dp"
-            android:text="Sin conexion - mostrando datos guardados. Pueden estar desactualizados."
-            android:textColor="#FFFFFF"
+            android:paddingHorizontal="@dimen/banner_padding_horizontal"
+            android:paddingVertical="@dimen/banner_padding_vertical"
+            android:text="@string/banner_offline"
+            android:textAppearance="@style/TextAppearance.Ronda.Caption"
+            android:textColor="@color/on_warning_container"
             android:visibility="gone" />
 
+        <!-- Bloque búsqueda + acciones -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:gravity="center_vertical"
-            android:orientation="horizontal"
-            android:paddingHorizontal="8dp">
+            android:background="@color/surface_variant"
+            android:orientation="vertical"
+            android:paddingHorizontal="@dimen/screen_padding_horizontal"
+            android:paddingTop="@dimen/spacing_s"
+            android:paddingBottom="@dimen/spacing_m">
 
-            <EditText
-                android:id="@+id/etBuscar"
-                android:layout_width="0dp"
+            <com.google.android.material.card.MaterialCardView
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:hint="Buscar publicaciones"
-                android:imeOptions="actionSearch"
-                android:importantForAutofill="no"
-                android:inputType="text"
-                android:maxLines="1"
-                android:padding="12dp" />
+                app:cardBackgroundColor="@color/surface"
+                app:cardCornerRadius="@dimen/card_corner_radius"
+                app:cardElevation="0dp"
+                app:strokeColor="@color/outline_variant"
+                app:strokeWidth="1dp">
 
-            <Button
-                android:id="@+id/btnFiltros"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Filtros" />
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center_vertical"
+                    android:minHeight="52dp"
+                    android:orientation="horizontal"
+                    android:paddingStart="@dimen/spacing_m"
+                    android:paddingEnd="@dimen/spacing_xs">
 
-            <Button
-                android:id="@+id/btnGuardarBusqueda"
-                android:layout_width="wrap_content"
+                    <ImageView
+                        android:layout_width="22dp"
+                        android:layout_height="22dp"
+                        android:contentDescription="@null"
+                        android:importantForAccessibility="no"
+                        android:src="@android:drawable/ic_menu_search"
+                        app:tint="@color/on_surface_variant" />
+
+                    <EditText
+                        android:id="@+id/etBuscar"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="@dimen/spacing_s"
+                        android:layout_weight="1"
+                        android:background="@null"
+                        android:hint="Buscar publicaciones"
+                        android:imeOptions="actionSearch"
+                        android:importantForAutofill="no"
+                        android:inputType="text"
+                        android:maxLines="1"
+                        android:paddingVertical="@dimen/spacing_s"
+                        android:textAppearance="@style/TextAppearance.Ronda.Body"
+                        android:textColorHint="@color/on_surface_variant" />
+
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/btnFiltros"
+                        style="@style/Widget.Ronda.Button.Icon"
+                        android:layout_width="40dp"
+                        android:layout_height="40dp"
+                        android:contentDescription="Filtros"
+                        app:icon="@android:drawable/ic_menu_sort_by_size"
+                        app:iconSize="22dp" />
+
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/btnGuardarBusqueda"
+                        style="@style/Widget.Ronda.Button.Icon"
+                        android:layout_width="40dp"
+                        android:layout_height="40dp"
+                        android:contentDescription="Guardar búsqueda"
+                        app:icon="@android:drawable/ic_menu_save"
+                        app:iconSize="22dp" />
+
+                </LinearLayout>
+
+            </com.google.android.material.card.MaterialCardView>
+
+            <LinearLayout
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Guardar" />
+                android:layout_marginTop="@dimen/spacing_m"
+                android:gravity="center_vertical"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="@dimen/spacing_s"
+                    android:text="Ordenar"
+                    android:textAppearance="@style/TextAppearance.Ronda.Label" />
+
+                <Spinner
+                    android:id="@+id/spOrden"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:background="@android:color/transparent"
+                    android:minHeight="48dp" />
+
+            </LinearLayout>
 
         </LinearLayout>
-
-        <Spinner
-            android:id="@+id/spOrden"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:paddingHorizontal="8dp" />
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/rvExplorar"
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_weight="1"
-            android:padding="8dp"
-            android:clipToPadding="false" />
+            android:clipToPadding="false"
+            android:paddingHorizontal="@dimen/screen_padding_horizontal"
+            android:paddingTop="@dimen/spacing_s"
+            android:paddingBottom="@dimen/spacing_s" />
 
         <ProgressBar
             android:id="@+id/progressBarSiguiente"
             style="?android:attr/progressBarStyleSmall"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:padding="8dp"
+            android:layout_gravity="center_horizontal"
+            android:indeterminateTint="@color/primary"
+            android:padding="@dimen/spacing_s"
             android:visibility="gone" />
 
     </LinearLayout>
@@ -81,25 +149,28 @@
         android:id="@+id/progressBar"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_gravity="center" />
+        android:layout_gravity="center"
+        android:indeterminateTint="@color/primary" />
 
     <TextView
         android:id="@+id/tvVacio"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
+        android:gravity="center"
+        android:paddingHorizontal="@dimen/spacing_l"
         android:text="Todavía no hay publicaciones."
-        android:textSize="16sp"
+        android:textAppearance="@style/TextAppearance.Ronda.BodySecondary"
         android:visibility="gone" />
 
     <LinearLayout
         android:id="@+id/contenedorError"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
         android:gravity="center"
         android:orientation="vertical"
-        android:padding="16dp"
+        android:paddingHorizontal="@dimen/spacing_l"
         android:visibility="gone">
 
         <TextView
@@ -107,15 +178,16 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:gravity="center"
-            android:text="No se pudo cargar. Revisá tu conexión e intentá de nuevo."
-            android:textSize="16sp" />
+            android:text="@string/state_error_generic"
+            android:textAppearance="@style/TextAppearance.Ronda.Error" />
 
-        <Button
+        <com.google.android.material.button.MaterialButton
             android:id="@+id/btnReintentar"
+            style="@style/Widget.Ronda.Button.Outlined"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
-            android:text="Reintentar" />
+            android:layout_marginTop="@dimen/spacing_s"
+            android:text="@string/action_retry" />
 
     </LinearLayout>
 

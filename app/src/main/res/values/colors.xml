@@ -1,5 +1,49 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <!-- Legacy -->
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
+
+    <!-- Marca Ronda — azul #1976D2 (Blue 700) -->
+    <color name="primary">#1976D2</color>
+    <color name="on_primary">#FFFFFF</color>
+    <color name="primary_container">#D1E4FF</color>
+    <color name="on_primary_container">#0D3B6B</color>
+
+    <!-- Superficies -->
+    <color name="surface">#FFFFFF</color>
+    <color name="on_surface">#1A1C1E</color>
+    <color name="surface_variant">#E8EEF4</color>
+    <color name="on_surface_variant">#5F6368</color>
+
+    <!-- Bordes y divisores -->
+    <color name="outline">#79747E</color>
+    <color name="outline_variant">#E0E0E0</color>
+
+    <!-- Error -->
+    <color name="error">#C62828</color>
+    <color name="on_error">#FFFFFF</color>
+    <color name="error_container">#FFEBEE</color>
+    <color name="on_error_container">#8E0000</color>
+
+    <!-- Avisos (sin conexión, etc.) -->
+    <color name="warning">#F57C00</color>
+    <color name="on_warning">#FFFFFF</color>
+    <color name="warning_container">#FFF3E0</color>
+    <color name="on_warning_container">#E65100</color>
+
+    <!-- Placeholders de imagen -->
+    <color name="image_placeholder">#E8EEF4</color>
+
+    <!-- Chips — estado del artículo (listados) -->
+    <color name="chip_articulo_bg">#E8EEF4</color>
+    <color name="chip_articulo_text">#5F6368</color>
+
+    <!-- Chips — estado de publicación (mis publicaciones) -->
+    <color name="chip_publicacion_activa_bg">#C8E6C9</color>
+    <color name="chip_publicacion_activa_text">#1B5E20</color>
+    <color name="chip_publicacion_pausada_bg">#FFE0B2</color>
+    <color name="chip_publicacion_pausada_text">#E65100</color>
+    <color name="chip_publicacion_vendida_bg">#E0E0E0</color>
+    <color name="chip_publicacion_vendida_text">#616161</color>
 </resources>

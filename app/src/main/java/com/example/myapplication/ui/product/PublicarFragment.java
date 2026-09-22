@@ -27,6 +27,7 @@ import com.example.myapplication.model.Publicacion.CategoriaDto;
 import com.example.myapplication.model.Publicacion.PublicacionDetalle;
 import com.example.myapplication.model.Publicacion.PublicacionRequest;
 import com.example.myapplication.network.RetrofitClient;
+import com.google.android.material.progressindicator.LinearProgressIndicator;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -50,6 +51,7 @@ public class PublicarFragment extends Fragment {
     private final String[] estadosArticulo = {"NUEVO", "COMO_NUEVO", "USADO"};
 
     private TextView tvPaso, tvResumen, tvFotosEstado;
+    private LinearProgressIndicator progressPasos;
     private View stepUno, stepDos, stepTres;
     private EditText etTitulo, etDescripcion, etPrecio, etZona;
     private Spinner spCategoria, spEstadoArticulo;
@@ -77,6 +79,7 @@ public class PublicarFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
 
         tvPaso = view.findViewById(R.id.tvPaso);
+        progressPasos = view.findViewById(R.id.progressPasos);
         tvResumen = view.findViewById(R.id.tvResumen);
         tvFotosEstado = view.findViewById(R.id.tvFotosEstado);
         stepUno = view.findViewById(R.id.stepUno);
@@ -297,6 +300,9 @@ public class PublicarFragment extends Fragment {
         stepDos.setVisibility(paso == 2 ? View.VISIBLE : View.GONE);
         stepTres.setVisibility(paso == 3 ? View.VISIBLE : View.GONE);
         tvPaso.setText("Paso " + paso + " de 3");
+        if (progressPasos != null) {
+            progressPasos.setProgressCompat(paso, true);
+        }
         btnAnterior.setEnabled(paso > 1);
         btnSiguiente.setText(paso == 3 ? "Publicar" : "Siguiente");
 
