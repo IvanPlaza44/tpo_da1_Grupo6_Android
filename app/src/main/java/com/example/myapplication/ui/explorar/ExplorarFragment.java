@@ -26,6 +26,7 @@ import com.example.myapplication.data.local.AppDatabase;
 import com.example.myapplication.data.local.PublicacionEntity;
 import com.example.myapplication.model.BusquedaGuardadaRequestDto;
 import com.example.myapplication.model.BusquedaGuardadaResponseDto;
+import com.example.myapplication.model.Usuario;
 import com.example.myapplication.model.Publicacion.CategoriaDto;
 import com.example.myapplication.model.Publicacion.FavoritoResponseDto;
 import com.example.myapplication.model.Publicacion.PaginaDto;
@@ -40,6 +41,8 @@ import java.util.List;
 import java.util.Set;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+
+import com.google.android.material.switchmaterial.SwitchMaterial;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -84,6 +87,8 @@ public class ExplorarFragment extends Fragment {
     private Double precioMax = null;
     private String estadoArticulo = null;
     private String zona = null;
+    /** Filtro de cercanía: usa {@link #zona} obtenida de GET /me al aplicar. */
+    private boolean usarMiZona = false;
     private String ordenActual = "RECIENTES";
     // true hasta terminar el setup (y setSelection programático). Evita un
     // segundo GET si el Spinner dispara onItemSelected al poner RECIENTES.
@@ -308,6 +313,7 @@ public class ExplorarFragment extends Fragment {
         precioMax = args.containsKey(ARG_PRECIO_MAX) ? args.getDouble(ARG_PRECIO_MAX) : null;
         estadoArticulo = textoONull(args.getString(ARG_ESTADO_ARTICULO));
         zona = textoONull(args.getString(ARG_ZONA));
+        usarMiZona = false;
         ordenActual = "RECIENTES";
 
         etBuscar.setText(queryActual != null ? queryActual : "");
@@ -424,6 +430,22 @@ public class ExplorarFragment extends Fragment {
         EditText etPrecioMax = contenido.findViewById(R.id.etPrecioMax);
         Spinner spEstado = contenido.findViewById(R.id.spEstadoArticuloFiltro);
         EditText etZona = contenido.findViewById(R.id.etZonaFiltro);
+        SwitchMaterial switchUsarMiZona = contenido.findViewById(R.id.switchUsarMiZona);
+        View tilZonaFiltro = contenido.findViewById(R.id.tilZonaFiltro);
+
+        SessionManager session = new SessionManager(requireContext());
+        boolean loggedIn = session.isLoggedIn();
+        if (loggedIn) {
+            switchUsarMiZona.setVisibility(View.VISIBLE);
+            switchUsarMiZona.setChecked(usarMiZona);
+        } else {
+            switchUsarMiZona.setVisibility(View.GONE);
+            switchUsarMiZona.setChecked(false);
+        }
+
+        actualizarCampoZonaManual(etZona, tilZonaFiltro, switchUsarMiZona.isChecked());
+        switchUsarMiZona.setOnCheckedChangeListener((buttonView, isChecked) ->
+                actualizarCampoZonaManual(etZona, tilZonaFiltro, isChecked));
 
         List<String> nombresCategoria = new ArrayList<>();
         nombresCategoria.add("Todas");
@@ -441,17 +463,26 @@ public class ExplorarFragment extends Fragment {
                 android.R.layout.simple_spinner_dropdown_item, ESTADOS_ARTICULO_FILTRO));
         spEstado.setSelection(indiceEstadoAplicado());
 
-        if (zona != null) etZona.setText(zona);
+        if (zona != null) {
+            etZona.setText(zona);
+        }
 
         AlertDialog dialog = new AlertDialog.Builder(requireContext())
                 .setTitle("Filtros")
                 .setView(contenido)
                 .create();
 
-        contenido.findViewById(R.id.btnAplicarFiltros).setOnClickListener(v -> {
-            if (aplicarFiltrosDesdeDialog(spCategoria, etPrecioMin, etPrecioMax, spEstado, etZona)) {
-                dialog.dismiss();
-                cargarPaginaInicial();
+        View btnAplicar = contenido.findViewById(R.id.btnAplicarFiltros);
+        btnAplicar.setOnClickListener(v -> {
+            if (loggedIn && switchUsarMiZona.isChecked()) {
+                btnAplicar.setEnabled(false);
+                aplicarFiltrosConMiZona(spCategoria, etPrecioMin, etPrecioMax, spEstado, dialog, btnAplicar);
+            } else {
+                usarMiZona = false;
+                if (aplicarFiltrosDesdeDialog(spCategoria, etPrecioMin, etPrecioMax, spEstado, etZona)) {
+                    dialog.dismiss();
+                    cargarPaginaInicial();
+                }
             }
         });
         contenido.findViewById(R.id.btnLimpiarFiltros).setOnClickListener(v -> {
@@ -460,6 +491,7 @@ public class ExplorarFragment extends Fragment {
             precioMax = null;
             estadoArticulo = null;
             zona = null;
+            usarMiZona = false;
             dialog.dismiss();
             cargarPaginaInicial();
         });
@@ -467,8 +499,59 @@ public class ExplorarFragment extends Fragment {
         dialog.show();
     }
 
-    private boolean aplicarFiltrosDesdeDialog(Spinner spCategoria, EditText etPrecioMin,
-                                              EditText etPrecioMax, Spinner spEstado, EditText etZona) {
+    private void actualizarCampoZonaManual(EditText etZona, View tilZonaFiltro, boolean usarMiZonaActivo) {
+        etZona.setEnabled(!usarMiZonaActivo);
+        tilZonaFiltro.setEnabled(!usarMiZonaActivo);
+        if (usarMiZonaActivo) {
+            etZona.setAlpha(0.6f);
+        } else {
+            etZona.setAlpha(1f);
+        }
+    }
+
+    private void aplicarFiltrosConMiZona(Spinner spCategoria, EditText etPrecioMin, EditText etPrecioMax,
+                                         Spinner spEstado, AlertDialog dialog, View btnAplicar) {
+        if (!validarPreciosDesdeDialog(etPrecioMin, etPrecioMax)) {
+            btnAplicar.setEnabled(true);
+            return;
+        }
+
+        RetrofitClient.getApiService(requireContext()).obtenerMiPerfil().enqueue(new Callback<Usuario>() {
+            @Override
+            public void onResponse(@NonNull Call<Usuario> call, @NonNull Response<Usuario> response) {
+                if (!isAdded()) return;
+                btnAplicar.setEnabled(true);
+
+                if (!response.isSuccessful() || response.body() == null) {
+                    Toast.makeText(requireContext(), "No se pudo cargar tu perfil", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+
+                String zonaPerfil = response.body().getZona();
+                if (zonaPerfil == null || zonaPerfil.trim().isEmpty()) {
+                    Toast.makeText(requireContext(),
+                            R.string.filter_zona_perfil_incompleto,
+                            Toast.LENGTH_SHORT).show();
+                    return;
+                }
+
+                usarMiZona = true;
+                zona = zonaPerfil.trim();
+                aplicarCategoriaEstadoPrecioDesdeDialog(spCategoria, etPrecioMin, etPrecioMax, spEstado);
+                dialog.dismiss();
+                cargarPaginaInicial();
+            }
+
+            @Override
+            public void onFailure(@NonNull Call<Usuario> call, @NonNull Throwable t) {
+                if (!isAdded()) return;
+                btnAplicar.setEnabled(true);
+                Toast.makeText(requireContext(), "Sin conexión", Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
+    private boolean validarPreciosDesdeDialog(EditText etPrecioMin, EditText etPrecioMax) {
         Double min;
         Double max;
         try {
@@ -485,17 +568,39 @@ public class ExplorarFragment extends Fragment {
                     Toast.LENGTH_SHORT).show();
             return false;
         }
+        return true;
+    }
 
+    private void aplicarCategoriaEstadoPrecioDesdeDialog(Spinner spCategoria, EditText etPrecioMin,
+                                                         EditText etPrecioMax, Spinner spEstado) {
         int catPos = spCategoria.getSelectedItemPosition();
         categoriaId = catPos <= 0 ? null : categorias.get(catPos - 1).id;
 
         int estadoPos = spEstado.getSelectedItemPosition();
         estadoArticulo = estadoPos <= 0 ? null : ESTADOS_ARTICULO_FILTRO[estadoPos];
 
+        precioMin = parsePrecioSafe(etPrecioMin.getText().toString());
+        precioMax = parsePrecioSafe(etPrecioMax.getText().toString());
+    }
+
+    private Double parsePrecioSafe(String texto) {
+        try {
+            return parsePrecio(texto);
+        } catch (NumberFormatException e) {
+            return null;
+        }
+    }
+
+    private boolean aplicarFiltrosDesdeDialog(Spinner spCategoria, EditText etPrecioMin,
+                                              EditText etPrecioMax, Spinner spEstado, EditText etZona) {
+        if (!validarPreciosDesdeDialog(etPrecioMin, etPrecioMax)) {
+            return false;
+        }
+
+        aplicarCategoriaEstadoPrecioDesdeDialog(spCategoria, etPrecioMin, etPrecioMax, spEstado);
+
         String zonaTexto = etZona.getText().toString().trim();
         zona = zonaTexto.isEmpty() ? null : zonaTexto;
-        precioMin = min;
-        precioMax = max;
         return true;
     }
 
