@@ -19,19 +19,22 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.myapplication.R;
 import com.example.myapplication.model.BusquedaGuardadaResponseDto;
 import com.example.myapplication.network.ApiService;
-import com.example.myapplication.network.RetrofitClient;
 import com.example.myapplication.ui.explorar.ExplorarFragment;
 
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.inject.Inject;
+
+import dagger.hilt.android.AndroidEntryPoint;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
+@AndroidEntryPoint
 public class BusquedasGuardadasFragment extends Fragment {
 
-    private ApiService apiService;
+    @Inject ApiService apiService;
     private BusquedasGuardadasAdapter adapter;
     private Call<List<BusquedaGuardadaResponseDto>> llamadaEnCurso;
     private Call<Void> llamadaEliminar;
@@ -52,8 +55,6 @@ public class BusquedasGuardadasFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-
-        apiService = RetrofitClient.getApiService(requireContext());
 
         rvBusquedasGuardadas = view.findViewById(R.id.rvBusquedasGuardadas);
         progressBar = view.findViewById(R.id.progressBar);

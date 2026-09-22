@@ -3,6 +3,12 @@ package com.example.myapplication.session;
 import android.content.Context;
 import android.content.SharedPreferences;
 
+import javax.inject.Inject;
+import javax.inject.Singleton;
+
+import dagger.hilt.android.qualifiers.ApplicationContext;
+
+@Singleton
 public class SessionManager {
 
     private static final String PREFS_NAME = "ronda_session";
@@ -15,7 +21,8 @@ public class SessionManager {
 
     private final SharedPreferences prefs;
 
-    public SessionManager(Context context) {
+    @Inject
+    public SessionManager(@ApplicationContext Context context) {
         prefs = context.getApplicationContext().getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
     }
 

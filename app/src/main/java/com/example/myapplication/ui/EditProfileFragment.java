@@ -26,13 +26,15 @@ import com.example.myapplication.R;
 import com.example.myapplication.model.Usuario;
 import com.example.myapplication.model.UsuarioUpdateRequest;
 import com.example.myapplication.network.ApiService;
-import com.example.myapplication.network.RetrofitClient;
 import com.example.myapplication.util.ImageLoader;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 
+import javax.inject.Inject;
+
+import dagger.hilt.android.AndroidEntryPoint;
 import okhttp3.MediaType;
 import okhttp3.MultipartBody;
 import okhttp3.RequestBody;
@@ -49,6 +51,7 @@ import retrofit2.Response;
  * foto nueva, la sube aparte con POST /me/foto (multipart/form-data), porque
  * JSON no transporta archivos binarios.
  */
+@AndroidEntryPoint
 public class EditProfileFragment extends Fragment {
 
     private static final String TAG = "EditProfileFragment";
@@ -60,7 +63,7 @@ public class EditProfileFragment extends Fragment {
     private EditText etZona;
     private Button btnGuardar;
 
-    private ApiService apiService;
+    @Inject ApiService apiService;
 
     // Uri de la foto elegida en la galería. La guardamos acá porque el
     // usuario puede cambiar la foto y recién después tocar "Guardar".
@@ -102,8 +105,6 @@ public class EditProfileFragment extends Fragment {
         etTelefono = view.findViewById(R.id.etTelefono);
         etZona = view.findViewById(R.id.etZona);
         btnGuardar = view.findViewById(R.id.btnGuardar);
-
-        apiService = RetrofitClient.getApiService(requireContext());
 
         cargarDatosActuales();
 

@@ -4,7 +4,7 @@ import com.google.gson.annotations.SerializedName;
 
 /**
  * Modelo de datos que representa a un usuario de la plataforma.
- * Gson (el conversor configurado en RetrofitClient con GsonConverterFactory)
+ * Gson (el conversor configurado en Retrofit con GsonConverterFactory)
  * convierte automáticamente el JSON que devuelve el servidor en un objeto
  * de esta clase. Por eso necesita un constructor vacío: Gson lo instancia
  * primero y después completa los campos usando reflection.

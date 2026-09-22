@@ -21,20 +21,23 @@ import com.example.myapplication.R;
 import com.example.myapplication.model.Publicacion.OfertaRequestDto;
 import com.example.myapplication.model.Publicacion.OfertaResponseDto;
 import com.example.myapplication.network.ApiService;
-import com.example.myapplication.network.RetrofitClient;
 
 import java.util.List;
 
+import javax.inject.Inject;
+
+import dagger.hilt.android.AndroidEntryPoint;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
+@AndroidEntryPoint
 public class MisOfertasFragment extends Fragment {
 
-    private ApiService apiService;
+    @Inject ApiService apiService;
+    @Inject SessionManager sessionManager;
 
     private RadioGroup rgTipoOferta;
-    private SessionManager sessionManager;
     private ProgressBar progressBar;
     private TextView tvVacio;
     private RecyclerView rvMisOfertas;
@@ -49,9 +52,6 @@ public class MisOfertasFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-
-        apiService = RetrofitClient.getApiService(requireContext());
-        sessionManager = new SessionManager(requireContext());
 
         rgTipoOferta = view.findViewById(R.id.rgTipoOferta);
         progressBar = view.findViewById(R.id.progressBar);

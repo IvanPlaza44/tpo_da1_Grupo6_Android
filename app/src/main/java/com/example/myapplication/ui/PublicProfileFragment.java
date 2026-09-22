@@ -20,13 +20,15 @@ import com.example.myapplication.R;
 import com.example.myapplication.model.PerfilPublicoResponseDto;
 import com.example.myapplication.model.Publicacion.PublicacionResumen;
 import com.example.myapplication.network.ApiService;
-import com.example.myapplication.network.RetrofitClient;
 import com.example.myapplication.ui.explorar.ExplorarAdapter;
 import com.example.myapplication.util.ImageLoader;
 
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.inject.Inject;
+
+import dagger.hilt.android.AndroidEntryPoint;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -41,6 +43,7 @@ import retrofit2.Response;
  * Una sola llamada (GET /api/usuarios/{id}) trae todo lo que pide el TP:
  * foto, reputación, antigüedad y publicaciones activas.
  */
+@AndroidEntryPoint
 public class PublicProfileFragment extends Fragment {
 
     private static final String TAG = "PublicProfileFragment";
@@ -58,7 +61,7 @@ public class PublicProfileFragment extends Fragment {
     private RecyclerView rvPublicaciones;
     private ExplorarAdapter adapter;
 
-    private ApiService apiService;
+    @Inject ApiService apiService;
     private long userId;
 
     @Nullable
@@ -96,8 +99,6 @@ public class PublicProfileFragment extends Fragment {
         if (getArguments() != null) {
             userId = getArguments().getLong(ARG_USER_ID, -1);
         }
-
-        apiService = RetrofitClient.getApiService(requireContext());
 
         if (userId != -1) {
             cargarPerfilPublico();
