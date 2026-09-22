@@ -10,53 +10,110 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:paddingHorizontal="@dimen/screen_padding_horizontal"
-        android:paddingTop="@dimen/spacing_l"
         android:paddingBottom="@dimen/spacing_xl">
 
-        <!-- Header -->
-        <TextView
-            android:id="@+id/tvSaludo"
+        <!-- Hero -->
+        <com.google.android.material.card.MaterialCardView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Hola"
-            android:textAppearance="@style/TextAppearance.Ronda.Headline" />
+            android:layout_marginHorizontal="@dimen/screen_padding_horizontal"
+            android:layout_marginTop="@dimen/spacing_m"
+            app:cardBackgroundColor="@color/primary_container"
+            app:cardCornerRadius="@dimen/card_corner_radius"
+            app:cardElevation="0dp"
+            app:strokeWidth="0dp">
 
-        <TextView
-            android:id="@+id/tvSubtitulo"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/spacing_xs"
-            android:text="Bienvenido"
-            android:textAppearance="@style/TextAppearance.Ronda.BodySecondary" />
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="@dimen/spacing_l">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Ronda"
+                    android:textAppearance="@style/TextAppearance.Ronda.Brand.Small"
+                    android:textColor="@color/on_primary_container"
+                    android:textSize="22sp" />
+
+                <TextView
+                    android:id="@+id/tvSaludo"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/spacing_s"
+                    android:text="Hola"
+                    android:textAppearance="@style/TextAppearance.Ronda.Headline"
+                    android:textColor="@color/on_primary_container" />
+
+                <TextView
+                    android:id="@+id/tvSubtitulo"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/spacing_xs"
+                    android:text="Bienvenido"
+                    android:textAppearance="@style/TextAppearance.Ronda.BodySecondary"
+                    android:textColor="@color/on_primary_container" />
+
+            </LinearLayout>
+
+        </com.google.android.material.card.MaterialCardView>
 
         <!-- Acciones principales -->
-        <com.google.android.material.button.MaterialButton
-            android:id="@+id/btnExplorar"
-            style="@style/Widget.Ronda.Button"
+        <com.google.android.material.card.MaterialCardView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/spacing_l"
-            android:text="Explorar publicaciones"
-            app:icon="@android:drawable/ic_menu_search"
-            app:iconGravity="textStart"
-            app:iconPadding="@dimen/spacing_s" />
+            android:layout_marginHorizontal="@dimen/screen_padding_horizontal"
+            android:layout_marginTop="@dimen/spacing_m"
+            app:cardBackgroundColor="@color/surface"
+            app:cardCornerRadius="@dimen/card_corner_radius"
+            app:cardElevation="0dp"
+            app:strokeColor="@color/outline_variant"
+            app:strokeWidth="1dp">
 
-        <com.google.android.material.button.MaterialButton
-            android:id="@+id/btnPublicar"
-            style="@style/Widget.Ronda.Button.Outlined"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/spacing_s"
-            android:text="Publicar producto"
-            app:icon="@android:drawable/ic_input_add"
-            app:iconGravity="textStart"
-            app:iconPadding="@dimen/spacing_s" />
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="@dimen/spacing_m">
 
-        <!-- Accesos secundarios -->
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Empezá ahora"
+                    android:textAppearance="@style/TextAppearance.Ronda.Label" />
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btnExplorar"
+                    style="@style/Widget.Ronda.Button"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/spacing_s"
+                    android:text="Explorar publicaciones"
+                    app:icon="@android:drawable/ic_menu_search"
+                    app:iconGravity="textStart"
+                    app:iconPadding="@dimen/spacing_s" />
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btnPublicar"
+                    style="@style/Widget.Ronda.Button.Outlined"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/spacing_s"
+                    android:text="Publicar producto"
+                    app:icon="@android:drawable/ic_input_add"
+                    app:iconGravity="textStart"
+                    app:iconPadding="@dimen/spacing_s" />
+
+            </LinearLayout>
+
+        </com.google.android.material.card.MaterialCardView>
+
+        <!-- Accesos rápidos -->
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginHorizontal="@dimen/screen_padding_horizontal"
             android:layout_marginTop="@dimen/spacing_l"
             android:layout_marginBottom="@dimen/spacing_s"
             android:text="Accesos rápidos"
@@ -66,12 +123,13 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:baselineAligned="false"
-            android:orientation="horizontal">
+            android:orientation="horizontal"
+            android:paddingHorizontal="@dimen/screen_padding_horizontal">
 
             <com.google.android.material.card.MaterialCardView
                 android:id="@+id/btnMisPublicaciones"
                 android:layout_width="0dp"
-                android:layout_height="wrap_content"
+                android:layout_height="match_parent"
                 android:layout_marginEnd="@dimen/spacing_xs"
                 android:layout_weight="1"
                 android:clickable="true"
@@ -85,22 +143,31 @@
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:gravity="center_vertical"
-                    android:minHeight="72dp"
+                    android:gravity="center_horizontal"
+                    android:minHeight="104dp"
                     android:orientation="vertical"
                     android:padding="@dimen/spacing_m">
 
-                    <ImageView
-                        android:layout_width="24dp"
-                        android:layout_height="24dp"
-                        android:contentDescription="@null"
-                        android:src="@android:drawable/ic_menu_agenda"
-                        app:tint="@color/on_surface_variant" />
+                    <FrameLayout
+                        android:layout_width="40dp"
+                        android:layout_height="40dp"
+                        android:background="@drawable/bg_icon_circle">
+
+                        <ImageView
+                            android:layout_width="22dp"
+                            android:layout_height="22dp"
+                            android:layout_gravity="center"
+                            android:contentDescription="@null"
+                            android:src="@android:drawable/ic_menu_agenda"
+                            app:tint="@color/primary" />
+
+                    </FrameLayout>
 
                     <TextView
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="@dimen/spacing_s"
+                        android:gravity="center_horizontal"
                         android:maxLines="2"
                         android:text="Mis publicaciones"
                         android:textAppearance="@style/TextAppearance.Ronda.Label" />
@@ -110,7 +177,7 @@
             <com.google.android.material.card.MaterialCardView
                 android:id="@+id/btnFavoritos"
                 android:layout_width="0dp"
-                android:layout_height="wrap_content"
+                android:layout_height="match_parent"
                 android:layout_marginStart="@dimen/spacing_xs"
                 android:layout_weight="1"
                 android:clickable="true"
@@ -124,22 +191,31 @@
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:gravity="center_vertical"
-                    android:minHeight="72dp"
+                    android:gravity="center_horizontal"
+                    android:minHeight="104dp"
                     android:orientation="vertical"
                     android:padding="@dimen/spacing_m">
 
-                    <ImageView
-                        android:layout_width="24dp"
-                        android:layout_height="24dp"
-                        android:contentDescription="@null"
-                        android:src="@drawable/ic_favorito_borde"
-                        app:tint="@color/on_surface_variant" />
+                    <FrameLayout
+                        android:layout_width="40dp"
+                        android:layout_height="40dp"
+                        android:background="@drawable/bg_icon_circle">
+
+                        <ImageView
+                            android:layout_width="22dp"
+                            android:layout_height="22dp"
+                            android:layout_gravity="center"
+                            android:contentDescription="@null"
+                            android:src="@drawable/ic_favorito_borde"
+                            app:tint="@color/primary" />
+
+                    </FrameLayout>
 
                     <TextView
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="@dimen/spacing_s"
+                        android:gravity="center_horizontal"
                         android:maxLines="2"
                         android:text="Favoritos"
                         android:textAppearance="@style/TextAppearance.Ronda.Label" />
@@ -152,12 +228,13 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/spacing_s"
             android:baselineAligned="false"
-            android:orientation="horizontal">
+            android:orientation="horizontal"
+            android:paddingHorizontal="@dimen/screen_padding_horizontal">
 
             <com.google.android.material.card.MaterialCardView
                 android:id="@+id/btnBusquedasGuardadas"
                 android:layout_width="0dp"
-                android:layout_height="wrap_content"
+                android:layout_height="match_parent"
                 android:layout_marginEnd="@dimen/spacing_xs"
                 android:layout_weight="1"
                 android:clickable="true"
@@ -171,22 +248,31 @@
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:gravity="center_vertical"
-                    android:minHeight="72dp"
+                    android:gravity="center_horizontal"
+                    android:minHeight="104dp"
                     android:orientation="vertical"
                     android:padding="@dimen/spacing_m">
 
-                    <ImageView
-                        android:layout_width="24dp"
-                        android:layout_height="24dp"
-                        android:contentDescription="@null"
-                        android:src="@android:drawable/ic_menu_save"
-                        app:tint="@color/on_surface_variant" />
+                    <FrameLayout
+                        android:layout_width="40dp"
+                        android:layout_height="40dp"
+                        android:background="@drawable/bg_icon_circle">
+
+                        <ImageView
+                            android:layout_width="22dp"
+                            android:layout_height="22dp"
+                            android:layout_gravity="center"
+                            android:contentDescription="@null"
+                            android:src="@android:drawable/ic_menu_save"
+                            app:tint="@color/primary" />
+
+                    </FrameLayout>
 
                     <TextView
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="@dimen/spacing_s"
+                        android:gravity="center_horizontal"
                         android:maxLines="2"
                         android:text="Búsquedas guardadas"
                         android:textAppearance="@style/TextAppearance.Ronda.Label" />
@@ -196,7 +282,7 @@
             <com.google.android.material.card.MaterialCardView
                 android:id="@+id/btnPerfil"
                 android:layout_width="0dp"
-                android:layout_height="wrap_content"
+                android:layout_height="match_parent"
                 android:layout_marginStart="@dimen/spacing_xs"
                 android:layout_weight="1"
                 android:clickable="true"
@@ -210,28 +296,72 @@
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:gravity="center_vertical"
-                    android:minHeight="72dp"
+                    android:gravity="center_horizontal"
+                    android:minHeight="104dp"
                     android:orientation="vertical"
                     android:padding="@dimen/spacing_m">
 
-                    <ImageView
-                        android:layout_width="24dp"
-                        android:layout_height="24dp"
-                        android:contentDescription="@null"
-                        android:src="@android:drawable/ic_menu_myplaces"
-                        app:tint="@color/on_surface_variant" />
+                    <FrameLayout
+                        android:layout_width="40dp"
+                        android:layout_height="40dp"
+                        android:background="@drawable/bg_icon_circle">
+
+                        <ImageView
+                            android:layout_width="22dp"
+                            android:layout_height="22dp"
+                            android:layout_gravity="center"
+                            android:contentDescription="@null"
+                            android:src="@android:drawable/ic_menu_myplaces"
+                            app:tint="@color/primary" />
+
+                    </FrameLayout>
 
                     <TextView
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="@dimen/spacing_s"
+                        android:gravity="center_horizontal"
                         android:maxLines="2"
                         android:text="Mi perfil"
                         android:textAppearance="@style/TextAppearance.Ronda.Label" />
                 </LinearLayout>
             </com.google.android.material.card.MaterialCardView>
         </LinearLayout>
+
+        <!-- Cierre visual -->
+        <com.google.android.material.card.MaterialCardView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="@dimen/screen_padding_horizontal"
+            android:layout_marginTop="@dimen/spacing_l"
+            app:cardBackgroundColor="@color/surface_variant"
+            app:cardCornerRadius="@dimen/card_corner_radius"
+            app:cardElevation="0dp"
+            app:strokeWidth="0dp">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="@dimen/spacing_l">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Comprá y vendé cerca tuyo"
+                    android:textAppearance="@style/TextAppearance.Ronda.Title" />
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/spacing_s"
+                    android:lineSpacingExtra="2dp"
+                    android:text="Explorá publicaciones, guardá tus búsquedas favoritas y coordiná el intercambio en persona con confianza."
+                    android:textAppearance="@style/TextAppearance.Ronda.BodySecondary" />
+
+            </LinearLayout>
+
+        </com.google.android.material.card.MaterialCardView>
 
     </LinearLayout>
 </ScrollView>

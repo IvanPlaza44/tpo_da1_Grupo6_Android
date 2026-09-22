@@ -18,7 +18,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="Verificar código"
-            android:textAppearance="@style/TextAppearance.Ronda.Headline" />
+            android:textAppearance="@style/TextAppearance.Ronda.Brand.Small" />
 
         <TextView
             android:id="@+id/tvEmail"

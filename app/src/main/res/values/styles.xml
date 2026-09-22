@@ -34,6 +34,19 @@
         <item name="android:textColor">@color/primary</item>
     </style>
 
+    <style name="TextAppearance.Ronda.Brand" parent="TextAppearance.Material3.HeadlineLarge">
+        <item name="android:fontFamily">@font/nunito_bold</item>
+        <item name="android:textColor">@color/primary</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:textSize">36sp</item>
+    </style>
+
+    <style name="TextAppearance.Ronda.Brand.Small" parent="TextAppearance.Ronda.Headline">
+        <item name="android:fontFamily">@font/nunito_bold</item>
+        <item name="android:textColor">@color/primary</item>
+        <item name="android:textStyle">bold</item>
+    </style>
+
     <!-- Botones -->
     <style name="Widget.Ronda.Button" parent="Widget.Material3.Button">
         <item name="android:minHeight">48dp</item>
@@ -56,6 +69,45 @@
     <style name="Widget.Ronda.TextInputLayout" parent="Widget.Material3.TextInputLayout.OutlinedBox">
         <item name="boxStrokeColor">@color/primary</item>
         <item name="hintTextColor">@color/on_surface_variant</item>
+    </style>
+
+    <style name="Widget.Ronda.TextInputLayout.Embedded" parent="Widget.Ronda.TextInputLayout">
+        <item name="boxBackgroundMode">none</item>
+        <item name="boxStrokeWidth">0dp</item>
+        <item name="boxStrokeWidthFocused">0dp</item>
+    </style>
+
+    <style name="Widget.Ronda.Button.Outlined.Compact" parent="Widget.Ronda.Button.Outlined">
+        <item name="android:minHeight">36dp</item>
+        <item name="android:insetTop">0dp</item>
+        <item name="android:insetBottom">0dp</item>
+        <item name="android:textSize">13sp</item>
+    </style>
+
+    <style name="Widget.Ronda.Button.Text.Compact" parent="Widget.Ronda.Button.Text">
+        <item name="android:minHeight">36dp</item>
+        <item name="android:insetTop">0dp</item>
+        <item name="android:insetBottom">0dp</item>
+        <item name="android:textSize">13sp</item>
+    </style>
+
+    <style name="Widget.Ronda.Button.Icon" parent="Widget.Material3.Button.IconButton">
+        <item name="iconTint">@color/primary</item>
+        <item name="android:minWidth">40dp</item>
+        <item name="android:minHeight">40dp</item>
+    </style>
+
+    <style name="Widget.Ronda.Toolbar" parent="Widget.Material3.Toolbar">
+        <item name="android:background">@android:color/transparent</item>
+        <item name="android:minHeight">44dp</item>
+        <item name="android:paddingTop">@dimen/spacing_xs</item>
+        <item name="android:paddingBottom">@dimen/spacing_xs</item>
+        <item name="titleTextColor">@color/on_surface</item>
+        <item name="subtitleTextColor">@color/on_surface_variant</item>
+        <item name="navigationIconTint">@color/primary</item>
+        <item name="android:elevation">0dp</item>
+        <item name="contentInsetStartWithNavigation">0dp</item>
+        <item name="contentInsetStart">0dp</item>
     </style>
 
     <!-- Cards -->

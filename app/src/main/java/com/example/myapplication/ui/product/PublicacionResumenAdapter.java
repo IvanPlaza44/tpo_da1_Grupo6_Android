@@ -3,14 +3,15 @@ package com.example.myapplication.ui.product;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.myapplication.R;
 import com.example.myapplication.model.Publicacion.PublicacionResumen;
+import com.google.android.material.button.MaterialButton;
 
 import java.util.List;
 
@@ -46,6 +47,7 @@ public class PublicacionResumenAdapter extends RecyclerView.Adapter<PublicacionR
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         PublicacionResumen p = lista.get(position);
+        var context = holder.itemView.getContext();
 
         holder.tvTitulo.setText(p.titulo != null ? p.titulo : "(sin titulo)");
         holder.tvPrecio.setText(p.precio != null ? "$" + p.precio : "");
@@ -56,20 +58,23 @@ public class PublicacionResumenAdapter extends RecyclerView.Adapter<PublicacionR
 
         switch (estado) {
             case "ACTIVA":
-                holder.tvEstado.setBackgroundResource(android.R.color.holo_green_light);
+                holder.tvEstado.setBackgroundResource(R.drawable.bg_chip_publicacion_activa);
+                holder.tvEstado.setTextColor(ContextCompat.getColor(context, R.color.chip_publicacion_activa_text));
                 holder.btnAccion.setVisibility(View.VISIBLE);
                 holder.btnAccion.setText("Pausar");
                 holder.btnAccion.setOnClickListener(v -> listener.onPausar(p));
                 break;
             case "PAUSADA":
-                holder.tvEstado.setBackgroundResource(android.R.color.holo_orange_light);
+                holder.tvEstado.setBackgroundResource(R.drawable.bg_chip_publicacion_pausada);
+                holder.tvEstado.setTextColor(ContextCompat.getColor(context, R.color.chip_publicacion_pausada_text));
                 holder.btnAccion.setVisibility(View.VISIBLE);
                 holder.btnAccion.setText("Reactivar");
                 holder.btnAccion.setOnClickListener(v -> listener.onReactivar(p));
                 break;
             case "VENDIDA":
             default:
-                holder.tvEstado.setBackgroundResource(android.R.color.darker_gray);
+                holder.tvEstado.setBackgroundResource(R.drawable.bg_chip_publicacion_vendida);
+                holder.tvEstado.setTextColor(ContextCompat.getColor(context, R.color.chip_publicacion_vendida_text));
                 holder.btnAccion.setVisibility(View.GONE);
                 break;
         }
@@ -82,7 +87,7 @@ public class PublicacionResumenAdapter extends RecyclerView.Adapter<PublicacionR
 
     static class ViewHolder extends RecyclerView.ViewHolder {
         TextView tvTitulo, tvPrecio, tvEstado;
-        Button btnAccion;
+        MaterialButton btnAccion;
 
         ViewHolder(@NonNull View itemView) {
             super(itemView);

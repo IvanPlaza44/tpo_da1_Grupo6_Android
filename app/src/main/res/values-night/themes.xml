@@ -25,5 +25,6 @@
 
         <item name="materialButtonStyle">@style/Widget.Ronda.Button</item>
         <item name="textInputStyle">@style/Widget.Ronda.TextInputLayout</item>
+        <item name="toolbarStyle">@style/Widget.Ronda.Toolbar</item>
     </style>
 </resources>
