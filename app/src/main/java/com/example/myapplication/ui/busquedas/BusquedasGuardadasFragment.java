@@ -12,6 +12,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.Fragment;
+import androidx.navigation.NavOptions;
 import androidx.navigation.Navigation;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -19,6 +20,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.myapplication.R;
 import com.example.myapplication.model.BusquedaGuardadaResponseDto;
 import com.example.myapplication.network.ApiService;
+import com.example.myapplication.session.ExplorarCriteriosPendiente;
 import com.example.myapplication.ui.explorar.ExplorarFragment;
 
 import java.util.ArrayList;
@@ -98,6 +100,13 @@ public class BusquedasGuardadasFragment extends Fragment {
     }
 
     private void aplicarBusquedaGuardada(BusquedaGuardadaResponseDto busqueda) {
+        if (!busqueda.tieneCriteriosAplicables()) {
+            Toast.makeText(requireContext(),
+                    "Esta búsqueda no tiene criterios para aplicar",
+                    Toast.LENGTH_SHORT).show();
+            return;
+        }
+
         apiService.marcarBusquedaRevisada(busqueda.id).enqueue(new Callback<Void>() {
             @Override
             public void onResponse(@NonNull Call<Void> call, @NonNull Response<Void> response) {
@@ -110,23 +119,14 @@ public class BusquedasGuardadasFragment extends Fragment {
             }
         });
 
-        Bundle args = new Bundle();
-        args.putBoolean(ExplorarFragment.ARG_APLICAR_BUSQUEDA, true);
-        args.putString(ExplorarFragment.ARG_QUERY, busqueda.query);
-        if (busqueda.categoriaId != null) {
-            args.putLong(ExplorarFragment.ARG_CATEGORIA_ID, busqueda.categoriaId);
-        }
-        if (busqueda.precioMin != null) {
-            args.putDouble(ExplorarFragment.ARG_PRECIO_MIN, busqueda.precioMin);
-        }
-        if (busqueda.precioMax != null) {
-            args.putDouble(ExplorarFragment.ARG_PRECIO_MAX, busqueda.precioMax);
-        }
-        args.putString(ExplorarFragment.ARG_ESTADO_ARTICULO, busqueda.estadoArticulo);
-        args.putString(ExplorarFragment.ARG_ZONA, busqueda.zona);
-
-        Navigation.findNavController(requireView())
-                .navigate(R.id.action_busquedasGuardadasFragment_to_explorarFragment, args);
+        ExplorarCriteriosPendiente.establecerDesde(busqueda);
+        NavOptions options = new NavOptions.Builder()
+                .setPopUpTo(R.id.explorarFragment, true)
+                .build();
+        Navigation.findNavController(requireView()).navigate(
+                R.id.action_busquedasGuardadasFragment_to_explorarFragment,
+                ExplorarFragment.crearArgumentosBusquedaGuardada(busqueda),
+                options);
     }
 
     private void confirmarEliminar(BusquedaGuardadaResponseDto busqueda) {
