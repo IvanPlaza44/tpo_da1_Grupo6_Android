@@ -1,32 +1,41 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="vertical"
-    android:padding="24dp">
+    android:padding="@dimen/spacing_l">
 
     <TextView
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="¿Cómo fue tu experiencia?" />
+        android:text="¿Cómo fue tu experiencia?"
+        android:textAppearance="@style/TextAppearance.Ronda.Headline" />
 
     <RatingBar
         android:id="@+id/ratingBar"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal"
-        android:layout_marginTop="12dp"
+        android:layout_marginTop="@dimen/spacing_m"
         android:numStars="5"
-        android:stepSize="1"
-        android:rating="5" />
+        android:rating="5"
+        android:stepSize="1" />
 
-    <EditText
-        android:id="@+id/etComentario"
+    <com.google.android.material.textfield.TextInputLayout
+        style="@style/Widget.Ronda.TextInputLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="12dp"
-        android:hint="Comentario (opcional)"
-        android:inputType="textMultiLine"
-        android:minLines="2" />
+        android:layout_marginTop="@dimen/spacing_m"
+        android:hint="Comentario (opcional)">
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/etComentario"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:inputType="textMultiLine"
+            android:minLines="2" />
+
+    </com.google.android.material.textfield.TextInputLayout>
 
 </LinearLayout>

@@ -1,29 +1,46 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="vertical"
-    android:padding="24dp">
+    android:padding="@dimen/spacing_l">
 
     <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Nuevo precio propuesto" />
-
-    <EditText
-        android:id="@+id/etMontoContraoferta"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="Monto"
-        android:inputType="numberDecimal" />
+        android:text="Nuevo precio propuesto"
+        android:textAppearance="@style/TextAppearance.Ronda.Headline" />
 
-    <EditText
-        android:id="@+id/etMensajeContraoferta"
+    <com.google.android.material.textfield.TextInputLayout
+        style="@style/Widget.Ronda.TextInputLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
-        android:hint="Mensaje (opcional)"
-        android:inputType="textMultiLine"
-        android:minLines="2" />
+        android:layout_marginTop="@dimen/spacing_m"
+        android:hint="Monto">
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/etMontoContraoferta"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:inputType="numberDecimal" />
+
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <com.google.android.material.textfield.TextInputLayout
+        style="@style/Widget.Ronda.TextInputLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/spacing_m"
+        android:hint="Mensaje (opcional)">
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/etMensajeContraoferta"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:inputType="textMultiLine"
+            android:minLines="2" />
+
+    </com.google.android.material.textfield.TextInputLayout>
 
 </LinearLayout>

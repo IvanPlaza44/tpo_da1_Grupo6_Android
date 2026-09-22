@@ -1,77 +1,97 @@
 <?xml version="1.0" encoding="utf-8"?>
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:background="@color/surface"
+    android:fillViewport="true">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:padding="16dp">
+        android:paddingHorizontal="@dimen/screen_padding_horizontal"
+        android:paddingTop="@dimen/spacing_l"
+        android:paddingBottom="@dimen/spacing_xl">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Editar perfil"
+            android:textAppearance="@style/TextAppearance.Ronda.Headline" />
 
         <ImageView
             android:id="@+id/ivFotoPerfil"
-            android:layout_width="120dp"
-            android:layout_height="120dp"
+            android:layout_width="96dp"
+            android:layout_height="96dp"
             android:layout_gravity="center_horizontal"
-            android:scaleType="centerCrop"
-            android:background="@android:color/darker_gray"
-            android:contentDescription="Foto de perfil" />
+            android:layout_marginTop="@dimen/spacing_l"
+            android:background="@drawable/bg_avatar_circle"
+            android:contentDescription="Foto de perfil"
+            android:scaleType="centerCrop" />
 
-        <Button
+        <com.google.android.material.button.MaterialButton
             android:id="@+id/btnCambiarFoto"
+            style="@style/Widget.Ronda.Button.Text"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
+            android:layout_marginTop="@dimen/spacing_s"
             android:text="Cambiar foto" />
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="24dp"
-            android:text="Nombre"
-            android:textStyle="bold" />
-
-        <!-- inputType="textPersonName" le dice al teclado que sugiera
-             mayúscula inicial y autocompletado de nombres -->
-        <EditText
-            android:id="@+id/etNombre"
+        <com.google.android.material.textfield.TextInputLayout
+            style="@style/Widget.Ronda.TextInputLayout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:inputType="textPersonName" />
+            android:layout_marginTop="@dimen/spacing_l"
+            android:hint="Nombre">
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
-            android:text="Teléfono de contacto"
-            android:textStyle="bold" />
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/etNombre"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="textPersonName" />
 
-        <EditText
-            android:id="@+id/etTelefono"
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <com.google.android.material.textfield.TextInputLayout
+            style="@style/Widget.Ronda.TextInputLayout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:inputType="phone" />
+            android:layout_marginTop="@dimen/spacing_m"
+            android:hint="Teléfono de contacto">
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
-            android:text="Zona"
-            android:textStyle="bold" />
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/etTelefono"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="phone" />
 
-        <EditText
-            android:id="@+id/etZona"
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <com.google.android.material.textfield.TextInputLayout
+            style="@style/Widget.Ronda.TextInputLayout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:inputType="text" />
+            android:layout_marginTop="@dimen/spacing_m"
+            android:hint="Zona">
 
-        <Button
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/etZona"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="text" />
+
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <com.google.android.material.button.MaterialButton
             android:id="@+id/btnGuardar"
+            style="@style/Widget.Ronda.Button"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="24dp"
+            android:layout_marginTop="@dimen/spacing_l"
             android:text="Guardar cambios" />
 
     </LinearLayout>
+
 </ScrollView>
