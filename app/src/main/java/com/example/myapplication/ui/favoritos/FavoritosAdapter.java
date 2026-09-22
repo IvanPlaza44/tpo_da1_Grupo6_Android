@@ -3,6 +3,7 @@ package com.example.myapplication.ui.favoritos;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -64,6 +65,8 @@ public class FavoritosAdapter extends RecyclerView.Adapter<FavoritosAdapter.View
         holder.ivFoto.setTag(null);
         ImageLoader.cargar(p != null ? p.fotoPrincipal : null, holder.ivFoto);
 
+        holder.btnFavorito.setVisibility(View.GONE);
+
         holder.itemView.setOnClickListener(v -> {
             if (p != null) listener.onClick(p);
         });
@@ -76,11 +79,13 @@ public class FavoritosAdapter extends RecyclerView.Adapter<FavoritosAdapter.View
 
     static class ViewHolder extends RecyclerView.ViewHolder {
         ImageView ivFoto;
+        ImageButton btnFavorito;
         TextView tvTitulo, tvPrecio, tvEstadoArticulo, tvZona, tvVendedor, tvCambioPrecio;
 
         ViewHolder(@NonNull View itemView) {
             super(itemView);
             ivFoto = itemView.findViewById(R.id.ivFoto);
+            btnFavorito = itemView.findViewById(R.id.btnFavorito);
             tvTitulo = itemView.findViewById(R.id.tvTitulo);
             tvPrecio = itemView.findViewById(R.id.tvPrecio);
             tvEstadoArticulo = itemView.findViewById(R.id.tvEstadoArticulo);

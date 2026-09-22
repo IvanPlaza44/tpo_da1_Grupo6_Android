@@ -27,13 +27,17 @@ import com.example.myapplication.data.local.PublicacionEntity;
 import com.example.myapplication.model.BusquedaGuardadaRequestDto;
 import com.example.myapplication.model.BusquedaGuardadaResponseDto;
 import com.example.myapplication.model.Publicacion.CategoriaDto;
+import com.example.myapplication.model.Publicacion.FavoritoResponseDto;
 import com.example.myapplication.model.Publicacion.PaginaDto;
 import com.example.myapplication.model.Publicacion.PublicacionResumen;
 import com.example.myapplication.network.ApiService;
 import com.example.myapplication.network.RetrofitClient;
+import com.example.myapplication.session.SessionManager;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -87,7 +91,13 @@ public class ExplorarFragment extends Fragment {
     private final List<CategoriaDto> categorias = new ArrayList<>();
     private Call<PaginaDto<PublicacionResumen>> callEnVuelo;
     private Call<BusquedaGuardadaResponseDto> callGuardarBusqueda;
+    private Call<List<FavoritoResponseDto>> callFavoritos;
+    private Call<List<PublicacionResumen>> callMisPublicaciones;
     private boolean guardandoBusqueda = false;
+
+    private final Set<Long> favoritoIds = new HashSet<>();
+    private final Set<Long> publicacionPropiaIds = new HashSet<>();
+    private final Set<Long> favoritosEnActualizacion = new HashSet<>();
 
     // Room no permite operaciones en el hilo principal. Como el proyecto es
     // Java puro (sin coroutines), usamos el mismo patron que el demo de
@@ -148,7 +158,7 @@ public class ExplorarFragment extends Fragment {
             args.putLong("publicacionId", publicacion.id);
             Navigation.findNavController(view)
                     .navigate(R.id.action_explorarFragment_to_publicacionDetalleFragment, args);
-        });
+        }, this::alternarFavorito);
         rvExplorar.setAdapter(adapter);
         rvExplorar.addOnScrollListener(new RecyclerView.OnScrollListener() {
             @Override
@@ -164,8 +174,131 @@ public class ExplorarFragment extends Fragment {
         }
 
         cargarCategorias();
+        cargarEstadoFavoritos();
         cargarPaginaInicial();
         spOrden.post(() -> silenciarCambioOrden = false);
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        cargarEstadoFavoritos();
+    }
+
+    private void cargarEstadoFavoritos() {
+        SessionManager session = new SessionManager(requireContext());
+        if (!session.isLoggedIn()) {
+            favoritoIds.clear();
+            publicacionPropiaIds.clear();
+            if (adapter != null) {
+                adapter.actualizarEstadoFavoritos(favoritoIds, publicacionPropiaIds, false);
+            }
+            return;
+        }
+
+        ApiService apiService = RetrofitClient.getApiService(requireContext());
+
+        if (callFavoritos != null) {
+            callFavoritos.cancel();
+        }
+        callFavoritos = apiService.listarFavoritos();
+        callFavoritos.enqueue(new Callback<List<FavoritoResponseDto>>() {
+            @Override
+            public void onResponse(@NonNull Call<List<FavoritoResponseDto>> call,
+                                   @NonNull Response<List<FavoritoResponseDto>> response) {
+                if (!isAdded() || call.isCanceled()) return;
+                favoritoIds.clear();
+                if (response.isSuccessful() && response.body() != null) {
+                    for (FavoritoResponseDto favorito : response.body()) {
+                        if (favorito.publicacion != null) {
+                            favoritoIds.add(favorito.publicacion.id);
+                        }
+                    }
+                }
+                publicarEstadoFavoritosEnAdapter(true);
+            }
+
+            @Override
+            public void onFailure(@NonNull Call<List<FavoritoResponseDto>> call, @NonNull Throwable t) {
+                if (!isAdded() || call.isCanceled()) return;
+                publicarEstadoFavoritosEnAdapter(true);
+            }
+        });
+
+        if (callMisPublicaciones != null) {
+            callMisPublicaciones.cancel();
+        }
+        callMisPublicaciones = apiService.misPublicaciones();
+        callMisPublicaciones.enqueue(new Callback<List<PublicacionResumen>>() {
+            @Override
+            public void onResponse(@NonNull Call<List<PublicacionResumen>> call,
+                                   @NonNull Response<List<PublicacionResumen>> response) {
+                if (!isAdded() || call.isCanceled()) return;
+                publicacionPropiaIds.clear();
+                if (response.isSuccessful() && response.body() != null) {
+                    for (PublicacionResumen p : response.body()) {
+                        publicacionPropiaIds.add(p.id);
+                    }
+                }
+                publicarEstadoFavoritosEnAdapter(true);
+            }
+
+            @Override
+            public void onFailure(@NonNull Call<List<PublicacionResumen>> call, @NonNull Throwable t) {
+                if (!isAdded() || call.isCanceled()) return;
+                publicarEstadoFavoritosEnAdapter(true);
+            }
+        });
+    }
+
+    private void publicarEstadoFavoritosEnAdapter(boolean habilitados) {
+        if (adapter != null) {
+            adapter.actualizarEstadoFavoritos(favoritoIds, publicacionPropiaIds, habilitados);
+        }
+    }
+
+    private void alternarFavorito(PublicacionResumen publicacion, boolean esFavorito) {
+        if (publicacion == null || favoritosEnActualizacion.contains(publicacion.id)) {
+            return;
+        }
+
+        favoritosEnActualizacion.add(publicacion.id);
+        ApiService apiService = RetrofitClient.getApiService(requireContext());
+        Call<Void> call = esFavorito
+                ? apiService.quitarFavorito(publicacion.id)
+                : apiService.agregarFavorito(publicacion.id);
+
+        call.enqueue(new Callback<Void>() {
+            @Override
+            public void onResponse(@NonNull Call<Void> call, @NonNull Response<Void> response) {
+                if (!isAdded() || call.isCanceled()) return;
+                favoritosEnActualizacion.remove(publicacion.id);
+                if (response.isSuccessful()) {
+                    if (esFavorito) {
+                        favoritoIds.remove(publicacion.id);
+                    } else {
+                        favoritoIds.add(publicacion.id);
+                    }
+                    int indice = adapter.indicePorId(publicacion.id);
+                    if (indice >= 0) {
+                        adapter.notifyItemChanged(indice);
+                    }
+                } else {
+                    Toast.makeText(requireContext(),
+                            "No se pudo actualizar el favorito",
+                            Toast.LENGTH_SHORT).show();
+                }
+            }
+
+            @Override
+            public void onFailure(@NonNull Call<Void> call, @NonNull Throwable t) {
+                if (!isAdded() || call.isCanceled()) return;
+                favoritosEnActualizacion.remove(publicacion.id);
+                Toast.makeText(requireContext(),
+                        "No se pudo actualizar el favorito",
+                        Toast.LENGTH_SHORT).show();
+            }
+        });
     }
 
     private void aplicarCriteriosDesdeArgs(Bundle args) {
@@ -609,6 +742,12 @@ public class ExplorarFragment extends Fragment {
         }
         if (callGuardarBusqueda != null) {
             callGuardarBusqueda.cancel();
+        }
+        if (callFavoritos != null) {
+            callFavoritos.cancel();
+        }
+        if (callMisPublicaciones != null) {
+            callMisPublicaciones.cancel();
         }
         executor.shutdown();
     }
