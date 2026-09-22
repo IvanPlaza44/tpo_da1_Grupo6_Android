@@ -1,78 +1,109 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="vertical"
-    android:padding="16dp">
+    android:padding="@dimen/spacing_m">
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="@dimen/spacing_m"
+        android:text="Filtros"
+        android:textAppearance="@style/TextAppearance.Ronda.Headline" />
 
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="Categoria"
-        android:textStyle="bold" />
+        android:textAppearance="@style/TextAppearance.Ronda.Label" />
 
     <Spinner
         android:id="@+id/spCategoriaFiltro"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="8dp" />
+        android:layout_marginBottom="@dimen/spacing_m"
+        android:minHeight="48dp" />
 
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="Precio minimo"
-        android:textStyle="bold" />
+        android:textAppearance="@style/TextAppearance.Ronda.Label" />
 
-    <EditText
-        android:id="@+id/etPrecioMin"
+    <com.google.android.material.textfield.TextInputLayout
+        style="@style/Widget.Ronda.TextInputLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="Opcional"
-        android:importantForAutofill="no"
-        android:inputType="numberDecimal"
-        android:layout_marginBottom="8dp" />
+        android:layout_marginBottom="@dimen/spacing_m"
+        android:hint="Opcional">
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/etPrecioMin"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:importantForAutofill="no"
+            android:inputType="numberDecimal" />
+
+    </com.google.android.material.textfield.TextInputLayout>
 
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="Precio maximo"
-        android:textStyle="bold" />
+        android:textAppearance="@style/TextAppearance.Ronda.Label" />
 
-    <EditText
-        android:id="@+id/etPrecioMax"
+    <com.google.android.material.textfield.TextInputLayout
+        style="@style/Widget.Ronda.TextInputLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="Opcional"
-        android:importantForAutofill="no"
-        android:inputType="numberDecimal"
-        android:layout_marginBottom="8dp" />
+        android:layout_marginBottom="@dimen/spacing_m"
+        android:hint="Opcional">
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/etPrecioMax"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:importantForAutofill="no"
+            android:inputType="numberDecimal" />
+
+    </com.google.android.material.textfield.TextInputLayout>
 
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="Estado del articulo"
-        android:textStyle="bold" />
+        android:textAppearance="@style/TextAppearance.Ronda.Label" />
 
     <Spinner
         android:id="@+id/spEstadoArticuloFiltro"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="8dp" />
+        android:layout_marginBottom="@dimen/spacing_m"
+        android:minHeight="48dp" />
 
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="Zona"
-        android:textStyle="bold" />
+        android:textAppearance="@style/TextAppearance.Ronda.Label" />
 
-    <EditText
-        android:id="@+id/etZonaFiltro"
+    <com.google.android.material.textfield.TextInputLayout
+        style="@style/Widget.Ronda.TextInputLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="Opcional"
-        android:importantForAutofill="no"
-        android:inputType="text"
-        android:layout_marginBottom="16dp" />
+        android:layout_marginBottom="@dimen/spacing_l"
+        android:hint="Opcional">
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/etZonaFiltro"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:importantForAutofill="no"
+            android:inputType="text" />
+
+    </com.google.android.material.textfield.TextInputLayout>
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -80,15 +111,17 @@
         android:gravity="end"
         android:orientation="horizontal">
 
-        <Button
+        <com.google.android.material.button.MaterialButton
             android:id="@+id/btnLimpiarFiltros"
+            style="@style/Widget.Ronda.Button.Text"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginEnd="8dp"
+            android:layout_marginEnd="@dimen/spacing_s"
             android:text="Limpiar" />
 
-        <Button
+        <com.google.android.material.button.MaterialButton
             android:id="@+id/btnAplicarFiltros"
+            style="@style/Widget.Ronda.Button"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Aplicar" />
