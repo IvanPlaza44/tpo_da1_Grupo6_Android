@@ -1,7 +1,5 @@
 package com.example.myapplication.ui.detail;
 
-import android.content.Intent;
-import android.net.Uri;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -25,6 +23,7 @@ import com.example.myapplication.R;
 import com.example.myapplication.model.Publicacion.FavoritoResponseDto;
 import com.example.myapplication.model.Publicacion.OfertaRequestDto;
 import com.example.myapplication.model.Publicacion.OfertaResponseDto;
+import com.example.myapplication.model.Publicacion.OperacionResponseDto;
 import com.example.myapplication.model.Publicacion.PreguntaRequestDto;
 import com.example.myapplication.model.Publicacion.PreguntaResponseDto;
 import com.example.myapplication.model.Publicacion.PublicacionDetalle;
@@ -62,7 +61,6 @@ public class PublicacionDetalleFragment extends Fragment {
     private LinearLayout seccionOfertasRecibidas;
     private TextView tvSinOfertas;
     private RecyclerView rvOfertas;
-    private String zonaDeEntregaGuardada = ""; // Para guardar la zona
 
     public static PublicacionDetalleFragment newInstance(long publicacionId) {
         PublicacionDetalleFragment fragment = new PublicacionDetalleFragment();
@@ -155,7 +153,6 @@ public class PublicacionDetalleFragment extends Fragment {
 
     private void mostrarDetalle(PublicacionDetalle dto) {
         esPropia = dto.esPropia;
-        zonaDeEntregaGuardada = dto.zonaEntrega; // Guardamos la zona para el mapa
 
         tvTitulo.setText(dto.titulo);
         tvPrecio.setText(String.format(Locale.getDefault(), "$ %.2f", dto.precio != null ? dto.precio : 0));
@@ -315,9 +312,11 @@ public class PublicacionDetalleFragment extends Fragment {
                                     Toast.LENGTH_SHORT).show();
                             cargarOfertas();
 
-                            // Si se acepta la oferta con éxito, se intenta abrir el mapa.
-                            if(aceptar){
-                                abrirMapaDeEntrega();
+                            // Si se acepta la oferta con éxito, buscamos la Operación que se
+                            // creó sola en el backend y navegamos a la pantalla de coordinación
+                            // de entrega, pasándole SU id (no el de la publicación).
+                            if (aceptar) {
+                                buscarOperacionYAbrirMapa();
                             }
 
                         } else {
@@ -449,19 +448,44 @@ public class PublicacionDetalleFragment extends Fragment {
                 });
     }
 
-    private void abrirMapaDeEntrega() {
-        if (zonaDeEntregaGuardada != null && !zonaDeEntregaGuardada.trim().isEmpty()) {
-            Uri gmmIntentUri = Uri.parse("geo:0,0?q=" + Uri.encode(zonaDeEntregaGuardada));
-            Intent mapIntent = new Intent(Intent.ACTION_VIEW, gmmIntentUri);
+    /**
+     * El backend crea la Operación sola al aceptar una oferta (ver README, 3.9),
+     * pero /api/ofertas/{id}/aceptar no nos devuelve su id en el body. Por eso
+     * pedimos "mis operaciones" y buscamos la que corresponde a esta publicación
+     * (recién creada, va a estar en estado PENDIENTE_ENTREGA) para navegar a la
+     * pantalla de "Punto de encuentro" con SU id real.
+     */
+    private void buscarOperacionYAbrirMapa() {
+        apiService.misOperaciones().enqueue(new Callback<List<OperacionResponseDto>>() {
+            @Override
+            public void onResponse(@NonNull Call<List<OperacionResponseDto>> call,
+                                   @NonNull Response<List<OperacionResponseDto>> response) {
+                if (!isAdded()) return;
 
-            try {
-                startActivity(mapIntent);
-            } catch (android.content.ActivityNotFoundException e) {
-                Toast.makeText(requireContext(), "No se encontró ninguna aplicación de mapas instalada", Toast.LENGTH_SHORT).show();
+                if (response.isSuccessful() && response.body() != null) {
+                    for (OperacionResponseDto operacion : response.body()) {
+                        if (operacion.publicacionId == publicacionId) {
+                            Bundle args = new Bundle();
+                            args.putLong("operacionId", operacion.id);
+                            Navigation.findNavController(requireView()).navigate(R.id.mapaFragment, args);
+                            return;
+                        }
+                    }
+                }
+
+                Toast.makeText(requireContext(),
+                        "La oferta se aceptó, pero no encontramos la operación para coordinar la entrega",
+                        Toast.LENGTH_LONG).show();
             }
-        } else {
-            Toast.makeText(requireContext(), "No hay una zona de entrega definida para buscar", Toast.LENGTH_SHORT).show();
-        }
+
+            @Override
+            public void onFailure(@NonNull Call<List<OperacionResponseDto>> call, @NonNull Throwable t) {
+                if (!isAdded()) return;
+                Toast.makeText(requireContext(),
+                        "La oferta se aceptó, pero no se pudo abrir el mapa (sin conexión)",
+                        Toast.LENGTH_LONG).show();
+            }
+        });
     }
 
     private void mostrarCargando() {
