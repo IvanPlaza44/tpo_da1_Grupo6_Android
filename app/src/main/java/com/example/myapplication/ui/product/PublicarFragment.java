@@ -26,7 +26,7 @@ import com.example.myapplication.R;
 import com.example.myapplication.model.Publicacion.CategoriaDto;
 import com.example.myapplication.model.Publicacion.PublicacionDetalle;
 import com.example.myapplication.model.Publicacion.PublicacionRequest;
-import com.example.myapplication.network.RetrofitClient;
+import com.example.myapplication.network.ApiService;
 import com.google.android.material.progressindicator.LinearProgressIndicator;
 
 import java.io.ByteArrayOutputStream;
@@ -35,6 +35,9 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.inject.Inject;
+
+import dagger.hilt.android.AndroidEntryPoint;
 import okhttp3.MediaType;
 import okhttp3.MultipartBody;
 import okhttp3.RequestBody;
@@ -42,7 +45,10 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
+@AndroidEntryPoint
 public class PublicarFragment extends Fragment {
+
+    @Inject ApiService apiService;
 
     private int pasoActual = 1;
     private long publicacionId = -1;
@@ -116,7 +122,7 @@ public class PublicarFragment extends Fragment {
     }
 
     private void cargarCategorias() {
-        RetrofitClient.getApiService(requireContext()).obtenerCategorias().enqueue(new Callback<List<CategoriaDto>>() {
+        apiService.obtenerCategorias().enqueue(new Callback<List<CategoriaDto>>() {
             @Override
             public void onResponse(Call<List<CategoriaDto>> call, Response<List<CategoriaDto>> response) {
                 if (!response.isSuccessful() || response.body() == null) return;
@@ -138,7 +144,7 @@ public class PublicarFragment extends Fragment {
 
     // Trae el borrador existente (o lo crea) y precarga los campos si ya habia algo cargado
     private void cargarBorrador() {
-        RetrofitClient.getApiService(requireContext()).obtenerBorrador().enqueue(new Callback<PublicacionDetalle>() {
+        apiService.obtenerBorrador().enqueue(new Callback<PublicacionDetalle>() {
             @Override
             public void onResponse(Call<PublicacionDetalle> call, Response<PublicacionDetalle> response) {
                 if (!response.isSuccessful() || response.body() == null) {
@@ -187,7 +193,7 @@ public class PublicarFragment extends Fragment {
         // Importante: nunca seteamos req.fotosUrls aca - eso lo maneja el endpoint de fotos aparte,
         // si lo mandamos (aunque sea vacio) el backend borra las fotos ya subidas.
 
-        RetrofitClient.getApiService(requireContext()).guardarPaso(publicacionId, req).enqueue(new Callback<PublicacionDetalle>() {
+        apiService.guardarPaso(publicacionId, req).enqueue(new Callback<PublicacionDetalle>() {
             @Override
             public void onResponse(Call<PublicacionDetalle> call, Response<PublicacionDetalle> response) {
                 if (!response.isSuccessful()) {
@@ -209,7 +215,7 @@ public class PublicarFragment extends Fragment {
     }
 
     private void publicar() {
-        RetrofitClient.getApiService(requireContext()).publicar(publicacionId).enqueue(new Callback<Void>() {
+        apiService.publicar(publicacionId).enqueue(new Callback<Void>() {
             @Override
             public void onResponse(Call<Void> call, Response<Void> response) {
                 if (response.isSuccessful()) {
@@ -236,7 +242,7 @@ public class PublicarFragment extends Fragment {
             return;
         }
 
-        RetrofitClient.getApiService(requireContext()).subirFoto(publicacionId, parte).enqueue(new Callback<PublicacionDetalle>() {
+        apiService.subirFoto(publicacionId, parte).enqueue(new Callback<PublicacionDetalle>() {
             @Override
             public void onResponse(Call<PublicacionDetalle> call, Response<PublicacionDetalle> response) {
                 if (!isAdded()) return; // el fragment ya no esta en pantalla, no tocar la UI

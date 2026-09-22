@@ -21,16 +21,22 @@ import com.example.myapplication.model.ApiError;
 import com.example.myapplication.model.AuthResponse;
 import com.example.myapplication.model.LoginRequest;
 import com.example.myapplication.network.ApiService;
-import com.example.myapplication.network.RetrofitClient;
 import com.example.myapplication.session.SessionManager;
 import com.google.gson.Gson;
 
+import javax.inject.Inject;
+
+import dagger.hilt.android.AndroidEntryPoint;
 import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
+@AndroidEntryPoint
 public class LoginFragment extends Fragment {
+
+    @Inject ApiService apiService;
+    @Inject SessionManager sessionManager;
 
     private EditText etUsuario, etPassword;
     private Button btnLogin;
@@ -61,7 +67,6 @@ public class LoginFragment extends Fragment {
 
         // ACÁ ESTÁ EL CAMBIO: Ahora llama al login silencioso en vez de ir directo al Home
         biometricManager = new BiometricAuthManager(requireActivity(), this::loginBiometricoSilencioso);
-        SessionManager sessionManager = new SessionManager(requireContext());
 
         if (btnBiometric != null) {
             if (biometricManager.canAuthenticate() && sessionManager.isBiometriaActivada()) {
@@ -95,15 +100,13 @@ public class LoginFragment extends Fragment {
 
         setLoading(true);
 
-        ApiService api = RetrofitClient.getApiService(requireContext());
-        api.login(new LoginRequest(usuario, password)).enqueue(new Callback<AuthResponse>() {
+        apiService.login(new LoginRequest(usuario, password)).enqueue(new Callback<AuthResponse>() {
             @Override
             public void onResponse(@NonNull Call<AuthResponse> call, @NonNull Response<AuthResponse> response) {
                 setLoading(false);
 
                 if (response.isSuccessful() && response.body() != null) {
                     AuthResponse body = response.body();
-                    SessionManager sessionManager = new SessionManager(requireContext());
 
                     sessionManager.guardarSesion(body.getToken(), body.getUsuarioId(), body.getEmail(), body.getUsername());
                     // ACÁ ESTÁ EL CAMBIO: Guardamos la contraseña para usarla luego con la huella
@@ -127,9 +130,8 @@ public class LoginFragment extends Fragment {
 
     // ACÁ ESTÁ EL NUEVO MÉTODO COMPLETO
     private void loginBiometricoSilencioso() {
-        SessionManager session = new SessionManager(requireContext());
-        String email = session.getEmail();
-        String password = session.getPassword();
+        String email = sessionManager.getEmail();
+        String password = sessionManager.getPassword();
 
         if (email == null || password == null) {
             mostrarError("Por seguridad, iniciá sesión con contraseña esta vez.");
@@ -137,14 +139,13 @@ public class LoginFragment extends Fragment {
         }
 
         setLoading(true);
-        ApiService api = RetrofitClient.getApiService(requireContext());
-        api.login(new LoginRequest(email, password)).enqueue(new Callback<AuthResponse>() {
+        apiService.login(new LoginRequest(email, password)).enqueue(new Callback<AuthResponse>() {
             @Override
             public void onResponse(@NonNull Call<AuthResponse> call, @NonNull Response<AuthResponse> response) {
                 setLoading(false);
                 if (response.isSuccessful() && response.body() != null) {
                     AuthResponse body = response.body();
-                    session.guardarSesion(body.getToken(), body.getUsuarioId(), body.getEmail(), body.getUsername());
+                    sessionManager.guardarSesion(body.getToken(), body.getUsuarioId(), body.getEmail(), body.getUsername());
                     irAHome();
                 } else {
                     mostrarError("La sesión expiró. Iniciá sesión manualmente.");

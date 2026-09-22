@@ -29,17 +29,20 @@ import com.example.myapplication.model.Publicacion.PreguntaResponseDto;
 import com.example.myapplication.model.Publicacion.PublicacionDetalle;
 import com.example.myapplication.model.Publicacion.RespuestaPreguntaDto;
 import com.example.myapplication.network.ApiService;
-import com.example.myapplication.network.RetrofitClient;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
+import javax.inject.Inject;
+
+import dagger.hilt.android.AndroidEntryPoint;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
+@AndroidEntryPoint
 public class PublicacionDetalleFragment extends Fragment {
 
     private static final String ARG_PUBLICACION_ID = "publicacionId";
@@ -48,7 +51,7 @@ public class PublicacionDetalleFragment extends Fragment {
     private boolean esPropia = false;
     private boolean esFavorito = false;
     private boolean actualizandoFavorito = false;
-    private ApiService apiService;
+    @Inject ApiService apiService;
 
     private ProgressBar progressBar;
     private TextView tvError, tvTitulo, tvPrecio, tvEstadoCategoria, tvDescripcion,
@@ -88,8 +91,6 @@ public class PublicacionDetalleFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-
-        apiService = RetrofitClient.getApiService(requireContext());
 
         progressBar = view.findViewById(R.id.progressBar);
         tvError = view.findViewById(R.id.tvError);

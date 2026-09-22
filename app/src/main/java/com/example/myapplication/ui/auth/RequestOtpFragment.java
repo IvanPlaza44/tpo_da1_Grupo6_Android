@@ -19,15 +19,20 @@ import com.example.myapplication.R;
 import com.example.myapplication.model.ApiError;
 import com.example.myapplication.model.EmailRequest;
 import com.example.myapplication.network.ApiService;
-import com.example.myapplication.network.RetrofitClient;
 import com.google.gson.Gson;
 
+import javax.inject.Inject;
+
+import dagger.hilt.android.AndroidEntryPoint;
 import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
+@AndroidEntryPoint
 public class RequestOtpFragment extends Fragment {
+
+    @Inject ApiService apiService;
 
     private EditText etEmail;
     private Button btnEnviar;
@@ -72,8 +77,7 @@ public class RequestOtpFragment extends Fragment {
 
         setLoading(true);
 
-        ApiService api = RetrofitClient.getApiService(requireContext());
-        api.solicitarOtp(new EmailRequest(email)).enqueue(new Callback<Void>() {
+        apiService.solicitarOtp(new EmailRequest(email)).enqueue(new Callback<Void>() {
             @Override
             public void onResponse(@NonNull Call<Void> call, @NonNull Response<Void> response) {
                 setLoading(false);

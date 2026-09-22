@@ -24,20 +24,23 @@ import com.example.myapplication.R;
 import com.example.myapplication.model.Publicacion.CalificacionOperacionRequestDto;
 import com.example.myapplication.model.Publicacion.OperacionResponseDto;
 import com.example.myapplication.network.ApiService;
-import com.example.myapplication.network.RetrofitClient;
 
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 import java.util.Locale;
 
+import javax.inject.Inject;
+
+import dagger.hilt.android.AndroidEntryPoint;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
+@AndroidEntryPoint
 public class HistorialFragment extends Fragment {
 
-    private ApiService apiService;
+    @Inject ApiService apiService;
     private List<OperacionResponseDto> todasLasOperaciones = new ArrayList<>();
 
     private RadioGroup rgTipo;
@@ -59,8 +62,6 @@ public class HistorialFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-
-        apiService = RetrofitClient.getApiService(requireContext());
 
         rgTipo = view.findViewById(R.id.rgTipo);
         btnFechaDesde = view.findViewById(R.id.btnFechaDesde);

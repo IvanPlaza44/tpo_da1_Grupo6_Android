@@ -19,13 +19,18 @@ import androidx.navigation.Navigation;
 import com.example.myapplication.R;
 import com.example.myapplication.model.LoginRequest;
 import com.example.myapplication.network.ApiService;
-import com.example.myapplication.network.RetrofitClient;
 
+import javax.inject.Inject;
+
+import dagger.hilt.android.AndroidEntryPoint;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
+@AndroidEntryPoint
 public class RegisterFragment extends Fragment {
+
+    @Inject ApiService apiService;
 
     // Acá están TODAS las variables declaradas correctamente
     private EditText etRegUsuario, etRegPassword;
@@ -77,8 +82,7 @@ public class RegisterFragment extends Fragment {
 
         setLoading(true);
 
-        ApiService api = RetrofitClient.getApiService(requireContext());
-        api.registrar(new LoginRequest(usuario, password)).enqueue(new Callback<Void>() {
+        apiService.registrar(new LoginRequest(usuario, password)).enqueue(new Callback<Void>() {
             @Override
             public void onResponse(@NonNull Call<Void> call, @NonNull Response<Void> response) {
                 setLoading(false);

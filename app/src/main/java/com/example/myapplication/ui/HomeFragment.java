@@ -14,7 +14,14 @@ import androidx.navigation.Navigation;
 import com.example.myapplication.R;
 import com.example.myapplication.session.SessionManager;
 
+import javax.inject.Inject;
+
+import dagger.hilt.android.AndroidEntryPoint;
+
+@AndroidEntryPoint
 public class HomeFragment extends Fragment {
+
+    @Inject SessionManager sessionManager;
 
     @Nullable
     @Override
@@ -28,7 +35,6 @@ public class HomeFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        SessionManager sessionManager = new SessionManager(requireContext());
         String email = sessionManager.getEmail();
 
         TextView tvSubtitulo = view.findViewById(R.id.tvSubtitulo);

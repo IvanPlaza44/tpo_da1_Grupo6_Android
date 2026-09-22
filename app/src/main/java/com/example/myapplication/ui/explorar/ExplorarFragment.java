@@ -32,7 +32,6 @@ import com.example.myapplication.model.Publicacion.FavoritoResponseDto;
 import com.example.myapplication.model.Publicacion.PaginaDto;
 import com.example.myapplication.model.Publicacion.PublicacionResumen;
 import com.example.myapplication.network.ApiService;
-import com.example.myapplication.network.RetrofitClient;
 import com.example.myapplication.session.SessionManager;
 
 import java.util.ArrayList;
@@ -42,12 +41,16 @@ import java.util.Set;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
+import javax.inject.Inject;
+
 import com.google.android.material.switchmaterial.SwitchMaterial;
 
+import dagger.hilt.android.AndroidEntryPoint;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
+@AndroidEntryPoint
 public class ExplorarFragment extends Fragment {
 
     private static final int TAMANIO_PAGINA = 5;
@@ -63,6 +66,9 @@ public class ExplorarFragment extends Fragment {
     public static final String ARG_PRECIO_MAX = "precioMax";
     public static final String ARG_ESTADO_ARTICULO = "estadoArticulo";
     public static final String ARG_ZONA = "zona";
+
+    @Inject ApiService apiService;
+    @Inject SessionManager sessionManager;
 
     private RecyclerView rvExplorar;
     private TextView tvSinConexion;
@@ -191,8 +197,7 @@ public class ExplorarFragment extends Fragment {
     }
 
     private void cargarEstadoFavoritos() {
-        SessionManager session = new SessionManager(requireContext());
-        if (!session.isLoggedIn()) {
+        if (!sessionManager.isLoggedIn()) {
             favoritoIds.clear();
             publicacionPropiaIds.clear();
             if (adapter != null) {
@@ -200,8 +205,6 @@ public class ExplorarFragment extends Fragment {
             }
             return;
         }
-
-        ApiService apiService = RetrofitClient.getApiService(requireContext());
 
         if (callFavoritos != null) {
             callFavoritos.cancel();
@@ -268,7 +271,6 @@ public class ExplorarFragment extends Fragment {
         }
 
         favoritosEnActualizacion.add(publicacion.id);
-        ApiService apiService = RetrofitClient.getApiService(requireContext());
         Call<Void> call = esFavorito
                 ? apiService.quitarFavorito(publicacion.id)
                 : apiService.agregarFavorito(publicacion.id);
@@ -380,7 +382,7 @@ public class ExplorarFragment extends Fragment {
         body.estadoArticulo = estadoArticulo;
         body.zona = zona;
 
-        callGuardarBusqueda = RetrofitClient.getApiService(requireContext()).crearBusquedaGuardada(body);
+        callGuardarBusqueda = apiService.crearBusquedaGuardada(body);
         callGuardarBusqueda.enqueue(new Callback<BusquedaGuardadaResponseDto>() {
             @Override
             public void onResponse(@NonNull Call<BusquedaGuardadaResponseDto> call,
@@ -406,7 +408,7 @@ public class ExplorarFragment extends Fragment {
     }
 
     private void cargarCategorias() {
-        RetrofitClient.getApiService(requireContext()).obtenerCategorias()
+        apiService.obtenerCategorias()
                 .enqueue(new Callback<List<CategoriaDto>>() {
                     @Override
                     public void onResponse(@NonNull Call<List<CategoriaDto>> call,
@@ -433,8 +435,7 @@ public class ExplorarFragment extends Fragment {
         SwitchMaterial switchUsarMiZona = contenido.findViewById(R.id.switchUsarMiZona);
         View tilZonaFiltro = contenido.findViewById(R.id.tilZonaFiltro);
 
-        SessionManager session = new SessionManager(requireContext());
-        boolean loggedIn = session.isLoggedIn();
+        boolean loggedIn = sessionManager.isLoggedIn();
         if (loggedIn) {
             switchUsarMiZona.setVisibility(View.VISIBLE);
             switchUsarMiZona.setChecked(usarMiZona);
@@ -516,7 +517,7 @@ public class ExplorarFragment extends Fragment {
             return;
         }
 
-        RetrofitClient.getApiService(requireContext()).obtenerMiPerfil().enqueue(new Callback<Usuario>() {
+        apiService.obtenerMiPerfil().enqueue(new Callback<Usuario>() {
             @Override
             public void onResponse(@NonNull Call<Usuario> call, @NonNull Response<Usuario> response) {
                 if (!isAdded()) return;
@@ -670,7 +671,6 @@ public class ExplorarFragment extends Fragment {
             callEnVuelo.cancel();
         }
 
-        ApiService apiService = RetrofitClient.getApiService(requireContext());
         callEnVuelo = apiService.explorar(
                 pagina,
                 TAMANIO_PAGINA,

@@ -15,16 +15,21 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.myapplication.R;
 import com.example.myapplication.model.Publicacion.PublicacionResumen;
 import com.example.myapplication.network.ApiService;
-import com.example.myapplication.network.RetrofitClient;
 
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.inject.Inject;
+
+import dagger.hilt.android.AndroidEntryPoint;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
+@AndroidEntryPoint
 public class MisPublicacionesFragment extends Fragment {
+
+    @Inject ApiService apiService;
 
     private RecyclerView rvMisPublicaciones;
     private View tvVacio;
@@ -76,7 +81,6 @@ public class MisPublicacionesFragment extends Fragment {
     }
 
     private void cargarMisPublicaciones() {
-        ApiService apiService = RetrofitClient.getApiService(requireContext());
         apiService.misPublicaciones().enqueue(new Callback<List<PublicacionResumen>>() {
             @Override
             public void onResponse(@NonNull Call<List<PublicacionResumen>> call,
@@ -101,7 +105,6 @@ public class MisPublicacionesFragment extends Fragment {
     }
 
     private void cambiarEstado(long id, String accion) {
-        ApiService apiService = RetrofitClient.getApiService(requireContext());
         Call<Void> call = accion.equals("pausar") ? apiService.pausar(id) : apiService.reactivar(id);
 
         call.enqueue(new Callback<Void>() {

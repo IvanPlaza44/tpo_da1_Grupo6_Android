@@ -18,6 +18,9 @@ import com.google.android.material.appbar.MaterialToolbar;
 import java.util.HashSet;
 import java.util.Set;
 
+import dagger.hilt.android.AndroidEntryPoint;
+
+@AndroidEntryPoint
 public class MainActivity extends AppCompatActivity {
 
     private NavController navController;

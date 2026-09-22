@@ -18,11 +18,13 @@ import androidx.navigation.Navigation;
 import com.example.myapplication.R;
 import com.example.myapplication.model.Usuario;
 import com.example.myapplication.network.ApiService;
-import com.example.myapplication.network.RetrofitClient;
 import com.example.myapplication.session.SessionManager;
 import com.example.myapplication.util.ImageLoader;
 import com.google.android.material.switchmaterial.SwitchMaterial;
 
+import javax.inject.Inject;
+
+import dagger.hilt.android.AndroidEntryPoint;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -41,6 +43,7 @@ import retrofit2.Response;
  *    seteamos listeners, y disparamos las llamadas a la API.
  * 3) onDestroyView()  -> liberamos referencias a vistas para evitar memory leaks.
  */
+@AndroidEntryPoint
 public class ProfileFragment extends Fragment {
 
     private static final String TAG = "ProfileFragment";
@@ -57,8 +60,8 @@ public class ProfileFragment extends Fragment {
     private Button btnMisOfertas;
     private SwitchMaterial switchBiometria;
     private Button btnCerrarSesion;
-    private ApiService apiService;
-    private SessionManager sessionManager;
+    @Inject ApiService apiService;
+    @Inject SessionManager sessionManager;
 
     @Nullable
     @Override
@@ -87,13 +90,6 @@ public class ProfileFragment extends Fragment {
         switchBiometria = view.findViewById(R.id.switchBiometria);
         btnCerrarSesion = view.findViewById(R.id.btnCerrarSesion);
         btnMisOfertas = view.findViewById(R.id.btnMisOfertas);
-
-        sessionManager = new SessionManager(requireContext());
-
-        // RetrofitClient arma el cliente HTTP UNA sola vez (patrón singleton)
-        // con el interceptor que agrega "Authorization: Bearer <token>"
-        // automáticamente en cada request (visto en la clase de JWT).
-        apiService = RetrofitClient.getApiService(requireContext());
 
         cargarPerfil();
 

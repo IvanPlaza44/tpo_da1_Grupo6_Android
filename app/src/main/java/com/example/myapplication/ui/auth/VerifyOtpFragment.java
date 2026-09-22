@@ -21,16 +21,22 @@ import com.example.myapplication.model.AuthResponse;
 import com.example.myapplication.model.EmailRequest;
 import com.example.myapplication.model.OtpVerifyRequest;
 import com.example.myapplication.network.ApiService;
-import com.example.myapplication.network.RetrofitClient;
 import com.example.myapplication.session.SessionManager;
 import com.google.gson.Gson;
 
+import javax.inject.Inject;
+
+import dagger.hilt.android.AndroidEntryPoint;
 import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
+@AndroidEntryPoint
 public class VerifyOtpFragment extends Fragment {
+
+    @Inject ApiService apiService;
+    @Inject SessionManager sessionManager;
 
     private String email;
 
@@ -76,16 +82,14 @@ public class VerifyOtpFragment extends Fragment {
 
         setLoading(true);
 
-        ApiService api = RetrofitClient.getApiService(requireContext());
-        api.verificarOtp(new OtpVerifyRequest(email, codigo)).enqueue(new Callback<AuthResponse>() {
+        apiService.verificarOtp(new OtpVerifyRequest(email, codigo)).enqueue(new Callback<AuthResponse>() {
             @Override
             public void onResponse(@NonNull Call<AuthResponse> call, @NonNull Response<AuthResponse> response) {
                 setLoading(false);
 
                 if (response.isSuccessful() && response.body() != null) {
                     AuthResponse body = response.body();
-                    new SessionManager(requireContext())
-                            .guardarSesion(body.getToken(), body.getUsuarioId(), body.getEmail(), body.getUsername());
+                    sessionManager.guardarSesion(body.getToken(), body.getUsuarioId(), body.getEmail(), body.getUsername());
 
                     // TODO: reemplazar homeFragment por el destino real una vez mergeado.
                     Navigation.findNavController(requireView())
@@ -106,8 +110,7 @@ public class VerifyOtpFragment extends Fragment {
     }
 
     private void reenviarCodigo() {
-        ApiService api = RetrofitClient.getApiService(requireContext());
-        api.reenviarOtp(new EmailRequest(email)).enqueue(new Callback<Void>() {
+        apiService.reenviarOtp(new EmailRequest(email)).enqueue(new Callback<Void>() {
             @Override
             public void onResponse(@NonNull Call<Void> call, @NonNull Response<Void> response) {
                 if (response.isSuccessful()) {

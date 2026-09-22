@@ -18,9 +18,11 @@ import androidx.fragment.app.Fragment;
 import com.example.myapplication.model.PublicacionDetalleDto;
 import com.example.myapplication.model.Publicacion.OperacionResponseDto;
 import com.example.myapplication.network.ApiService;
-import com.example.myapplication.network.RetrofitClient;
 import com.google.android.material.button.MaterialButton;
 
+import javax.inject.Inject;
+
+import dagger.hilt.android.AndroidEntryPoint;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -34,13 +36,14 @@ import retrofit2.Response;
  *    calificar en el Historial (ver README: puedeCalificar solo es true
  *    después de PUT /api/operaciones/{id}/entregada).
  */
+@AndroidEntryPoint
 public class MapaFragment extends Fragment {
 
     private static final String TAG = "MapaFragment";
 
     private long operacionId;
     private String direccionParaBuscar = "";
-    private ApiService apiService;
+    @Inject ApiService apiService;
 
     private TextView tvArticulo, tvEstado;
     private MaterialButton btnComoLlegar, btnMarcarEntregada;
@@ -64,8 +67,6 @@ public class MapaFragment extends Fragment {
         tvEstado = view.findViewById(com.example.myapplication.R.id.tvEstado);
         btnComoLlegar = view.findViewById(com.example.myapplication.R.id.btnComoLlegar);
         btnMarcarEntregada = view.findViewById(com.example.myapplication.R.id.btnMarcarEntregada);
-
-        apiService = RetrofitClient.getApiService(requireContext());
 
         if (operacionId <= 0) {
             tvEstado.setText("No se pudo identificar la operación.");
