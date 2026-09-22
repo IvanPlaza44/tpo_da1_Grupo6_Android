@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Espaciado -->
+    <dimen name="spacing_xs">4dp</dimen>
+    <dimen name="spacing_s">8dp</dimen>
+    <dimen name="spacing_m">16dp</dimen>
+    <dimen name="spacing_l">24dp</dimen>
+    <dimen name="spacing_xl">32dp</dimen>
+
+    <!-- Pantalla -->
+    <dimen name="screen_padding_horizontal">16dp</dimen>
+    <dimen name="screen_padding_vertical">16dp</dimen>
+
+    <!-- Cards -->
+    <dimen name="card_corner_radius">12dp</dimen>
+    <dimen name="card_elevation">2dp</dimen>
+    <dimen name="card_content_padding">12dp</dimen>
+
+    <!-- Chips -->
+    <dimen name="chip_corner_radius">8dp</dimen>
+    <dimen name="chip_padding_horizontal">8dp</dimen>
+    <dimen name="chip_padding_vertical">2dp</dimen>
+
+    <!-- Listas -->
+    <dimen name="list_item_spacing">8dp</dimen>
+    <dimen name="list_thumbnail_size">96dp</dimen>
+
+    <!-- Banner -->
+    <dimen name="banner_padding_vertical">8dp</dimen>
+    <dimen name="banner_padding_horizontal">16dp</dimen>
+</resources>

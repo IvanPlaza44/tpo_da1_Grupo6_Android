@@ -1,5 +1,4 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- Alias legacy: mismo aspecto que chip de artículo -->
 <shape xmlns:android="http://schemas.android.com/apk/res/android">
     <solid android:color="@color/chip_articulo_bg" />
     <corners android:radius="@dimen/chip_corner_radius" />
