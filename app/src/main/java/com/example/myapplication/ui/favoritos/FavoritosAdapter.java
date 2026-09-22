@@ -4,7 +4,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -87,22 +86,7 @@ public class FavoritosAdapter extends RecyclerView.Adapter<FavoritosAdapter.View
             tvEstadoArticulo = itemView.findViewById(R.id.tvEstadoArticulo);
             tvZona = itemView.findViewById(R.id.tvZona);
             tvVendedor = itemView.findViewById(R.id.tvVendedor);
-            tvCambioPrecio = crearTvCambioPrecio(itemView);
-        }
-
-        private static TextView crearTvCambioPrecio(View itemView) {
-            LinearLayout columna = (LinearLayout) itemView.findViewById(R.id.tvVendedor).getParent();
-            TextView tv = new TextView(itemView.getContext());
-            tv.setText("El precio cambió");
-            tv.setTextColor(0xFFC62828);
-            tv.setTextSize(12);
-            LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
-                    LinearLayout.LayoutParams.WRAP_CONTENT,
-                    LinearLayout.LayoutParams.WRAP_CONTENT);
-            params.topMargin = (int) (4 * itemView.getResources().getDisplayMetrics().density);
-            tv.setLayoutParams(params);
-            columna.addView(tv);
-            return tv;
+            tvCambioPrecio = itemView.findViewById(R.id.tvCambioPrecio);
         }
     }
 }

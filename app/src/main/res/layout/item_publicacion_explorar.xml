@@ -48,6 +48,17 @@
                 android:textColor="@color/primary" />
 
             <TextView
+                android:id="@+id/tvCambioPrecio"
+                style="@style/Widget.Ronda.ReadOnlyChip"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/spacing_xs"
+                android:background="@drawable/bg_chip_warning_container"
+                android:text="El precio cambió"
+                android:textColor="@color/on_warning_container"
+                android:visibility="gone" />
+
+            <TextView
                 android:id="@+id/tvEstadoArticulo"
                 style="@style/Widget.Ronda.ReadOnlyChip"
                 android:layout_width="wrap_content"
