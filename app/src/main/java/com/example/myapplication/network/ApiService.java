@@ -27,7 +27,7 @@ import java.util.List;
 import com.example.myapplication.model.OtpVerifyRequest;
 import com.example.myapplication.model.Publicacion.PaginaDto;
 import retrofit2.http.Query;
-
+import com.example.myapplication.model.NovedadDto;
 import retrofit2.Call;
 import retrofit2.http.Body;
 import retrofit2.http.DELETE;
@@ -243,5 +243,10 @@ public interface ApiService {
 
     @PATCH("api/busquedas-guardadas/{id}/revisada")
     Call<Void> marcarBusquedaRevisada(@Path("id") long id);
+
+    // ---------- AVISOS (punto 11) ----------
+    @GET("api/novedades/esperar")
+    Call<List<NovedadDto>> esperarNovedades();
+
 }
  
