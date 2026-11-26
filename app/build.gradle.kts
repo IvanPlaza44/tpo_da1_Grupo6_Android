@@ -55,4 +55,14 @@ dependencies {
 
     implementation(libs.hilt.android)
     annotationProcessor(libs.hilt.compiler)
+
+
+
+    // --- Punto 12: cámara + lector de QR ---
+    val camerax = "1.4.2"
+    implementation("androidx.camera:camera-core:$camerax")
+    implementation("androidx.camera:camera-camera2:$camerax")
+    implementation("androidx.camera:camera-lifecycle:$camerax")
+    implementation("androidx.camera:camera-view:$camerax")
+    implementation("com.google.mlkit:barcode-scanning:17.3.0")
 }

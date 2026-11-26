@@ -1,0 +1,136 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/black">
+
+    <!-- Lo que ve la cámara -->
+    <androidx.camera.view.PreviewView
+        android:id="@+id/previewView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
+
+    <!-- Marco para apuntar el QR -->
+    <View
+        android:id="@+id/marcoQr"
+        android:layout_width="260dp"
+        android:layout_height="260dp"
+        android:layout_gravity="center"
+        android:background="@drawable/bg_qr_marco" />
+
+    <TextView
+        android:id="@+id/tvInstruccion"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="top|center_horizontal"
+        android:layout_marginTop="@dimen/spacing_xl"
+        android:background="@drawable/bg_qr_instruccion"
+        android:paddingHorizontal="@dimen/spacing_l"
+        android:paddingVertical="@dimen/spacing_s"
+        android:text="Apuntá la cámara al código QR de la entrega"
+        android:textColor="@color/white"
+        android:textAppearance="@style/TextAppearance.Ronda.Body" />
+
+    <!-- Sin permiso de cámara -->
+    <LinearLayout
+        android:id="@+id/panelPermiso"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/surface"
+        android:gravity="center"
+        android:orientation="vertical"
+        android:padding="@dimen/spacing_xl"
+        android:visibility="gone">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center_horizontal"
+            android:text="Necesitamos la cámara"
+            android:textAppearance="@style/TextAppearance.Ronda.Headline" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/spacing_m"
+            android:gravity="center_horizontal"
+            android:text="Para confirmar la entrega tenés que escanear el código QR, y para eso la app usa la cámara."
+            android:textAppearance="@style/TextAppearance.Ronda.BodySecondary" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnPermiso"
+            style="@style/Widget.Ronda.Button"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/spacing_xl"
+            android:text="Permitir cámara" />
+
+    </LinearLayout>
+
+    <!-- Resultado: operación confirmada / código inválido / cargando -->
+    <LinearLayout
+        android:id="@+id/panelResultado"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/surface"
+        android:clickable="true"
+        android:focusable="true"
+        android:gravity="center"
+        android:orientation="vertical"
+        android:padding="@dimen/spacing_xl"
+        android:visibility="gone">
+
+        <ProgressBar
+            android:id="@+id/progreso"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:visibility="gone" />
+
+        <TextView
+            android:id="@+id/tvIcono"
+            android:layout_width="96dp"
+            android:layout_height="96dp"
+            android:gravity="center"
+            android:textSize="48sp"
+            tools:background="@drawable/bg_qr_circulo_ok"
+            tools:text="✓" />
+
+        <TextView
+            android:id="@+id/tvResultadoTitulo"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/spacing_l"
+            android:gravity="center_horizontal"
+            android:textAppearance="@style/TextAppearance.Ronda.Headline"
+            tools:text="Operación confirmada" />
+
+        <TextView
+            android:id="@+id/tvResultadoMensaje"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/spacing_m"
+            android:gravity="center_horizontal"
+            android:textAppearance="@style/TextAppearance.Ronda.BodySecondary"
+            tools:text="La publicación pasó a vendida." />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnResultadoPrincipal"
+            style="@style/Widget.Ronda.Button"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/spacing_xl"
+            tools:text="Listo" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnResultadoSecundario"
+            style="@style/Widget.Ronda.Button.Outlined"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/spacing_s"
+            android:text="Cancelar" />
+
+    </LinearLayout>
+
+</FrameLayout>

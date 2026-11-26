@@ -37,7 +37,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/spacing_m"
             android:gravity="center_horizontal"
-            android:text="La otra parte aceptó tu oferta. Coordinen el encuentro y, cuando se haga la entrega, marquenla para poder calificarse."
+            android:text="Coordinen el encuentro con la otra parte."
             android:textAppearance="@style/TextAppearance.Ronda.BodySecondary" />
 
         <com.google.android.material.button.MaterialButton
@@ -53,14 +53,14 @@
             app:iconPadding="@dimen/spacing_s" />
 
         <com.google.android.material.button.MaterialButton
-            android:id="@+id/btnMarcarEntregada"
+            android:id="@+id/btnEscanearQr"
             style="@style/Widget.Ronda.Button"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/spacing_m"
-            android:enabled="false"
-            android:text="Marcar como entregada"
-            app:icon="@android:drawable/ic_menu_send"
+            android:visibility="gone"
+            android:text="Escanear QR de entrega"
+            app:icon="@android:drawable/ic_menu_camera"
             app:iconGravity="textStart"
             app:iconPadding="@dimen/spacing_s" />
 
