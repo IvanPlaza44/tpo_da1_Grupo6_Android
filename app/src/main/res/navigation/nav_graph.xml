@@ -18,6 +18,19 @@
         <argument
             android:name="operacionId"
             app:argType="long" />
+        <action
+            android:id="@+id/action_mapaFragment_to_qrScannerFragment"
+            app:destination="@id/qrScannerFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/qrScannerFragment"
+        android:name="com.example.myapplication.ui.QrScannerFragment"
+        android:label="Escanear QR"
+        tools:layout="@layout/fragment_qr_scanner">
+        <argument
+            android:name="operacionId"
+            app:argType="long" />
     </fragment>
 
     <action

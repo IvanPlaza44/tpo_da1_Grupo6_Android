@@ -36,9 +36,9 @@ import retrofit2.Response;
  * Recibe el operacionId REAL por argumento de navegación (no un valor fijo de
  * prueba), y desde acá se puede:
  *  - Abrir una app de mapas para llegar a la zona de entrega.
- *  - Marcar la operación como ENTREGADA, que es lo único que habilita
- *    calificar en el Historial (ver README: puedeCalificar solo es true
- *    después de PUT /api/operaciones/{id}/entregada).
+ *  - Cerrar la operación escaneando el QR (solo el comprador, ver QrScannerFragment).
+ *    Eso la pasa a ENTREGADA, marca la publicación como VENDIDA y habilita calificar
+ *    en el Historial.
  */
 @AndroidEntryPoint
 public class MapaFragment extends Fragment {
@@ -52,7 +52,7 @@ public class MapaFragment extends Fragment {
     @Inject ApiService apiService;
 
     private TextView tvArticulo, tvEstado;
-    private MaterialButton btnComoLlegar, btnMarcarEntregada;
+    private MaterialButton btnComoLlegar, btnEscanearQr;
 
     /** Abre esta pantalla desde cualquier grafo anidado (detalle, ofertas, historial). */
     public static void abrir(Fragment fragment, long operacionId) {
@@ -131,7 +131,7 @@ public class MapaFragment extends Fragment {
         tvArticulo = view.findViewById(R.id.tvArticulo);
         tvEstado = view.findViewById(R.id.tvEstado);
         btnComoLlegar = view.findViewById(R.id.btnComoLlegar);
-        btnMarcarEntregada = view.findViewById(R.id.btnMarcarEntregada);
+        btnEscanearQr = view.findViewById(R.id.btnEscanearQr);
 
         if (operacionId <= 0) {
             tvEstado.setText("No se pudo identificar la operación.");
@@ -139,9 +139,10 @@ public class MapaFragment extends Fragment {
         }
 
         btnComoLlegar.setOnClickListener(v -> abrirMapaExterno());
-        btnMarcarEntregada.setOnClickListener(v -> confirmarEntrega());
+        btnEscanearQr.setOnClickListener(v -> abrirEscanerQr());
 
-        cargarOperacion();
+        // La carga de la operación se hace en onResume(), que corre justo después
+        // de esto y también cada vez que volvemos desde el escáner.
     }
 
     private void cargarOperacion() {
@@ -156,11 +157,16 @@ public class MapaFragment extends Fragment {
                     tvArticulo.setText(op.publicacionTitulo);
 
                     if ("ENTREGADA".equals(op.estado)) {
-                        tvEstado.setText("Ya marcaste esta entrega. Podés calificar desde tu Historial.");
-                        btnMarcarEntregada.setEnabled(false);
-                        btnMarcarEntregada.setText("Entrega ya marcada");
+                        tvEstado.setText("La entrega ya fue confirmada. Podés calificar desde tu Historial.");
+                        btnEscanearQr.setVisibility(View.GONE);
+                    } else if ("COMPRA".equals(op.tipo)) {
+                        // Solo el comprador escanea el QR que le muestra el vendedor.
+                        tvEstado.setText("Coordinen el encuentro. Cuando recibas el artículo, escaneá el código QR del vendedor para cerrar la operación.");
+                        btnEscanearQr.setVisibility(View.VISIBLE);
+                        btnEscanearQr.setEnabled(true);
                     } else {
-                        btnMarcarEntregada.setEnabled(true);
+                        tvEstado.setText("Coordinen el encuentro. Cuando entregues el artículo, el comprador va a escanear tu código QR para cerrar la operación.");
+                        btnEscanearQr.setVisibility(View.GONE);
                     }
 
                     if (tieneUbicacion(op.direccionEncuentro, op.latitudEncuentro, op.longitudEncuentro)) {
@@ -240,35 +246,18 @@ public class MapaFragment extends Fragment {
         }
     }
 
-    private void confirmarEntrega() {
-        btnMarcarEntregada.setEnabled(false);
+    /** Abre la cámara para escanear el QR de la operación. */
+    private void abrirEscanerQr() {
+        Bundle args = new Bundle();
+        args.putLong("operacionId", operacionId);
+        Navigation.findNavController(requireView())
+                .navigate(R.id.action_mapaFragment_to_qrScannerFragment, args);
+    }
 
-        apiService.marcarEntregada(operacionId).enqueue(new Callback<Void>() {
-            @Override
-            public void onResponse(@NonNull Call<Void> call, @NonNull Response<Void> response) {
-                if (!isAdded()) return;
-
-                if (response.isSuccessful()) {
-                    Toast.makeText(requireContext(),
-                            "¡Entrega confirmada! Ya podés calificar desde Perfil > Historial y calificaciones.",
-                            Toast.LENGTH_LONG).show();
-                    tvEstado.setText("Entrega marcada. Ya podés calificar desde tu Historial.");
-                    btnMarcarEntregada.setText("Entrega ya marcada");
-                } else if (response.code() == 409) {
-                    Toast.makeText(requireContext(), "Esta operación ya estaba marcada como entregada", Toast.LENGTH_LONG).show();
-                } else {
-                    Toast.makeText(requireContext(), "No se pudo marcar la entrega (código " + response.code() + ")", Toast.LENGTH_LONG).show();
-                    btnMarcarEntregada.setEnabled(true);
-                }
-            }
-
-            @Override
-            public void onFailure(@NonNull Call<Void> call, @NonNull Throwable t) {
-                if (!isAdded()) return;
-                Log.e(TAG, "Error de red: " + t.getMessage());
-                Toast.makeText(requireContext(), "Sin conexión, intentá de nuevo", Toast.LENGTH_SHORT).show();
-                btnMarcarEntregada.setEnabled(true);
-            }
-        });
+    /** Al volver del escáner, recargamos para reflejar si la operación quedó ENTREGADA. */
+    @Override
+    public void onResume() {
+        super.onResume();
+        if (operacionId > 0 && tvArticulo != null) cargarOperacion();
     }
 }
