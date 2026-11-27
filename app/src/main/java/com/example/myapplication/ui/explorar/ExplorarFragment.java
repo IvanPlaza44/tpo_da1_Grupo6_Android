@@ -13,6 +13,11 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import android.content.Context;
+import android.net.ConnectivityManager;
+import android.net.Network;
+import android.net.NetworkCapabilities;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
@@ -78,6 +83,10 @@ public class ExplorarFragment extends Fragment {
 
     private RecyclerView rvExplorar;
     private TextView tvSinConexion;
+
+    private ConnectivityManager.NetworkCallback networkCallback;
+
+    private boolean estabaSinConexion = false;
     private TextView tvVacio;
     private View contenedorError;
     private ProgressBar progressBar;
@@ -299,6 +308,66 @@ public class ExplorarFragment extends Fragment {
             }
         }
         return 0;
+    }
+    @Override
+    public void onStart() {
+        super.onStart();
+        ConnectivityManager cm = (ConnectivityManager)
+                requireContext().getSystemService(Context.CONNECTIVITY_SERVICE);
+
+        // Estado inicial: si ya arrancamos sin conexión, marcarlo y mostrar el aviso
+        if (!hayConexion(cm)) {
+            estabaSinConexion = true;
+            mostrarAvisoSinConexionSiHayLista();
+        }
+
+        networkCallback = new ConnectivityManager.NetworkCallback() {
+            @Override
+            public void onLost(@NonNull Network network) {
+                if (!isAdded()) return;
+                requireActivity().runOnUiThread(() -> {
+                    estabaSinConexion = true;
+                    mostrarAvisoSinConexionSiHayLista();
+                });
+            }
+
+            @Override
+            public void onAvailable(@NonNull Network network) {
+                if (!isAdded()) return;
+                requireActivity().runOnUiThread(() -> {
+                    if (estabaSinConexion) {
+                        estabaSinConexion = false;
+                        cargarPaginaInicial(); // vuelve internet: refresca listado y caché
+                    }
+                });
+            }
+        };
+        cm.registerDefaultNetworkCallback(networkCallback);
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        if (networkCallback != null) {
+            ConnectivityManager cm = (ConnectivityManager)
+                    requireContext().getSystemService(Context.CONNECTIVITY_SERVICE);
+            cm.unregisterNetworkCallback(networkCallback);
+            networkCallback = null;
+        }
+    }
+
+    private boolean hayConexion(ConnectivityManager cm) {
+        Network red = cm.getActiveNetwork();
+        if (red == null) return false;
+        NetworkCapabilities caps = cm.getNetworkCapabilities(red);
+        return caps != null && caps.hasCapability(NetworkCapabilities.NET_CAPABILITY_INTERNET);
+    }
+
+    /** Muestra el banner solo si hay publicaciones en pantalla (si no, ya hay otro estado visible). */
+    private void mostrarAvisoSinConexionSiHayLista() {
+        if (tvSinConexion != null && adapter != null && adapter.getItemCount() > 0) {
+            tvSinConexion.setVisibility(View.VISIBLE);
+        }
     }
 
     @Override
