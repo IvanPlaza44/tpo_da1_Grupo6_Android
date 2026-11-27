@@ -65,12 +65,14 @@ public class PublicarFragment extends Fragment {
     private LinearLayout llFotos;
 
     private int fotosSubidas = 0;
+    private String categoriaDelBorrador;
+    private String estadoDelBorrador;
 
     private final ActivityResultLauncher<String> seleccionarFotosLauncher = registerForActivityResult(
             new ActivityResultContracts.GetMultipleContents(),
             uris -> {
                 if (uris == null || uris.isEmpty()) return;
-                for (Uri uri : uris) subirFotoIndividual(uri);
+                subirFotosEnCola(new java.util.ArrayList<>(uris), 0);
             }
     );
 
@@ -120,7 +122,26 @@ public class PublicarFragment extends Fragment {
         cargarCategorias();
         cargarBorrador();
     }
-
+    private void aplicarSeleccionesDelBorrador() {
+        if (categoriaDelBorrador != null) {
+            for (int i = 0; i < categorias.size(); i++) {
+                if (categoriaDelBorrador.equals(categorias.get(i).nombre)) {
+                    spCategoria.setSelection(i);
+                    categoriaDelBorrador = null;
+                    break;
+                }
+            }
+        }
+        if (estadoDelBorrador != null) {
+            for (int i = 0; i < estadosArticulo.length; i++) {
+                if (estadosArticulo[i].equals(estadoDelBorrador)) {
+                    spEstadoArticulo.setSelection(i);
+                    estadoDelBorrador = null;
+                    break;
+                }
+            }
+        }
+    }
     private void cargarCategorias() {
         apiService.obtenerCategorias().enqueue(new Callback<List<CategoriaDto>>() {
             @Override
@@ -133,6 +154,8 @@ public class PublicarFragment extends Fragment {
                 ArrayAdapter<String> adapter = new ArrayAdapter<>(requireContext(),
                         android.R.layout.simple_spinner_dropdown_item, nombres);
                 spCategoria.setAdapter(adapter);
+                spCategoria.setAdapter(adapter);
+                aplicarSeleccionesDelBorrador();
             }
 
             @Override
@@ -157,6 +180,9 @@ public class PublicarFragment extends Fragment {
                 if (d.descripcion != null) etDescripcion.setText(d.descripcion);
                 if (d.precio != null) etPrecio.setText(String.valueOf(d.precio));
                 if (d.zonaEntrega != null) etZona.setText(d.zonaEntrega);
+                categoriaDelBorrador = d.categoria;
+                estadoDelBorrador = d.estadoArticulo;
+                aplicarSeleccionesDelBorrador();
                 if (d.fotos != null) {
                     fotosSubidas = d.fotos.size();
                     actualizarEstadoFotos();
@@ -233,12 +259,19 @@ public class PublicarFragment extends Fragment {
         });
     }
 
-    private void subirFotoIndividual(Uri uri) {
+
+    private void subirFotosEnCola(java.util.List<Uri> uris, int indice) {
+        if (indice >= uris.size() || !isAdded()) return;
+        subirFotoIndividual(uris.get(indice), () -> subirFotosEnCola(uris, indice + 1));
+    }
+
+    private void subirFotoIndividual(Uri uri, Runnable siguiente) {
         MultipartBody.Part parte;
         try {
             parte = uriAParteMultipart(uri);
         } catch (IOException e) {
             if (isAdded()) Toast.makeText(requireContext(), "No se pudo leer la imagen elegida", Toast.LENGTH_SHORT).show();
+            siguiente.run();
             return;
         }
 
@@ -249,17 +282,19 @@ public class PublicarFragment extends Fragment {
 
                 if (!response.isSuccessful() || response.body() == null) {
                     Toast.makeText(requireContext(), "Error al subir la foto: " + response.code(), Toast.LENGTH_LONG).show();
-                    return;
+                } else {
+                    agregarMiniatura(uri);
+                    fotosSubidas = response.body().fotos != null ? response.body().fotos.size() : fotosSubidas + 1;
+                    actualizarEstadoFotos();
                 }
-                agregarMiniatura(uri);
-                fotosSubidas = response.body().fotos != null ? response.body().fotos.size() : fotosSubidas + 1;
-                actualizarEstadoFotos();
+                siguiente.run();
             }
 
             @Override
             public void onFailure(Call<PublicacionDetalle> call, Throwable t) {
                 if (!isAdded()) return;
                 Toast.makeText(requireContext(), "Sin conexion al subir la foto", Toast.LENGTH_LONG).show();
+                siguiente.run();
             }
         });
     }
